@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": false,
+        "noLib": false
+    },
+    "files": [
+        "typings/gruntjs/gruntjs.d.ts",
+        "grunt-config.ts"
+    ]
+}

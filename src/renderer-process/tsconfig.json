@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": false,
+        "noLib": false,
+        "outDir": "../../lib/renderer-process"
+    },
+    "files": [
+        "../../typings/node/node.d.ts",
+        "../../typings/github-electron/github-electron.d.ts",
+        "../../typings/github-electron/github-electron-renderer.d.ts"
+    ]
+}
