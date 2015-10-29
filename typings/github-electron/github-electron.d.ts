@@ -5,6 +5,8 @@
 
 /// <reference path="../node/node.d.ts" />
 
+// NOTE: Some parts have been updated for Electron v0.34.1, and have been marked as such.
+
 declare module GitHubElectron {
 	/**
 	 * This class is used to represent an image.
@@ -343,27 +345,7 @@ declare module GitHubElectron {
 		 * @returns Whether the window's document has been edited.
 		 */
 		isDocumentEdited(): boolean;
-		/**
-		 * Opens the developer tools.
-		 */
-		openDevTools(options?: {
-			/**
-			 * Opens devtools in a new window.
-			 */
-			detach?: boolean;
-		}): void;
-		/**
-		 * Closes the developer tools.
-		 */
-		closeDevTools(): void;
-		/**
-		 * Returns whether the developer tools are opened.
-		 */
-		isDevToolsOpened(): boolean;
-		/**
-		 * Toggle the developer tools.
-		 */
-		toggleDevTools(): void;
+
 		reloadIgnoringCache(): void;
 		/**
 		 * Starts inspecting element at position (x, y).
@@ -730,6 +712,39 @@ declare module GitHubElectron {
 		 *   data Buffer - PDF file content
 		 */
 		callback: (error: Error, data: Buffer) => void): void;
+
+		//---- start v0.34.1 ----//
+
+		/** Add the given path to the developer tools workspace. */
+		addWorkSpace(path: string): void;
+		/** Remove the given path from the developer tools workspace. */
+		removeWorkSpace(path: string): void;
+		/**
+		 * Opens the developer tools.
+		 */
+		openDevTools(options?: {
+			/**
+			 * Opens devtools in a new window.
+			 */
+			detach?: boolean;
+		}): void;
+		/**
+		 * Closes the developer tools.
+		 */
+		closeDevTools(): void;
+		isDevToolsOpened(): boolean;
+		/**
+		 * Toggle the developer tools.
+		 */
+		toggleDevTools(): void;
+		isDevToolsFocused(): boolean;
+		/** Inspect the element at the given position. */
+		inspectElement(x: number, y: number): void;
+		/** Open developer tools for the service worker context. */
+		inspectServiceWorker(): void;
+
+		//---- end v0.34.1 ----//
+
 		/**
 		 * Send args.. to the web page via channel in asynchronous message, the web page
 		 * can handle it by listening to the channel event of ipc module.
