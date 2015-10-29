@@ -19,7 +19,7 @@ app.on('ready', () => {
   const documentFilename = path.resolve(__dirname, '..', '..', 'static', 'index.html');
   mainWindow.loadUrl('file://' + documentFilename);
 
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', () => {
     mainWindow = null;
