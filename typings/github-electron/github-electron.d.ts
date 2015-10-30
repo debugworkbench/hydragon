@@ -450,6 +450,59 @@ declare module GitHubElectron {
 		isVisibleOnAllWorkspaces(): boolean;
 	}
 
+	// current as at v0.34.1
+	interface WebPreferences {
+		/** Defaults to true. */
+		'node-integration'?: boolean;
+		/**
+		 * Absolute path to script file that will be loaded before other scripts run in the page.
+		 * This script will always have access to node APIs no matter whether node integration is
+		 * turned on for the page.
+		 */
+		preload?: string;
+		/**
+		 * The session used by the page.
+		 * If partition starts with `persist:`, the page will use a persistent session available to
+		 * all pages in the app with the same partition. If there is no `persist:` prefix, the page
+		 * will use an in-memory session. By assigning the same partition, multiple pages can share
+		 * the same session. If the partition is unset then the default session of the app will be
+		 * used.
+		 */
+		partition?: string;
+		/** Default zoom factor of the page, e.g. 3.0 represents 300% */
+		'zoom-factor'?: number;
+		javascript?: boolean;
+		/**
+		 * When set to `false` the same-origin policy is disabled,
+		 * and [[allow_displaying_insecure_content]] and [[allow_running_insecure_content]] are set
+		 * to `true` if those two options are not set by user.
+		 */
+		'web-security'?: boolean;
+		/** Set to `true` to allow an HTTPS page to display content like images from HTTP URLs. */
+		'allow-displaying-insecure-content'?: boolean;
+		/** Set to `true` to allow an HTTPS page to run JavaScript, CSS or plugins from HTTP URLs. */
+		'allow-running-insecure-content'?: boolean;
+		images?: boolean;
+		java?: boolean;
+		'text-areas-are-resizable'?: boolean;
+		webgl?: boolean;
+		webaudio?: boolean;
+		plugins?: boolean;
+		'experimental-features'?: boolean;
+		'experimental-canvas-features'?: boolean;
+		'overlay-scrollbars'?: boolean;
+		'overlay-fullscreen-video'?: boolean;
+		'shared-worker'?: boolean;
+		/** Set to `true` to enable DirectWrite font rendering on Windows. */
+		'direct-write'?: boolean;
+		/**
+		 * If set the page would be forced to be always in visible or hidden state instead of
+		 * reflecting current window's visibility. Users can set it to true to prevent
+		 * throttling of DOM timers.
+		 */
+		'page-visibility'?: boolean;
+	}
+
 	// Includes all options BrowserWindow can take as of this writing
 	// http://electron.atom.io/docs/v0.29.0/api/browser-window/
 	interface BrowserWindowOptions extends Rectangle {
@@ -479,7 +532,7 @@ declare module GitHubElectron {
 		transparent?: boolean;
 		type?: string;
 		'standard-window'?: boolean;
-		'web-preferences'?: any; // Object
+		'web-preferences'?: WebPreferences;
 		javascript?: boolean;
 		'web-security'?: boolean;
 		images?: boolean;
@@ -1299,7 +1352,7 @@ declare module GitHubElectron {
 		 */
 		read(format: string, type?: string): any;
 	}
-	
+
 	interface CrashReporterStartOptions {
 		/**
 		* Default: Electron
@@ -1330,7 +1383,7 @@ declare module GitHubElectron {
 		*/
 		extra?: {}
 	}
-	
+
 	interface CrashReporterPayload extends Object {
 		/**
 		* E.g., "electron-crash-service".
@@ -1370,17 +1423,17 @@ declare module GitHubElectron {
 		*/
 		upload_file_minidump: File;
 	}
-	
+
 	interface CrashReporter {
 		start(options?: CrashReporterStartOptions): void;
-	
+
 		/**
 		 * @returns The date and ID of the last crash report. When there was no crash report
 		 * sent or the crash reporter is not started, null will be returned.
 		 */
 		getLastCrashReport(): CrashReporterPayload;
 	}
-	
+
 	interface Shell{
 		/**
 		 * Show the given file in a file manager. If possible, select the file.
