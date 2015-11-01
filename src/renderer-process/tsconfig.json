@@ -10,6 +10,7 @@
     },
     "files": [
         "../../typings/node/node.d.ts",
+        "../../typings/github-electron/node.d.ts",
         "../../typings/github-electron/github-electron.d.ts",
         "../../typings/github-electron/github-electron-renderer.d.ts"
     ]
