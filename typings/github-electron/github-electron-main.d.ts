@@ -85,7 +85,7 @@ declare module GitHubElectron {
 		ENABLE_SAMPLING: number;
 		RECORD_CONTINUOUSLY: number;
 	}
-	
+
 	interface Dialog {
 		/**
 		 * @param callback If supplied, the API call will be asynchronous.
@@ -105,7 +105,7 @@ declare module GitHubElectron {
 		 * @returns The index of the clicked button.
 		 */
 		showMessageBox: typeof GitHubElectron.Dialog.showMessageBox;
-	
+
 		/**
 		 * Runs a modal dialog that shows an error message. This API can be called safely
 		 * before the ready event of app module emits, it is usually used to report errors
@@ -113,7 +113,7 @@ declare module GitHubElectron {
 		 */
 		showErrorBox(title: string, content: string): void;
 	}
-	
+
 	interface GlobalShortcut {
 		/**
 		 * Registers a global shortcut of accelerator.
@@ -140,58 +140,114 @@ declare module GitHubElectron {
 		 */
 		unregisterAll(): void;
 	}
-	
-	class RequestFileJob {
-		/**
-		* Create a request job which would query a file of path and set corresponding mime types.
-		*/
-		constructor(path: string);
-	}
-	
-	class RequestStringJob {
-		/**
-		* Create a request job which sends a string as response.
-		*/
-		constructor(options?: {
-			/**
-			* Default is "text/plain".
-			*/
-			mimeType?: string;
-			/**
-			* Default is "UTF-8".
-			*/
-			charset?: string;
-			data?: string;
-		});
-	}
-	
-	class RequestBufferJob {
-		/**
-		* Create a request job which accepts a buffer and sends a string as response.
-		*/
-		constructor(options?: {
-			/**
-				* Default is "application/octet-stream".
-				*/
-			mimeType?: string;
-			/**
-				* Default is "UTF-8".
-				*/
-			encoding?: string;
-			data?: Buffer;
-		});
-	}
-	
+
+  //---- start v0.34.1 ----//
+
+  interface URLRequest {
+    /** The request method (`GET`, `POST` etc.) as an uppercase string. */
+    method: string;
+    url: string;
+    /** The referrer URL for the request. */
+    referrer: string;
+  }
+
+  interface FileProtocolHandlerCallback {
+    (): void;
+    /** @param path The path of the file to send. */
+    (path: string): void;
+    /** @param arg.path The path of the file to send. */
+    (arg: { path: string }): void;
+  }
+
+  interface BufferProtocolHandlerCallback {
+    (): void;
+    (data: Buffer): void;
+    (arg: { mimeType: string; charset: string; data: Buffer }): void;
+  }
+
+  interface StringProtocolHandlerCallback {
+    (): void;
+    (data: string): void;
+    (arg: { mimeType: string; charset: string; data: string }): void;
+  }
+
+  interface HttpProtocolHandlerCallback {
+    (): void;
+    /**
+     * @param arg.session By default the current session will be reused for the request,
+     *                    to force the request to have a different session set this to `null`.
+     */
+    (arg: { url: string; method: string; referrer: string; session?: any }): void;
+  }
+
 	interface Protocol {
-		registerProtocol(scheme: string, handler: (request: any) => void): void;
-		unregisterProtocol(scheme: string): void;
-		isHandledProtocol(scheme: string): boolean;
-		interceptProtocol(scheme: string, handler: (request: any) => void): void;
-		uninterceptProtocol(scheme: string): void;
-		RequestFileJob: typeof RequestFileJob;
-		RequestStringJob: typeof RequestStringJob;
-		RequestBufferJob: typeof RequestBufferJob;
+    registerStandardSchemes(schemes: string[]): void;
+    /**
+     * @param scheme Name to register the new protocol under, e.g. `file`.
+     * @param handler Invoked to handle a request matching the registered protocol.
+     * @param handler.callback The handler must call this function with no arguments if the
+     *                         request should fail, or a single argument if the request should
+     *                         be allowed to proceed.
+     * @param completion Invoked when this operation completes (successfully or otherwise).
+     * @param completion.error `null` if the protocol was registered successfully, otherwise
+     *                          a `string` that describes the error that occured.
+     */
+    registerFileProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: FileProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    registerBufferProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: BufferProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    registerStringProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: StringProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    /**
+     * @param scheme Name to register the new protocol under, e.g. `http`.
+     * @param handler Invoked to handle a request matching the registered protocol.
+     * @param handler.callback The handler must call this function with no arguments if the
+     *                         request should fail, or a single argument if the request should
+     *                         be allowed to proceed.
+     * @param completion Invoked when this operation completes (successfully or otherwise).
+     * @param completion.error `null` if the protocol was registered successfully, otherwise
+     *                          a `string` that describes the error that occured.
+     */
+    registerHttpProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: HttpProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+		unregisterProtocol(scheme: string, completion?: (error: string) => void): void;
+		isProtocolHandled(scheme: string, callback: (isHandled: boolean) => void): void;
+		interceptFileProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: FileProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    interceptStringProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: StringProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    interceptBufferProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: BufferProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+    interceptHttpProtocol(
+      scheme: string,
+      handler: (request: URLRequest, callback: HttpProtocolHandlerCallback) => void,
+      completion?: (error: string) => void
+    ): void;
+		uninterceptProtocol(scheme: string, completion?: (error: string) => void): void;
 	}
+
+  //---- end v0.34.1 ----//
 }
 
 declare module 'app' {
