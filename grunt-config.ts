@@ -45,15 +45,27 @@ export = function(grunt: IGrunt) {
         }
       }
     },
+    'vulcanize': {
+      default: {
+        options: {
+          // extract all inline JavaScript into a separate file to work around Atom's
+          // Content Security Policy
+          csp: 'dependencies_bundle.js'
+        },
+        files: {
+          // output: input
+          './lib/renderer-process/elements/dependencies_bundle.html': './src/renderer-process/elements/dependencies.html'
+        }
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-tsc');
   grunt.loadNpmTasks('grunt-tslint');
-  
+  grunt.loadNpmTasks('grunt-vulcanize');
+
   grunt.registerTask('lint', ['jshint', 'tslint']);
-  
   grunt.registerTask('build', ['tsc']);
-  
   grunt.registerTask('default', ['lint', 'build']);
 };
