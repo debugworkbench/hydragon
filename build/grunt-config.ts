@@ -1,12 +1,39 @@
 // This file contains the actual Grunt config which gets imported in Gruntfile.js.
 
 import * as path from 'path';
+import * as glob from 'glob';
+
+/** Load Grunt tasks from the .ts files in the tasks directory. */
+function loadTasks(grunt: IGrunt): void {
+  try {
+    const files = glob.sync('*.ts', { cwd: 'tasks' });
+    files.forEach((filename) => {
+      require('./tasks/' + path.basename(filename, '.ts'))(grunt);
+    });
+  } catch (e) {
+    grunt.log.verbose.error(e.stack).or.error(e);
+  }
+}
 
 export = function(grunt: IGrunt) {
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-tsc');
+  grunt.loadNpmTasks('grunt-tslint');
+  grunt.loadNpmTasks('grunt-vulcanize');
+  // grunt.loadTasks() only loads .js and .coffee files, so gotta load .ts files separately
+  loadTasks(grunt);
+
+
+  const repoRoot = path.resolve('..');
+  const packageJson = grunt.file.readJSON('../package.json');
+  // Set the Grunt working directory to the root of the repo so that any relative paths passed
+  // to Grunt from here on are resolved relative to root dir instead of the build dir.
+  grunt.file.setBase(repoRoot);
+
   grunt.initConfig({
-    'pkg': grunt.file.readJSON('package.json'),
+    'pkg': packageJson,
     'jshint': {
-      files: ['Gruntfile.js'],
+      files: ['build/Gruntfile.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -24,6 +51,7 @@ export = function(grunt: IGrunt) {
         },
         files: {
           src: [
+            'build/tasks/*.ts',
             'src/**/*.ts',
             'test/**/*.ts'
           ]
@@ -32,7 +60,7 @@ export = function(grunt: IGrunt) {
     },
     'tsc': {
       options: {
-        tscPath: path.resolve('node_modules', 'typescript', 'bin', 'tsc')
+        tscPath: path.resolve('build', 'node_modules', 'typescript', 'bin', 'tsc')
       },
       'main-process': {
         options: {
@@ -57,13 +85,15 @@ export = function(grunt: IGrunt) {
           './lib/renderer-process/elements/dependencies_bundle.html': './src/renderer-process/elements/dependencies.html'
         }
       }
+    },
+    'rebuild-native-modules': {
+      default: {
+        options: {
+          nodeModulesDir: path.join(repoRoot, 'node_modules')
+        }
+      }
     }
   });
-
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-tsc');
-  grunt.loadNpmTasks('grunt-tslint');
-  grunt.loadNpmTasks('grunt-vulcanize');
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
   grunt.registerTask('build', ['tsc']);

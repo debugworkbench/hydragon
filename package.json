@@ -1,5 +1,5 @@
 {
-  "name": "debug-workbench-electron",
+  "name": "hydragon",
   "version": "1.0.0",
   "description": "Extensible Debugging Framework",
   "main": "lib/main-process/main.js",
@@ -17,18 +17,9 @@
     "gdb",
     "lldb"
   ],
-  "author": "Vadim Macagon",
+  "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "electron-prebuilt": "^0.34.1",
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-tsc": "github:enlight/grunt-tsc",
-    "grunt-tslint": "^2.5.0",
-    "grunt-vulcanize": "^1.0.0",
-    "ts-node": "^0.4.0",
-    "tsd": "^0.6.0-beta.5",
-    "tslint": "^2.5.1",
-    "typescript": "^1.6.2"
+    "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
   }
 }

@@ -5,10 +5,14 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "declaration": false,
-        "noLib": false
+        "noLib": true
     },
     "files": [
+        "node_modules/typescript/lib/lib.es6.d.ts",
         "typings/gruntjs/gruntjs.d.ts",
+        "typings/glob/glob.d.ts",
+        "typings/electron-rebuild/electron-rebuild.d.ts",
+        "tasks/rebuild-native-modules.ts",
         "grunt-config.ts"
     ]
 }
