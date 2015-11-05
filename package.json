@@ -20,6 +20,8 @@
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "node-inspector": "^0.12.3",
+    "node-pre-gyp": "github:enlight/node-pre-gyp#detect-electron-runtime-in-find",
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
   }
 }

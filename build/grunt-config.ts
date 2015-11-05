@@ -92,6 +92,13 @@ export = function(grunt: IGrunt) {
           nodeModulesDir: path.join(repoRoot, 'node_modules')
         }
       }
+    },
+    'run-node-inspector': {
+      default: {
+        options: {
+          scriptPath: path.join(repoRoot, 'node_modules', 'node-inspector', 'bin', 'inspector.js')
+        }
+      }
     }
   });
 
