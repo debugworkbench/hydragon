@@ -13,6 +13,7 @@
         "typings/glob/glob.d.ts",
         "typings/electron-rebuild/electron-rebuild.d.ts",
         "tasks/rebuild-native-modules.ts",
+        "tasks/run-electron.ts",
         "tasks/run-node-inspector.ts",
         "grunt-config.ts"
     ]

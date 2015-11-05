@@ -99,6 +99,20 @@ export = function(grunt: IGrunt) {
           scriptPath: path.join(repoRoot, 'node_modules', 'node-inspector', 'bin', 'inspector.js')
         }
       }
+    },
+    'run-electron': {
+      options: {
+        scriptPath: path.join(repoRoot, 'lib', 'main-process', 'main.js')
+      },
+      default: {
+        // run Electron normally without debugging
+      },
+      debug: {
+        options: {
+          debug: true,
+          stopAtEntry: true
+        }
+      }
     }
   });
 
