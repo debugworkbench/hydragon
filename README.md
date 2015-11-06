@@ -14,9 +14,14 @@ Prerequisites
 
 Setup
 -----
-Clone this repository and then do:
+After cloning this repository install the depedencies:
 ```
 npm install
+bower install
+```
+
+Then setup the build system:
+```
 cd build
 npm install
 grunt rebuild-native-modules
