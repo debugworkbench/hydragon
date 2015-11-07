@@ -4,11 +4,11 @@
 import * as app from 'app';
 import * as BrowserWindow from 'browser-window';
 import * as path from 'path';
-import Application, { IApplicationArgs } from './application';
+import Application from './application';
 
 //require('crash-reporter').start();
 
-let mainWindow: GitHubElectron.BrowserWindow = null;
+let application: Application;
 
 interface CommandLineArgs {
   /** Allows to override the PATH environment variable for the process. */
@@ -34,7 +34,7 @@ function main(): void {
   app.on('ready', () => {
     const rootPath = path.resolve(__dirname, '..', '..');
     console.log(`rootPath: ${rootPath}`);
-    const application = new Application();
+    application = new Application();
     application.run({ rootPath });
   });
 }

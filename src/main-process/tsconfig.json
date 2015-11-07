@@ -15,6 +15,7 @@
         "../../typings/github-electron/github-electron-main.d.ts",
         "application.ts",
         "application-window.ts",
-        "main.ts"
+        "main.ts",
+        "protocol-handlers.ts"
     ]
 }
