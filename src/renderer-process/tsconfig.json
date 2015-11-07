@@ -5,15 +5,21 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "declaration": false,
-        "noLib": false,
-        "outDir": "../../lib/renderer-process"
+        "noLib": true,
+        "outDir": "../../lib/renderer-process",
+        "experimentalDecorators": true
     },
     "files": [
+        "../../build/node_modules/typescript/lib/lib.es6.d.ts",
         "../../typings/node/node.d.ts",
         "../../typings/github-electron/node.d.ts",
         "../../typings/github-electron/github-electron.d.ts",
         "../../typings/github-electron/github-electron-renderer.d.ts",
+        "../../typings/polymer/polymer.d.ts",
+        "elements/register-element/register-element.ts",
+        "elements/element-factory.ts",
         "init-window.ts",
-        "renderer-context.ts"
+        "renderer-context.ts",
+        "utils.ts"
     ]
 }

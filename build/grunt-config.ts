@@ -17,6 +17,7 @@ function loadTasks(grunt: IGrunt): void {
 
 export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-sync');
   grunt.loadNpmTasks('grunt-tsc');
   grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('grunt-vulcanize');
@@ -82,7 +83,7 @@ export = function(grunt: IGrunt) {
         },
         files: {
           // output: input
-          './lib/renderer-process/elements/dependencies_bundle.html': './src/renderer-process/elements/dependencies.html'
+          'lib/renderer-process/elements/dependencies_bundle.html': 'src/renderer-process/elements/dependencies.html'
         }
       }
     },
@@ -112,6 +113,20 @@ export = function(grunt: IGrunt) {
           debug: true,
           stopAtEntry: true
         }
+      }
+    },
+    'sync': {
+      elements: {
+        files: [{
+          cwd: 'src',
+          src: [
+            'renderer-process/elements/**/*.html',
+            '!renderer-process/elements/dependencies.html'
+          ],
+          dest: 'lib'
+        }],
+        verbose: true,
+        //pretend: true
       }
     }
   });
