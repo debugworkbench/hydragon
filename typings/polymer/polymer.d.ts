@@ -112,7 +112,7 @@ declare namespace polymer {
      *
      * @param selector CSS selector that should match a `<content>` node, defaults to `content`.
      */
-    getContentChildNodes(selector: string): HTMLElement[];
+    getContentChildNodes(selector?: string): HTMLElement[];
     /**
      * Returns an array of child elements distributed to this element's `<content>`.
      * If the element has multiple `<content>` nodes provide a CSS selector to pick the right one.
@@ -120,7 +120,7 @@ declare namespace polymer {
      *
      * @param selector CSS selector that should match a `<content>` node, defaults to `content`.
      */
-    getContentChildren(selector: string): HTMLElement[];
+    getContentChildren(selector?: string): HTMLElement[];
     /**
      * Add an event listener on a given element, late bound to a named method on this element.
      * 
@@ -143,7 +143,7 @@ declare namespace polymer {
       options?: { node: HTMLElement, bubbles: boolean, cancelable: boolean }
     ): CustomEvent;
     /** Runs a callback function asyncronously. */
-    async(callback: Function, waitTime: number): number;
+    async(callback: Function, waitTime?: number): number;
     /** Cancels an async callback started via [[async]]. */
     cancelAsync(handle: number): void;
     /** Sets an element's CSS `transform` property in a cross-platform manner. */
