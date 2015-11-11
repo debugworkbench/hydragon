@@ -81,8 +81,8 @@ declare namespace polymer {
 
     // Utility functions
 
-    /** 
-     * Returns the first element within the local DOM scope that matches the specified group of 
+    /**
+     * Returns the first element within the local DOM scope that matches the specified group of
      * selectors.
      *
      * @param selector A CSS selector.
@@ -91,7 +91,7 @@ declare namespace polymer {
     /**
      * Toggles a CSS class on/off.
      * @param bool Set to `true` to add the CSS class to the element, `false` to remove it.
-     *              By default the CSS class is removed if present, and added if absent.   
+     *              By default the CSS class is removed if present, and added if absent.
      * @param node The node to toggle the CSS class on, defaults to `this`.
      */
     toggleClass(cssClass: string, bool?: boolean, node?: HTMLElement): void;
@@ -106,7 +106,7 @@ declare namespace polymer {
     classFollows(cssClass: string, toElement: HTMLElement, fromElement: HTMLElement): void; // static
     /** Removes an attribute from one node and adds it to another. */
     attributeFollows(attrName: string, toElement: HTMLElement, fromElement: HTMLElement): void; // static
-    /** 
+    /**
      * Returns an array of child nodes distributed to this element's `<content>`.
      * If the element has multiple `<content>` nodes provide a CSS selector to pick the right one.
      *
@@ -123,7 +123,7 @@ declare namespace polymer {
     getContentChildren(selector?: string): HTMLElement[];
     /**
      * Add an event listener on a given element, late bound to a named method on this element.
-     * 
+     *
      * @param node Element to add event listener to.
      * @param eventName Name of event to listen for.
      * @param methodName Name of handler method on `this` to call.
@@ -131,7 +131,7 @@ declare namespace polymer {
     listen(node: HTMLElement, eventName: string, methodName: string): void;
     /**
      * Remove an event listener from a given element, late bound to a named method on this element.
-     * 
+     *
      * @param node Element to remove event listener from.
      * @param eventName Name of event to stop listening to.
      * @param methodName Name of handler method on `this` to not call anymore.
@@ -139,7 +139,7 @@ declare namespace polymer {
     unlisten(node: HTMLElement, eventName: string, methodName: string): void;
     /** Dispatches a custom event. */
     fire(
-      type: string, detail?: Object, 
+      type: string, detail?: Object,
       options?: { node: HTMLElement, bubbles: boolean, cancelable: boolean }
     ): CustomEvent;
     /** Runs a callback function asyncronously. */
@@ -154,24 +154,24 @@ declare namespace polymer {
     importHref(href: string, onload: Function, onerror: Function): HTMLLinkElement;
     /** Creates and configures an element with the given properties. */
     create(tag: string, props: Object): HTMLElement;
-    
+
     // Path Notification
     /**
      * Notify interested parties that the value at a data path has changed.
      *
-     * @param fromAbove Set to `true` to indicate that upward notification is not necessary.  
+     * @param fromAbove Set to `true` to indicate that upward notification is not necessary.
      * @return `true` if the value at the data path actually changed.
      */
     notifyPath(path: string, value: any, fromAbove?: boolean): boolean;
     /**
      * Set the value at a data path and notify interested parties.
-     * 
+     *
      * @param root Object relative to which the `path` should be evaluated, defaults to `this`.
      */
     set(path: string | Array<string | number>, value: any, root?: Object): void;
     /**
      * Get the value at a data path.
-     * 
+     *
      * @param root Object relative to which the `path` should be evaluated, defaults to `this`.
      */
     get(path: string | Array<string | number>, root?: Object): any;
@@ -181,7 +181,7 @@ declare namespace polymer {
     unlinkPaths(path: string): void;
     /**
      * Add items to then end of an array and notify interested parties of the change.
-     * 
+     *
      * @param path Path to the array to modify.
      * @param items One or more items to add.
      * @return New length of the array after the items are added.
@@ -189,14 +189,14 @@ declare namespace polymer {
     push(path: string, ...items: any[]): number;
     /**
      * Remove the last item from an array and notify interested parties of the change.
-     * 
+     *
      * @param path Path to the array to modify.
-     * @return Item that was removed. 
+     * @return Item that was removed.
      */
     pop(path: string): any;
     /**
      * Works similarly to Array.prototype.splice() but also notifies interested parties of the changes.
-     * 
+     *
      * @param path Path to the array to modify.
      * @param start Index at which to start modifying the array.
      * @param deleteCount Number of items to remove starting from `start`.
@@ -213,7 +213,7 @@ declare namespace polymer {
     shift(path: string): any;
     /**
      * Add items to the beginning of an array and notify interested parties of the change.
-     * 
+     *
      * @param path Path to the array to modify.
      * @param items Items to add to the array.
      * @return New length of the array after the items are added.
@@ -226,13 +226,13 @@ declare namespace polymer {
     remove(...token: string[]): void;
     toggle(token: string, force?: boolean): boolean;
   }
-  
+
   interface DomApi {
     appendChild(node: HTMLElement): HTMLElement;
     insertBefore(node: HTMLElement): HTMLElement;
     removeChild(node: HTMLElement): HTMLElement;
     flush(): void;
-    
+
     // Parent and child API
 
     childNodes: HTMLElement[]; // read-only
@@ -255,7 +255,7 @@ declare namespace polymer {
     querySelectorAll(selector: string): HTMLElement[];
 
     // Content API
-    
+
     getDistributedNodes: HTMLElement[];
     getDestinationInsertionPoints: HTMLElement[];
 
@@ -268,7 +268,7 @@ declare namespace polymer {
 
   /** Normalized event that provides equivalent target data on both shady DOM and shadow DOM. */
   interface EventApi {
-    /** 
+    /**
      * Original or root target before shadow retargeting
      * (equivalent to event.path[0] under shadow DOM or event.target under shady DOM).
      */
@@ -284,7 +284,7 @@ declare namespace polymer {
     (node: Event): EventApi;
     flush(): void;
   }
-  
+
   interface Global {
     /**
      * Creates an element constructor and registers it with the document.
