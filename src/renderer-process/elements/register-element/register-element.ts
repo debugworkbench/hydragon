@@ -27,15 +27,21 @@ export class RegisterElementElement {
   ready(): void {
     if (this.path) {
       // get the absolute path of the document this tag was found in
-      let { protocol, path: basePath } = url.parse(base(this).root.baseURI);
-      // strip file:/// prefix from document path
-      if (basePath && (basePath.length > 0) && (basePath[0] === '/') && (protocol === 'file:')) {
-        basePath = basePath.slice(1);
+      let { protocol, hostname, pathname } = url.parse(base(this).root.baseURI);
+      if (pathname && (pathname.length > 0) && (pathname[0] === '/')) {
+        if ((protocol === 'file:') || (protocol === 'app:')) {
+          pathname = pathname.slice(1);
+        }
+      }
+      // the hostname if present is actually the first component of the path because the app:
+      // scheme is only used for local files
+      if (hostname) {
+        pathname = path.posix.join(hostname, pathname);
       }
       // if the script path is relative to the document path (should generally be the case)
       // make it absolute
       const scriptPath =
-        path.isAbsolute(this.path) ? this.path : path.resolve(path.dirname(basePath), this.path);
+        path.isAbsolute(this.path) ? this.path : path.resolve(path.dirname(pathname), this.path);
 
       const elementConstructor = require(scriptPath).register();
       RendererContext.get().elementFactory.setElementConstructor(
