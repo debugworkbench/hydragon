@@ -228,23 +228,37 @@ declare namespace polymer {
   }
 
   interface DomApi {
-    appendChild(node: HTMLElement): HTMLElement;
-    insertBefore(node: HTMLElement): HTMLElement;
-    removeChild(node: HTMLElement): HTMLElement;
+    /**
+     * Append the given node from the light DOM.
+     * @return The node that was appended.
+     */
+    appendChild<T extends Node>(node: T): T;
+    /**
+     * Insert the given node before another node.
+     * @return The node that was inserted.
+     */
+    insertBefore<T extends Node>(nodeToInsert: T, beforeNode: Node): T;
+    /**
+     * Remove the given node from the light DOM.
+     * @return The node that was removed.
+     */
+    removeChild<T extends Node>(node: T): T;
     flush(): void;
 
     // Parent and child API
 
-    childNodes: HTMLElement[]; // read-only
+    childNodes: Node[]; // read-only
     /** Child nodes that are elements. */
     children: HTMLElement[]; // read-only
-    parentNode: HTMLElement; // read-only
-    firstChild: HTMLElement; // read-only
-    lastChild: HTMLElement; // read-only
+    parentNode: Node; // read-only
+    firstChild: Node; // read-only
+    lastChild: Node; // read-only
     firstElementChild: HTMLElement; // read-only
     lastElementChild: HTMLElement; // read-only
-    previousSibling: HTMLElement; // read-only
-    nextSibling: HTMLElement; // read-only
+    previousSibling: Node; // read-only
+    nextSibling: Node; // read-only
+    previousElementSibling: HTMLElement; // read-only
+    nextElementSibling: HTMLElement; // read-only
     textContent: string;
     innerHTML: string;
 
