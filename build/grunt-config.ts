@@ -16,6 +16,7 @@ function loadTasks(grunt: IGrunt): void {
 }
 
 export = function(grunt: IGrunt) {
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-sync');
   grunt.loadNpmTasks('grunt-tsc');
@@ -30,6 +31,36 @@ export = function(grunt: IGrunt) {
 
   grunt.initConfig({
     'pkg': packageJson,
+    'babel': {
+      options: {
+        babelrc: false, // undocumented option to prevent babel from looking for .babelrc or in package.json
+        sourceMaps: false,
+        plugins: [
+          'transform-strict-mode',
+          'transform-es2015-parameters',
+          'transform-es2015-destructuring'
+        ]
+      },
+      'main-process': {
+        files: [{
+          expand: true,
+          cwd: '../lib/',
+          src: ['main-process/**/*.js'],
+          dest: '../lib/'
+        }]
+      },
+      'renderer-process': {
+        files: [{
+          expand: true,
+          cwd: '../lib/',
+          src: [
+            'renderer-process/**/*.js',
+            '!renderer-process/elements/dependencies_bundle.js'
+          ],
+          dest: '../lib/'
+        }]
+      }
+    },
     'jshint': {
       files: ['Gruntfile.js'],
       options: {
@@ -130,6 +161,6 @@ export = function(grunt: IGrunt) {
   });
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
-  grunt.registerTask('build', ['tsc']);
+  grunt.registerTask('build', ['tsc', 'babel']);
   grunt.registerTask('default', ['lint', 'build']);
 };

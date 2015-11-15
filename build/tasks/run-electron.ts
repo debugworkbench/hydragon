@@ -34,7 +34,10 @@ function activatePlugin(grunt: IGrunt) {
     }
     const spawnOptions: grunt.util.ISpawnOptions = {
       cmd: electronPath,
-      args
+      args,
+      opts: {
+        cwd
+      }
     };
     const electron = grunt.util.spawn(spawnOptions, (error, result, code) => {
       error ? done(error) : done();

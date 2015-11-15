@@ -9,9 +9,13 @@
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "babel-plugin-transform-es2015-destructuring": "^6.1.18",
+    "babel-plugin-transform-es2015-parameters": "^6.1.18",
+    "babel-plugin-transform-strict-mode": "^6.1.18",
     "electron-prebuilt": "^0.34.2",
     "electron-rebuild": "^1.0.2",
     "grunt": "^0.4.5",
+    "grunt-babel": "^6.0.0",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-sync": "^0.4.1",
     "grunt-tsc": "github:enlight/grunt-tsc",
@@ -20,6 +24,6 @@
     "ts-node": "^0.4.0",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.5.1",
-    "typescript": "^1.6.2"
+    "typescript": "^1.8.0-dev.20151113"
   }
 }

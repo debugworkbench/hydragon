@@ -1,16 +1,15 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "es6",
         "noImplicitAny": true,
         "sourceMap": true,
         "declaration": false,
-        "noLib": true,
+        "noLib": false,
         "outDir": "../../lib/renderer-process",
         "experimentalDecorators": true
     },
     "files": [
-        "../../build/node_modules/typescript/lib/lib.es6.d.ts",
         "../../typings/node/node.d.ts",
         "../../typings/github-electron/node.d.ts",
         "../../typings/github-electron/github-electron.d.ts",
