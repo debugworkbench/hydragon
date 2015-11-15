@@ -8,7 +8,7 @@ export interface IApplicationWindowOpenParams {
   windowUrl: string;
 }
 
-export default class ApplicationWindow {
+export class ApplicationWindow {
   private _browserWindow: GitHubElectron.BrowserWindow;
 
   open({ windowUrl }: IApplicationWindowOpenParams): void {

@@ -21,7 +21,7 @@ interface IElementMapEntry {
  * by the `register-element` custom element, and the element constructor is stored in the
  * factory.
  */
-export default class ElementFactory {
+export class ElementFactory {
   private elements = new Map</* tagName: */string, IElementMapEntry>();
 
   /**

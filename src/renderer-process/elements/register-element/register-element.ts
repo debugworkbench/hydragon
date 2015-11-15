@@ -4,7 +4,7 @@
 import * as pd from 'polymer-ts-decorators';
 import * as url from 'url';
 import * as path from 'path';
-import RendererContext from '../../renderer-context';
+import { RendererContext } from '../../renderer-context';
 
 // TODO: Consider eliminating the dependency on Polymer, this element is very simple and doesn't
 //       really need any of the features Polymer provides.

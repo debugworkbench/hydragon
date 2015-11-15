@@ -4,7 +4,7 @@
 import * as app from 'app';
 import * as BrowserWindow from 'browser-window';
 import * as path from 'path';
-import Application from './application';
+import { Application } from './application';
 
 //require('crash-reporter').start();
 

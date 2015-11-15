@@ -2,7 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as url from 'url';
-import ApplicationWindow from './application-window';
+import { ApplicationWindow } from './application-window';
 import { AppProtocolHandler } from './protocol-handlers';
 
 export interface IApplicationArgs {
@@ -10,7 +10,7 @@ export interface IApplicationArgs {
   rootPath: string;
 }
 
-export default class Application {
+export class Application {
   private _window: ApplicationWindow;
   private _appProtocolHandler: AppProtocolHandler;
 

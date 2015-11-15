@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import RendererContext from './renderer-context';
+import { RendererContext } from './renderer-context';
 import * as remote from 'remote';
 
 window.onload = (e: Event) => {

@@ -2,12 +2,12 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as remote from 'remote';
-import ElementFactory from './elements/element-factory';
+import { ElementFactory } from './elements/element-factory';
 
 /**
  * Singleton that provides access to all core Debug Workbench functionality.
  */
-export default class RendererContext {
+export class RendererContext {
   /** Create the renderer context for the current process. */
   static create(): Promise<RendererContext> {
     return Promise.resolve()
