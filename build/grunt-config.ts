@@ -27,14 +27,11 @@ export = function(grunt: IGrunt) {
 
   const repoRoot = path.resolve('..');
   const packageJson = grunt.file.readJSON('../package.json');
-  // Set the Grunt working directory to the root of the repo so that any relative paths passed
-  // to Grunt from here on are resolved relative to root dir instead of the build dir.
-  grunt.file.setBase(repoRoot);
 
   grunt.initConfig({
     'pkg': packageJson,
     'jshint': {
-      files: ['build/Gruntfile.js'],
+      files: ['Gruntfile.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -48,29 +45,29 @@ export = function(grunt: IGrunt) {
     'tslint': {
       errors: {
         options: {
-          configuration: grunt.file.readJSON('conf/tslint.json')
+          configuration: grunt.file.readJSON('../conf/tslint.json')
         },
         files: {
           src: [
-            'build/tasks/*.ts',
-            'src/**/*.ts',
-            'test/**/*.ts'
+            'tasks/*.ts',
+            '../src/**/*.ts',
+            '../test/**/*.ts'
           ]
         }
       }
     },
     'tsc': {
       options: {
-        tscPath: path.resolve('build', 'node_modules', 'typescript', 'bin', 'tsc')
+        tscPath: path.resolve('node_modules', 'typescript', 'bin', 'tsc')
       },
       'main-process': {
         options: {
-          project: 'src/main-process'
+          project: '../src/main-process'
         }
       },
       'renderer-process': {
         options: {
-          project: 'src/renderer-process'
+          project: '../src/renderer-process'
         }
       }
     },
@@ -83,7 +80,7 @@ export = function(grunt: IGrunt) {
         },
         files: {
           // output: input
-          'lib/renderer-process/elements/dependencies_bundle.html': 'src/renderer-process/elements/dependencies.html'
+          '../lib/renderer-process/elements/dependencies_bundle.html': '../src/renderer-process/elements/dependencies.html'
         }
       }
     },
@@ -103,7 +100,8 @@ export = function(grunt: IGrunt) {
     },
     'run-electron': {
       options: {
-        scriptPath: path.join(repoRoot, 'lib', 'main-process', 'main.js')
+        cwd: repoRoot,
+        scriptPath: path.join('.', 'lib', 'main-process', 'main.js'),
       },
       default: {
         // run Electron normally without debugging
@@ -118,12 +116,12 @@ export = function(grunt: IGrunt) {
     'sync': {
       elements: {
         files: [{
-          cwd: 'src',
+          cwd: '../src',
           src: [
             'renderer-process/elements/**/*.html',
             '!renderer-process/elements/dependencies.html'
           ],
-          dest: 'lib'
+          dest: '../lib'
         }],
         verbose: true,
         //pretend: true
