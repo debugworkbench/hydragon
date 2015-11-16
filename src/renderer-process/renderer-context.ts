@@ -1,22 +1,27 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+import * as path from 'path';
 import * as remote from 'remote';
 import { ElementFactory } from './elements/element-factory';
+
+export const enum Cursor {
+  HorizontalResize,
+  VerticalResize
+}
 
 /**
  * Singleton that provides access to all core Debug Workbench functionality.
  */
 export class RendererContext {
+  private _cursorOverlay: HTMLElement;
+
   /** Create the renderer context for the current process. */
-  static create(): Promise<RendererContext> {
-    return Promise.resolve()
-    .then(() => {
-      const newContext = new RendererContext();
-      (<any> global).debugWorkbench = newContext;
-      return newContext.initialize();
-    })
-    .then(() => (<any> global).debugWorkbench);
+  static async create(): Promise<RendererContext> {
+    const newContext = new RendererContext();
+    (<any> global).debugWorkbench = newContext;
+    await newContext.initialize();
+    return newContext;
   }
 
   /** Get the renderer context for the current process. */
@@ -28,6 +33,19 @@ export class RendererContext {
 
   constructor() {
     this.elementFactory = new ElementFactory();
+    this.elementFactory.addElementPath(
+      'debug-workbench-workspace', path.posix.join('lib/renderer-process/elements/workspace', 'workspace.html')
+    );
+    this.elementFactory.addElementPath(
+      'debug-workbench-panel', path.posix.join('lib/renderer-process/elements/panel', 'panel.html')
+    );
+    this.elementFactory.addElementPath(
+      'debug-workbench-horizontal-container',
+      path.posix.join('lib/renderer-process/elements/horizontal-container', 'horizontal-container.html')
+    );
+    this.elementFactory.addElementPath(
+      'debug-workbench-splitter', path.posix.join('lib/renderer-process/elements/splitter', 'splitter.html')
+    );
   }
 
   initialize(): Promise<void> {
@@ -36,5 +54,53 @@ export class RendererContext {
 
   showWindow(): void {
     remote.getCurrentWindow().show();
+  }
+
+  /**
+   * Override the browser cursor image.
+   *
+   * To stop overriding the browser cursor call [[resetCursor]].
+   */
+  overrideCursor(cursor: Cursor): void {
+    // the cursor is overriden by creating an overlay that covers the entire document body
+    // and setting the cursor for the overlay to the one requested
+    if (!this._cursorOverlay) {
+      this._cursorOverlay = document.createElement('div');
+      const style = this._cursorOverlay.style;
+      style.position = 'absolute';
+      style.left = '0px';
+      style.right = '0px';
+      style.width = '100%';
+      style.height = '100%';
+      style.zIndex = '1000000';
+    }
+
+    let cursorName: string;
+
+    switch (cursor) {
+      case Cursor.HorizontalResize:
+        cursorName = 'ew-resize';
+        break;
+
+      case Cursor.VerticalResize:
+        cursorName = 'ns-resize';
+        break;
+    }
+
+    if (cursorName) {
+      this._cursorOverlay.style.cursor = cursorName;
+      if (!this._cursorOverlay.parentNode) {
+        document.body.appendChild(this._cursorOverlay);
+      }
+    }
+  }
+
+  /**
+   * Stop overriding the browser cursor image.
+   */
+  resetCursor(): void {
+    if (this._cursorOverlay) {
+      document.body.removeChild(this._cursorOverlay);
+    }
   }
 }

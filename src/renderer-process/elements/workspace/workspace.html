@@ -1,0 +1,42 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+<link rel="import" href="../dependencies_bundle.html">
+
+<!--
+An element that represent the application workspace. The workspace element must have a single
+child element that is a layout container, all other elements representing the various panels
+the user can interact with must be nested in that layout container (either directly, or indirectly).
+
+Example:
+
+    <debug-workbench-workspace>
+      <debug-workbench-horizontal-container>
+        <debug-workbench-panel>
+        </debug-workbench-panel>
+      </debug-workbench-horizontal-container>
+    </debug-workbench-workspace>
+
+@group Debug Workbench
+@element debug-workbench-workspace
+-->
+<dom-module id="debug-workbench-workspace">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        width: auto;
+        height: auto;
+        /* Make this element a flex container */
+        @apply(--layout);
+      }
+
+    </style>
+
+    <!-- The content must be a single layout container. -->
+    <content></content>
+  </template>
+</dom-module>
+
+<register-element path="./workspace"></register-element>

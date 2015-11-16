@@ -27,13 +27,21 @@ export class ElementFactory {
   /**
    * Initialize the factory.
    *
-   * This must be done before any debug-workbench custom elements are imported.
+   * All registered custom elements will be imported.
    * @return A promise that will be resolved when initialization completes.
    */
-  initialize(): Promise<void> {
-    return importHref(this.resolvePath('register-element')).then(() => {
-      registerRegisterElement();
-    });
+  async initialize(): Promise<void> {
+    await importHref(this.resolvePath('register-element'));
+    registerRegisterElement();
+    await this._importAllElements();
+  }
+
+  private async _importAllElements(): Promise<any[]> {
+    const promises: Promise<any>[] = [];
+    for (const elementTag of this.elements.keys()) {
+      promises.push(this.importElement(elementTag));
+    }
+    return Promise.all(promises);
   }
 
   resolvePath(tagName: string, relativePath?: string): string {
@@ -90,26 +98,29 @@ export class ElementFactory {
   /**
    * Create a new instance of a custom element.
    *
+   * If the element hasn't been imported yet it will be automatically imported.
    * @param tagName The name of a known custom element.
    * @return A promise that will be resolved with a new custom element instance.
    */
-  createElement(tagName: string, ...args: any[]): Promise<HTMLElement> {
-    return new Promise<HTMLElement>((resolve, reject) => {
-      let elementConstructor = this.elements.get(tagName).elementConstructor;
-      if (elementConstructor) {
-        // invoke the constructor with the given args
-        // TODO: in ES6 this can be simplified to Reflect.construct(elementConstructor, args),
-        //       but have to wait for Chrome and Electron to support it.
-        resolve(new (Function.prototype.bind.apply(elementConstructor, [null].concat(args))));
-      } else {
-        resolve(
-          this.importElement(tagName)
-          .then((elementConstructor) => {
-            return new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
-          })
-        );
-      }
-    });
+  async createElement<T extends HTMLElement>(tagName: string, ...args: any[]): Promise<T> {
+    let element = this.createElementSync.apply(this, arguments);
+    if (element === null) {
+      const elementConstructor = await this.importElement(tagName);
+      element = new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
+    }
+    return element;
+  }
+
+  createElementSync<T extends HTMLElement>(tagName: string, ...args: any[]): T {
+    let element: T = null;
+    const elementConstructor = this.elements.get(tagName).elementConstructor;
+    if (elementConstructor) {
+      // invoke the constructor with the given args
+      // TODO: in ES6 this can be simplified to Reflect.construct(elementConstructor, args),
+      //       but have to wait for Chrome and Electron to support it.
+      element = new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
+    }
+    return element;
   }
 
   createCoreElement(tagName: string, ...args: any[]): Promise<HTMLElement> {

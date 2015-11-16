@@ -1,0 +1,62 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+<link rel="import" href="../dependencies_bundle.html">
+
+<!--
+An element that can be dragged by the user in order to resize its previous sibling.
+Note that splitters are automatically inserted by layout containers.
+
+Example:
+
+    <debug-workbench-horizontal-container>
+      <debug-workbench-panel id="panelA"></debug-workbench-panel>
+      <debug-workbench-splitter></debug-workbench-splitter>
+      <debug-workbench-panel id="panelB"></debug-workbench-panel>
+    </debug-workbench-horizontal-container>
+
+In the example above the splitter will resize panelA.
+
+@group Debug Workbench
+@element debug-workbench-splitter
+-->
+<dom-module id="debug-workbench-splitter">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        background-color: #000000;
+        @apply(--layout-flex-none);
+      }
+
+      :host([orientation="horizontal"]) {
+        width: auto;
+        height: 3px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+
+      :host([orientation="vertical"]) {
+        width: 3px;
+        height: auto;
+        margin-left: 4px;
+        margin-right: 4px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+
+      :host([orientation="horizontal"]:hover) {
+        cursor: ns-resize;
+      }
+
+      :host([orientation="vertical"]:hover) {
+        cursor: ew-resize;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<register-element path="./splitter"></register-element>

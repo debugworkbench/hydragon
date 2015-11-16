@@ -15,8 +15,13 @@
         "../../typings/github-electron/github-electron.d.ts",
         "../../typings/github-electron/github-electron-renderer.d.ts",
         "../../typings/polymer/polymer.d.ts",
+        "elements/horizontal-container/horizontal-container.ts",
+        "elements/panel/panel.ts",
         "elements/register-element/register-element.ts",
+        "elements/splitter/splitter.ts",
+        "elements/workspace/workspace.ts",
         "elements/element-factory.ts",
+        "elements/interfaces.ts",
         "init-window.ts",
         "renderer-context.ts",
         "utils.ts"

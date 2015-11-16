@@ -1,0 +1,34 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+<link rel="import" href="../dependencies_bundle.html">
+
+<!--
+Example:
+
+    <debug-workbench-panel></debug-workbench-panel>
+
+@group Debug Workbench
+@element debug-workbench-panel
+-->
+<dom-module id="debug-workbench-panel">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        @apply(--layout);
+      }
+
+      :host ::content > * {
+        @apply(--layout-flex-none);
+      }
+    </style>
+
+    <div id="content-wrapper">
+      <content></content>
+    </div>
+  </template>
+</dom-module>
+
+<register-element path="./panel"></register-element>
