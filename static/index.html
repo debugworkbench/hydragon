@@ -5,6 +5,7 @@
     <link rel="import" href="app://lib/renderer-process/elements/workspace/workspace.html">
     <link rel="import" href="app://lib/renderer-process/elements/panel/panel.html">
     <link rel="import" href="app://lib/renderer-process/elements/horizontal-container/horizontal-container.html">
+    <link rel="import" href="app://lib/renderer-process/elements/vertical-container/vertical-container.html">
     <script src="index.js"></script>
     <style is="custom-style">
       debug-workbench-workspace {
@@ -21,12 +22,17 @@
       <debug-workbench-horizontal-container>
         <debug-workbench-panel width="300" resizable>
         </debug-workbench-panel>
-        <debug-workbench-panel>
-          <h1>Debug Workbench</h1>
-          We are using node <script>document.write(process.versions.node)</script>,
-          Chrome <script>document.write(process.versions.chrome)</script>,
-          and Electron <script>document.write(process.versions.electron)</script>.
-        </debug-workbench-panel>
+        <debug-workbench-vertical-container>
+          <debug-workbench-panel>
+            <h1>Debug Workbench</h1>
+            We are using node <script>document.write(process.versions.node)</script>,
+            Chrome <script>document.write(process.versions.chrome)</script>,
+            and Electron <script>document.write(process.versions.electron)</script>.
+          </debug-workbench-panel>
+          <debug-workbench-panel height="20">
+            Status Bar
+          </debug-workbench-panel>
+        </debug-workbench-vertical-container>
       </debug-workbench-horizontal-container>
     </debug-workbench-workspace>
   </body>

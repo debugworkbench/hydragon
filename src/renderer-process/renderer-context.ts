@@ -44,6 +44,10 @@ export class RendererContext {
       path.posix.join('lib/renderer-process/elements/horizontal-container', 'horizontal-container.html')
     );
     this.elementFactory.addElementPath(
+      'debug-workbench-vertical-container',
+      path.posix.join('lib/renderer-process/elements/vertical-container', 'vertical-container.html')
+    );
+    this.elementFactory.addElementPath(
       'debug-workbench-splitter', path.posix.join('lib/renderer-process/elements/splitter', 'splitter.html')
     );
   }

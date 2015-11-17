@@ -19,6 +19,7 @@
         "elements/panel/panel.ts",
         "elements/register-element/register-element.ts",
         "elements/splitter/splitter.ts",
+        "elements/vertical-container/vertical-container.ts",
         "elements/workspace/workspace.ts",
         "elements/element-factory.ts",
         "elements/interfaces.ts",
