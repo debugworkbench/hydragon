@@ -4,12 +4,14 @@
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { SplitterElement } from '../splitter/splitter';
+import { SplittableBehavior } from '../behaviors/splittable';
 
-function base(element: VerticalContainerElement): polymer.Base {
+function base(element: VerticalContainerElement): VerticalContainerElement & SplittableBehavior & polymer.Base {
   return <any> element;
 }
 
 @pd.is('debug-workbench-vertical-container')
+@pd.behavior(SplittableBehavior)
 export class VerticalContainerElement implements ILayoutContainer {
   @pd.property({ type: Number, value: undefined })
   width: number; // initial width
@@ -20,19 +22,7 @@ export class VerticalContainerElement implements ILayoutContainer {
   curHeight: number;
 
   attached(): void {
-    base(this).async(() => {
-      // insert splitters between child elements
-      const lightDom = Polymer.dom(<any> this);
-      if (lightDom.children.length > 1) {
-        for (let i = 1; i < lightDom.children.length; ++i) {
-          const curChild: ILayoutContainer = <any> lightDom.children[i];
-          // TODO: check that the previous child is resizable, if it isn't there's no need to
-          //       insert a splitter after it
-          lightDom.insertBefore(SplitterElement.createSync(), lightDom.children[i]);
-          ++i; // adjust the iterator to account for the newly inserted splitter element
-        }
-      }
-    });
+    base(this).createSplitters();
   }
 
   calculateSize(): void {

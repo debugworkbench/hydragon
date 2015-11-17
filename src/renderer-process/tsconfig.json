@@ -15,6 +15,7 @@
         "../../typings/github-electron/github-electron.d.ts",
         "../../typings/github-electron/github-electron-renderer.d.ts",
         "../../typings/polymer/polymer.d.ts",
+        "elements/behaviors/splittable.ts",
         "elements/horizontal-container/horizontal-container.ts",
         "elements/panel/panel.ts",
         "elements/register-element/register-element.ts",
