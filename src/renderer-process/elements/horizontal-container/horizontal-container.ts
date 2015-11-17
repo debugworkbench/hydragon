@@ -66,6 +66,10 @@ export class HorizontalContainerElement implements ILayoutContainer {
     // TODO
   }
 
+  adjustHeight(delta: number): void {
+    // ignore
+  }
+
   updateStyle(): void {
     // this element's flex style should have already been set by the parent,
     // so all that remains is to update the flex styles of all the children

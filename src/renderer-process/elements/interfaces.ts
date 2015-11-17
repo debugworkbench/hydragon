@@ -4,5 +4,6 @@ export interface ILayoutContainer {
 
   calculateSize(): void;
   adjustWidth(delta: number): void;
+  adjustHeight(delta: number): void;
   updateStyle(): void;
 }

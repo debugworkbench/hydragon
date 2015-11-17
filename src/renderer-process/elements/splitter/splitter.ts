@@ -79,7 +79,9 @@ export class SplitterElement {
       this._lastPageCoord = event.pageX;
       prevSibling.adjustWidth(delta);
     } else {
-      // TODO
+      const delta = event.pageY - this._lastPageCoord;
+      this._lastPageCoord = event.pageY;
+      prevSibling.adjustHeight(delta);
     }
 
     const parent: ILayoutContainer = <any> Polymer.dom(<any> this).parentNode;

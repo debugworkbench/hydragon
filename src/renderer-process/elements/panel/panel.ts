@@ -24,10 +24,18 @@ export class PanelElement implements ILayoutContainer {
   }
 
   adjustWidth(delta: number): void {
-    this.curWidth += delta;
+    this.curWidth = base(this).clientWidth + delta;
     // TODO: check for min/max width
     if (this.curWidth < 0) {
       this.curWidth = 0;
+    }
+  }
+
+  adjustHeight(delta: number): void {
+    this.curHeight = base(this).clientHeight + delta;
+    // TODO: check for min/max height
+    if (this.curHeight < 0) {
+      this.curHeight = 0;
     }
   }
 
