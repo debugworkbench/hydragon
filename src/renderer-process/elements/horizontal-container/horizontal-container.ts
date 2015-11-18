@@ -5,10 +5,14 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { SplitterElement } from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
+import { RendererContext } from '../../renderer-context';
 
-function base(element: HorizontalContainerElement): HorizontalContainerElement & SplittableBehavior & polymer.Base {
+function self(element: HorizontalContainerElement): IHorizontalContainerElement {
   return <any> element;
 }
+
+export type IHorizontalContainerElement =
+  HorizontalContainerElement & SplittableBehavior & polymer.Base;
 
 @pd.is('debug-workbench-horizontal-container')
 @pd.behavior(SplittableBehavior)
@@ -21,8 +25,14 @@ export class HorizontalContainerElement implements ILayoutContainer {
   curWidth: number;
   curHeight: number;
 
+  static createSync(): IHorizontalContainerElement {
+    return RendererContext.get().elementFactory.createElementSync<IHorizontalContainerElement>(
+      (<any> HorizontalContainerElement.prototype).is
+    );
+  }
+
   attached(): void {
-    base(this).createSplitters(true);
+    self(this).createSplitters(true);
   }
 
   calculateSize(): void {
@@ -30,7 +40,7 @@ export class HorizontalContainerElement implements ILayoutContainer {
     this.curHeight = this.height;
     // the container must be wide enough to fit all child elements, however, if any of the child
     // elements have no set width then the container can't have a set width either
-    const children = base(this).getContentChildren();
+    const children = self(this).getContentChildren();
     let autoWidth = false;
     for (let i = 0; i < children.length; ++i) {
       if (!(children[i] instanceof SplitterElement)) {
@@ -63,7 +73,7 @@ export class HorizontalContainerElement implements ILayoutContainer {
   updateStyle(): void {
     // this element's flex style should have already been set by the parent,
     // so all that remains is to update the flex styles of all the children
-    base(this).getContentChildren().forEach((child) => {
+    self(this).getContentChildren().forEach((child) => {
       if (!(child instanceof SplitterElement)) {
         const container: ILayoutContainer = <any> child;
         if (container.curWidth === undefined) {

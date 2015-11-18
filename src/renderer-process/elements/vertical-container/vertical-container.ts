@@ -5,9 +5,17 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { SplitterElement } from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
+import { RendererContext } from '../../renderer-context';
 
-function base(element: VerticalContainerElement): VerticalContainerElement & SplittableBehavior & polymer.Base {
+function self(element: VerticalContainerElement): IVerticalContainerElement {
   return <any> element;
+}
+
+export type IVerticalContainerElement =
+  VerticalContainerElement & SplittableBehavior & polymer.Base;
+
+export interface IVerticalContainerState {
+  resizable?: boolean;
 }
 
 @pd.is('debug-workbench-vertical-container')
@@ -17,12 +25,27 @@ export class VerticalContainerElement implements ILayoutContainer {
   width: number; // initial width
   @pd.property({ type: Number, value: undefined })
   height: number; // initial height
+  @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
+  resizable: boolean;
 
   curWidth: number;
   curHeight: number;
 
+  static createSync(state?: IVerticalContainerState): IVerticalContainerElement {
+    return RendererContext.get().elementFactory.createElementSync<IVerticalContainerElement>(
+      (<any> VerticalContainerElement.prototype).is, state
+    );
+  }
+
+  /** Called after ready() with arguments passed to the element constructor function. */
+  factoryImpl(state?: IVerticalContainerState): void {
+    if (state) {
+      this.resizable = state.resizable || this.resizable;
+    }
+  }
+
   attached(): void {
-    base(this).createSplitters();
+    self(this).createSplitters();
   }
 
   calculateSize(): void {
@@ -30,7 +53,7 @@ export class VerticalContainerElement implements ILayoutContainer {
     this.curHeight = this.height;
     // the container must be high enough to fit all child elements, however, if any of the child
     // elements have no set height then the container can't have a set height either
-    const children = base(this).getContentChildren();
+    const children = self(this).getContentChildren();
     let autoHeight = false;
     for (let i = 0; i < children.length; ++i) {
       if (!(children[i] instanceof SplitterElement)) {
@@ -63,7 +86,7 @@ export class VerticalContainerElement implements ILayoutContainer {
   updateStyle(): void {
     // this element's flex style should have already been set by the parent,
     // so all that remains is to update the flex styles of all the children
-    base(this).getContentChildren().forEach((child) => {
+    self(this).getContentChildren().forEach((child) => {
       if (!(child instanceof SplitterElement)) {
         const container: ILayoutContainer = <any> child;
         if (container.curHeight === undefined) {
