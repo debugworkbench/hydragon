@@ -53,6 +53,9 @@ export class RendererContext {
     this.elementFactory.addElementPath(
       'debug-workbench-splitter', path.posix.join('lib/renderer-process/elements/splitter', 'splitter.html')
     );
+    this.elementFactory.addElementPath(
+      'debug-workbench-page', path.posix.join('lib/renderer-process/elements/pages', 'page.html')
+    );
   }
 
   async initialize(): Promise<void> {

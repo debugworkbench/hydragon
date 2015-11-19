@@ -1,0 +1,50 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+
+<!--
+Example:
+
+    <debug-workbench-page></debug-workbench-page>
+
+@group Debug Workbench
+@element debug-workbench-page
+-->
+<dom-module id="debug-workbench-page">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        @apply(--layout-flex-auto);
+      }
+
+      :host > paper-toolbar {
+        --paper-toolbar-background: rgb(30, 30, 30);
+        --paper-toolbar-color: rgb(204, 204, 204);
+        --paper-toolbar-height: 30px;
+        --paper-toolbar-title: {
+          font-size: 14px;
+          margin-left: 10px;
+        }
+      }
+
+      :host > paper-toolbar .close-button {
+        --paper-icon-button: {
+          width: 30px;
+          height: 30px;
+          padding: 5px;
+        }
+      }
+
+    </style>
+
+    <paper-toolbar>
+      <div class="title">[[title]]</div>
+      <paper-icon-button icon="icons:close" alt="Close Page" class="close-button"></paper-icon-button>
+    </paper-toolbar>
+    <content></content>
+  </template>
+</dom-module>
+
+<register-element path="./page"></register-element>

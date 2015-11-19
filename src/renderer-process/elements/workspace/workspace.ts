@@ -7,6 +7,7 @@ import { RendererContext } from '../../renderer-context';
 import { HorizontalContainerElement, IHorizontalContainerElement } from '../horizontal-container/horizontal-container';
 import { VerticalContainerElement } from '../vertical-container/vertical-container';
 import { PanelElement } from '../panel/panel';
+import { PageElement } from '../pages/page';
 
 interface ILocalDOM {
 
@@ -38,10 +39,13 @@ export class WorkspaceElement {
     const leftPanel = PanelElement.createSync({ width: 300, resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
     const documentPanel = PanelElement.createSync();
+    const page = PageElement.createSync({ title: 'Debug Workbench' });
     const statusPanel = PanelElement.createSync({ height: 20 });
 
+    page.innerText = 'Some text on a page.';
     statusPanel.innerText = 'Status';
 
+    Polymer.dom(documentPanel).appendChild(page);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
     Polymer.dom(this._rootContainer).appendChild(leftPanel);
