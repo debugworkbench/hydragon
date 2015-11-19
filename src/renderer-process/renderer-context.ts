@@ -4,6 +4,7 @@
 import * as path from 'path';
 import * as remote from 'remote';
 import { ElementFactory } from './elements/element-factory';
+import { WorkspaceElement, IWorkspaceElement } from './elements/workspace/workspace';
 import { importHref } from './utils';
 
 export const enum Cursor {
@@ -17,6 +18,9 @@ export const enum Cursor {
 export class RendererContext {
   private _cursorOverlay: HTMLElement;
 
+  elementFactory: ElementFactory;
+  workspace: IWorkspaceElement;
+
   /** Create the renderer context for the current process. */
   static async create(): Promise<RendererContext> {
     const newContext = new RendererContext();
@@ -29,8 +33,6 @@ export class RendererContext {
   static get(): RendererContext {
     return (<any> global).debugWorkbench;
   }
-
-  elementFactory: ElementFactory;
 
   constructor() {
     this.elementFactory = new ElementFactory();
@@ -56,6 +58,8 @@ export class RendererContext {
   async initialize(): Promise<void> {
     await importHref('app://bower_components/dependencies_bundle.html');
     await this.elementFactory.initialize();
+    this.workspace = WorkspaceElement.createSync();
+    document.body.appendChild(this.workspace);
   }
 
   showWindow(): void {
