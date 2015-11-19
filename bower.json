@@ -23,15 +23,16 @@
     "paper-input": "enlight/paper-input#no-deep",
     "paper-item": "PolymerElements/paper-item#~1.0.6",
     "paper-menu": "PolymerElements/paper-menu#~1.1.1",
-    "paper-styles": "enlight/paper-styles#no-deep",
+    "paper-styles": "PolymerElements/paper-styles#~1.0.13",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#~1.0.11",
-    "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.4",
-    "polymer": "Polymer/polymer#~1.2.1"
+    "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.1",
+    "polymer": "Polymer/polymer#~1.2.1",
+    "iron-flex-layout": "enlight/iron-flex-layout#no-shadow"
   },
   "devDependencies": {},
   "resolutions": {
     "font-roboto": "offline-fonts",
-    "paper-styles": "no-deep",
-    "paper-input": "no-deep"
+    "paper-input": "no-deep",
+    "iron-flex-layout": "no-shadow"
   }
 }
