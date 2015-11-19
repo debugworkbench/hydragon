@@ -4,6 +4,7 @@
 import * as path from 'path';
 import * as remote from 'remote';
 import { ElementFactory } from './elements/element-factory';
+import { importHref } from './utils';
 
 export const enum Cursor {
   HorizontalResize,
@@ -52,8 +53,9 @@ export class RendererContext {
     );
   }
 
-  initialize(): Promise<void> {
-    return this.elementFactory.initialize();
+  async initialize(): Promise<void> {
+    await importHref('app://bower_components/dependencies_bundle.html');
+    await this.elementFactory.initialize();
   }
 
   showWindow(): void {

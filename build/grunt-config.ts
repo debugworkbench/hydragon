@@ -111,7 +111,7 @@ export = function(grunt: IGrunt) {
         },
         files: {
           // output: input
-          '../lib/renderer-process/elements/dependencies_bundle.html': '../src/renderer-process/elements/dependencies.html'
+          '../bower_components/dependencies_bundle.html': '../bower_components/dependencies.html'
         }
       }
     },
