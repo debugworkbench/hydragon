@@ -23,5 +23,8 @@
     "node-inspector": "^0.12.3",
     "node-pre-gyp": "github:enlight/node-pre-gyp#detect-electron-runtime-in-find",
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
+  },
+  "dependencies": {
+    "codemirror": "^5.8.0"
   }
 }
