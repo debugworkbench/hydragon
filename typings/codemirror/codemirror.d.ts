@@ -1,6 +1,6 @@
-// Type definitions for CodeMirror
+// Type definitions for CodeMirror ~5.8.0 (which means some bits are up to date for v5.8.0 and some aren't)
 // Project: https://github.com/marijnh/CodeMirror
-// Definitions by: mihailik <https://github.com/mihailik>
+// Definitions by: mihailik <https://github.com/mihailik>, Vadim Macagon <https://github.com/enlight>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 declare function CodeMirror(host: HTMLElement, options?: CodeMirror.EditorConfiguration): CodeMirror.Editor;
@@ -479,8 +479,8 @@ declare module CodeMirror {
         It may be "start" , "end" , "head"(the side of the selection that moves when you press shift + arrow),
         or "anchor"(the fixed side of the selection).Omitting the argument is the same as passing "head".A { line , ch } object will be returned. */
         getCursor(start?: string): CodeMirror.Position;
-        
-        /** Retrieves a list of all current selections. These will always be sorted, and never overlap (overlapping selections are merged). 
+
+        /** Retrieves a list of all current selections. These will always be sorted, and never overlap (overlapping selections are merged).
         Each object in the array contains anchor and head properties referring to {line, ch} objects. */
         listSelections(): { anchor: CodeMirror.Position; head: CodeMirror.Position }[];
 
@@ -651,50 +651,95 @@ declare module CodeMirror {
         line: number;
     }
 
+    // current for v5.8.0
     interface EditorConfiguration {
-        /** string| The starting value of the editor. Can be a string, or a document object. */
-        value?: any;
+        /** The starting value of the editor. Can be a string, or a document object. */
+        value?: string | Doc;
 
-        /** string|object. The mode to use. When not given, this will default to the first mode that was loaded.
-        It may be a string, which either simply names the mode or is a MIME type associated with the mode.
-        Alternatively, it may be an object containing configuration options for the mode,
-        with a name property that names the mode (for example {name: "javascript", json: true}). */
+        /**
+         * The mode to use. When not specified, this will default to the first mode that was loaded.
+         * It may be a string, which either simply names the mode or is a MIME type associated with
+         * the mode. Alternatively, it may be an object containing configuration options for the mode,
+         * with a name property that names the mode (for example {name: "javascript", json: true}).
+         */
         mode?: any;
 
-        /** The theme to style the editor with. You must make sure the CSS file defining the corresponding .cm-s-[name] styles is loaded.
-        The default is "default". */
+        /**
+         * The line separator for the editor. By default (value null), the document will be split
+         * on CRLFs as well as lone CRs and LFs, and a single LF will be used as line separator in
+         * all output (such as [[getValue]]). When a specific string is given, lines will only be
+         * split on that string, and output will, by default, use that same separator.
+         */
+        lineSeparator?: any;
+
+        /** The theme to style the editor with. You must make sure the CSS file defining the
+         * corresponding .cm-s-[name] styles is loaded. The default is `default`.
+         */
         theme?: string;
 
-        /** How many spaces a block (whatever that means in the edited language) should be indented. The default is 2. */
+        /**
+         * How many spaces a block (whatever that means in the edited language) should be indented.
+         * The default is 2.
+         */
         indentUnit?: number;
 
-        /** Whether to use the context-sensitive indentation that the mode provides (or just indent the same as the line before). Defaults to true. */
+        /**
+         * Whether to use the context-sensitive indentation that the mode provides (or just indent
+         * the same as the line before). Defaults to true.
+         */
         smartIndent?: boolean;
 
         /** The width of a tab character. Defaults to 4. */
         tabSize?: number;
 
-        /** Whether, when indenting, the first N*tabSize spaces should be replaced by N tabs. Default is false. */
+        /**
+         * Whether, when indenting, the first N*tabSize spaces should be replaced by N tabs.
+         * Default is `false`.
+         */
         indentWithTabs?: boolean;
 
-        /** Configures whether the editor should re-indent the current line when a character is typed
-        that might change its proper indentation (only works if the mode supports indentation). Default is true. */
+        /**
+         * Configures whether the editor should re-indent the current line when a character is
+         * typed that might change its proper indentation (only works if the mode supports
+         * indentation). Default is `true`.
+         */
         electricChars?: boolean;
 
-        /** Determines whether horizontal cursor movement through right-to-left (Arabic, Hebrew) text
-        is visual (pressing the left arrow moves the cursor left)
-        or logical (pressing the left arrow moves to the next lower index in the string, which is visually right in right-to-left text).
-        The default is false on Windows, and true on other platforms. */
+        /**
+         * A regular expression used to determine which characters should be replaced by a special
+         * placeholder. Mostly useful for non-printing special characters. The default is
+         * /[\u0000-\u0019\u00ad\u200b-\u200f\u2028\u2029\ufeff]/.
+         */
+        specialChars?: RegExp;
+
+        /**
+         * A function that, given a special character identified by the [[specialChars]] option,
+         * produces a DOM node that is used to represent the character. By default, a red dot (•)
+         * is shown, with a title tooltip to indicate the character code.
+         */
+        specialCharPlaceholder?: (char: string) => HTMLElement;
+
+        /**
+         * Determines whether horizontal cursor movement through right-to-left (Arabic, Hebrew)
+         * text is visual (pressing the left arrow moves the cursor left) or logical (pressing
+         * the left arrow moves to the next lower index in the string, which is visually right
+         * in right-to-left text). The default is `false` on Windows, and `true` on other platforms.
+         */
         rtlMoveVisually?: boolean;
 
-        /** Configures the keymap to use. The default is "default", which is the only keymap defined in codemirror.js itself.
-        Extra keymaps are found in the keymap directory. See the section on keymaps for more information. */
+        /**
+         * Specifies which keymap to use.
+         * The default is `default`, which is the only keymap defined in codemirror.js itself.
+         */
         keyMap?: string;
 
-        /** Can be used to specify extra keybindings for the editor, alongside the ones defined by keyMap. Should be either null, or a valid keymap value. */
+        /**
+         * Extra keybindings for the editor, alongside the ones defined by [[keyMap]].
+         * Should be either `null`, or a valid keymap value.
+         */
         extraKeys?: any;
 
-        /** Whether CodeMirror should scroll or wrap for long lines. Defaults to false (scroll). */
+        /** Whether CodeMirror should scroll or wrap for long lines. Defaults to `false` (scroll). */
         lineWrapping?: boolean;
 
         /** Whether to show line numbers to the left of the editor. */
@@ -703,102 +748,173 @@ declare module CodeMirror {
         /** At which number to start counting lines. Default is 1. */
         firstLineNumber?: number;
 
-        /** A function used to format line numbers. The function is passed the line number, and should return a string that will be shown in the gutter. */
+        /**
+         * A function used to format line numbers.
+         * The function is passed the line number, and should return a string that will be shown in
+         * the gutter.
+         */
         lineNumberFormatter?: (line: number) => string;
 
-        /** Can be used to add extra gutters (beyond or instead of the line number gutter).
-        Should be an array of CSS class names, each of which defines a width (and optionally a background),
-        and which will be used to draw the background of the gutters.
-        May include the CodeMirror-linenumbers class, in order to explicitly set the position of the line number gutter
-        (it will default to be to the right of all other gutters). These class names are the keys passed to setGutterMarker. */
+        /**
+         * Can be used to add extra gutters (beyond or instead of the line number gutter).
+         * Should be an array of CSS class names, each of which defines a width
+         * (and optionally a background), and which will be used to draw the background
+         * of the gutters. May include the `CodeMirror-linenumbers` class, in order to explicitly
+         * set the position of the line number gutter (it will default to be to the right of all
+         * other gutters). These class names are the keys passed to [[setGutterMarker]].
+         */
         gutters?: string[];
 
-        /** Determines whether the gutter scrolls along with the content horizontally (false)
-        or whether it stays fixed during horizontal scrolling (true, the default). */
+        /**
+         * Determines whether the gutter scrolls along with the content horizontally (`false`)
+         * or whether it stays fixed during horizontal scrolling (`true`, the default).
+         */
         fixedGutter?: boolean;
 
-        /** boolean|string. This disables editing of the editor content by the user. If the special value "nocursor" is given (instead of simply true), focusing of the editor is also disallowed. */
-        readOnly?: any;
+        /**
+         * Specifies a scrollbar implementation.
+         * The default is "native", showing native scrollbars. The core library also provides the
+         * "null" style, which completely hides the scrollbars. Addons may provide alternative
+         * implementations.
+         */
+        scrollbarStyle?: string;
 
-        /**Whether the cursor should be drawn when a selection is active. Defaults to false. */
+        /**
+         * When [[fixedGutter]] is on, and there is a horizontal scrollbar, by default the gutter
+         * will be visible to the left of this scrollbar. If this option is set to true, it will
+         * be covered by an element with class `CodeMirror-gutter-filler`.
+         */
+        coverGutterNextToScrollbar?: boolean;
+
+        /**
+         * Specifies how CodeMirror handles input and focus.
+         * The core library defines the `textarea` and `contenteditable` input models.
+         */
+        inputStyle?: string;
+
+        /**
+         * Disables editing of the editor content by the user.
+         * If this is set to the string `nocursor` instead of the value `true` then
+         * focusing of the editor is also disabled.
+         */
+        readOnly?: boolean | string;
+
+        /** Whether the cursor should be drawn when a selection is active. Defaults to false. */
         showCursorWhenSelecting?: boolean;
 
-        /** The maximum number of undo levels that the editor stores. Defaults to 40. */
+        /**
+         * When enabled doing a copy or cut when there is no selection will copy or cut all
+         * lines that have cursors on them in their entirety. Defaults to enabled.
+         */
+        lineWiseCopyCut?: boolean;
+
+        /**
+         * The maximum number of undo levels that the editor stores.
+         * Note that this includes selection change events. Defaults to 200.
+         */
         undoDepth?: number;
 
-        /** The period of inactivity (in milliseconds) that will cause a new history event to be started when typing or deleting. Defaults to 500. */
+        /**
+         * The period of inactivity (in milliseconds) that will cause a new history event to be
+         * started when typing or deleting. Defaults to 1250.
+         */
         historyEventDelay?: number;
 
         /** The tab index to assign to the editor. If not given, no tab index will be assigned. */
         tabindex?: number;
 
-        /** Can be used to make CodeMirror focus itself on initialization. Defaults to off.
-        When fromTextArea is used, and no explicit value is given for this option, it will be set to true when either the source textarea is focused,
-        or it has an autofocus attribute and no other element is focused. */
+        /**
+         * Can be used to make CodeMirror focus itself on initialization. Defaults to off.
+         * When [[fromTextArea]] is used, and no explicit value is given for this option,
+         * it will be set to true when either the source textarea is focused, or it has an
+         * autofocus attribute and no other element is focused.
+         */
         autofocus?: boolean;
 
         /** Controls whether drag-and - drop is enabled. On by default. */
         dragDrop?: boolean;
 
-        /** When given , this will be called when the editor is handling a dragenter , dragover , or drop event.
-        It will be passed the editor instance and the event object as arguments.
-        The callback can choose to handle the event itself , in which case it should return true to indicate that CodeMirror should not do anything further. */
-        onDragEvent?: (instance: CodeMirror.Editor, event: Event) => boolean;
+        /**
+         * When set only files whose type is in the array can be dropped into the editor.
+         * The strings should be MIME types, and will be checked against the type of the
+         * File object as reported by the browser. Defaults to null.
+         */
+        allowDropFileTypes?: string[];
 
-        /** This provides a rather low - level hook into CodeMirror's key handling.
-        If provided, this function will be called on every keydown, keyup, and keypress event that CodeMirror captures.
-        It will be passed two arguments, the editor instance and the key event.
-        This key event is pretty much the raw key event, except that a stop() method is always added to it.
-        You could feed it to, for example, jQuery.Event to further normalize it.
-        This function can inspect the key event, and handle it if it wants to.
-        It may return true to tell CodeMirror to ignore the event.
-        Be wary that, on some browsers, stopping a keydown does not stop the keypress from firing, whereas on others it does.
-        If you respond to an event, you should probably inspect its type property and only do something when it is keydown
-        (or keypress for actions that need character data). */
-        onKeyEvent?: (instance: CodeMirror.Editor, event: Event) => boolean;
-
-        /** Half - period in milliseconds used for cursor blinking. The default blink rate is 530ms. */
+        /**
+         * Half-period in milliseconds used for cursor blinking. The default blink rate is 530ms.
+         * Set to zero to disable blinking, or a negative value to hide the cursor entirely.
+         */
         cursorBlinkRate?: number;
 
-        /** Determines the height of the cursor. Default is 1 , meaning it spans the whole height of the line.
-        For some fonts (and by some tastes) a smaller height (for example 0.85),
-        which causes the cursor to not reach all the way to the bottom of the line, looks better */
+        /**
+         * How much extra space to always keep above and below the cursor when approaching the
+         * top or bottom of the visible view in a scrollable document. Default is 0.
+         */
+        cursorScrollMargin?: number;
+
+        /**
+         * Determines the height of the cursor.
+         * Default is 1, meaning it spans the whole height of the line.
+         */
         cursorHeight?: number;
 
-        /** Highlighting is done by a pseudo background - thread that will work for workTime milliseconds,
-        and then use timeout to sleep for workDelay milliseconds.
-        The defaults are 200 and 300, you can change these options to make the highlighting more or less aggressive. */
+        /**
+         * Controls whether, when the context menu is opened with a click outside of the current
+         * selection, the cursor is moved to the point of the click. Defaults to `true`.
+         */
+        resetSelectionOnContextMenu?: boolean;
+
+        /**
+         * Highlighting is done by a pseudo background-thread that will work for [[workTime]]
+         * milliseconds (defaults to 200), and then sleep for [[workDelay]] milliseconds.
+         * Tune these options to make the highlighting more or less aggressive.
+         */
         workTime?: number;
 
-        /** See workTime. */
+        /** Defaults to 300, see [[workTime]]. */
         workDelay?: number;
 
-        /** Indicates how quickly CodeMirror should poll its input textarea for changes(when focused).
-        Most input is captured by events, but some things, like IME input on some browsers, don't generate events that allow CodeMirror to properly detect it.
-        Thus, it polls. Default is 100 milliseconds. */
-        pollInterval?: number
+        /**
+         * Indicates how quickly the input textarea should be polled for changes (when focused).
+         * Default is 100 milliseconds.
+         */
+        pollInterval?: number;
 
-        /** By default, CodeMirror will combine adjacent tokens into a single span if they have the same class.
-        This will result in a simpler DOM tree, and thus perform better. With some kinds of styling(such as rounded corners),
-        this will change the way the document looks. You can set this option to false to disable this behavior. */
+        /**
+         * By default, CodeMirror will combine adjacent tokens into a single span if they have the
+         * same class, set this option to `false` to disable this behavior.
+         */
         flattenSpans?: boolean;
 
-        /** When highlighting long lines, in order to stay responsive, the editor will give up and simply style
-        the rest of the line as plain text when it reaches a certain position. The default is 10000.
-        You can set this to Infinity to turn off this behavior. */
+        /**
+         * When enabled (off by default), an extra CSS class will be added to each token,
+         * indicating the (inner) mode that produced it, prefixed with `cm-m-`.
+         * For example, tokens from the XML mode will get the `cm-m-xml` class.
+         */
+        addModeClass?: boolean;
+
+        /**
+         * When highlighting long lines, in order to stay responsive, the editor will give up
+         * and simply style the rest of the line as plain text when it reaches a certain position.
+         * The default is 10,000, set this to `Infinity` to turn off this behavior.
+         */
         maxHighlightLength?: number;
 
-        /** Specifies the amount of lines that are rendered above and below the part of the document that's currently scrolled into view.
-        This affects the amount of updates needed when scrolling, and the amount of work that such an update does.
-        You should usually leave it at its default, 10. Can be set to Infinity to make sure the whole document is always rendered,
-        and thus the browser's text search works on it. This will have bad effects on performance of big documents. */
+        /**
+         * Specifies the number of lines that are rendered above and below the part of the document
+         * that's currently scrolled into view.
+         * The default is 10, set this to `Infinity` to make sure the whole document is always
+         * rendered (ensuring the browser's text search works on it) at the expense of performance
+         * (especially in big documents).
+         */
         viewportMargin?: number;
 
-        /** Optional lint configuration to be used in conjunction with CodeMirror's linter addon. */
+        /** Optional lint configuration to be used in conjunction with the linter addon. */
         lint?: boolean | LintOptions;
 
-	/** Optional value to be used in conduction with CodeMirror’s placeholder add-on. */
-	placeholder?: string;
+        /** Optional value to be used in conduction with the placeholder addon. */
+        placeholder?: string;
     }
 
     interface TextMarkerOptions {
