@@ -8,6 +8,7 @@ import { HorizontalContainerElement, IHorizontalContainerElement } from '../hori
 import { VerticalContainerElement } from '../vertical-container/vertical-container';
 import { PanelElement } from '../panel/panel';
 import { PageElement } from '../pages/page';
+import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirror-editor/code-mirror-editor';
 
 interface ILocalDOM {
 
@@ -26,6 +27,7 @@ export type IWorkspaceElement = WorkspaceElement & polymer.Base;
 @pd.is('debug-workbench-workspace')
 export class WorkspaceElement {
   private _rootContainer: IHorizontalContainerElement;
+  private _editorElement: ICodeMirrorEditorElement;
 
   static createSync(): IWorkspaceElement {
     return RendererContext.get().elementFactory.createElementSync<IWorkspaceElement>(
@@ -42,9 +44,13 @@ export class WorkspaceElement {
     const page = PageElement.createSync({ title: 'Debug Workbench' });
     const statusPanel = PanelElement.createSync({ height: 20 });
 
-    page.innerText = 'Some text on a page.';
+    this._editorElement = CodeMirrorEditorElement.createSync({
+      value: 'int main(int argc, char** argv) {}',
+      mode: 'text/x-c++src'
+    });
     statusPanel.innerText = 'Status';
 
+    Polymer.dom(page).appendChild(this._editorElement);
     Polymer.dom(documentPanel).appendChild(page);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
@@ -57,6 +63,9 @@ export class WorkspaceElement {
     self(this).async(() => {
       this.calculateSize();
       this.updateStyle();
+
+      this._editorElement.editor.focus();
+      this._editorElement.editor.refresh();
     });
   }
 

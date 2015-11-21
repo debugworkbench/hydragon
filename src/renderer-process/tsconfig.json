@@ -17,6 +17,7 @@
         "../../typings/github-electron/github-electron-renderer.d.ts",
         "../../typings/polymer/polymer.d.ts",
         "elements/behaviors/splittable.ts",
+        "elements/code-mirror-editor/code-mirror-editor.ts",
         "elements/horizontal-container/horizontal-container.ts",
         "elements/pages/page.ts",
         "elements/panel/panel.ts",

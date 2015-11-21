@@ -56,6 +56,9 @@ export class RendererContext {
     this.elementFactory.addElementPath(
       'debug-workbench-page', path.posix.join('lib/renderer-process/elements/pages', 'page.html')
     );
+    this.elementFactory.addElementPath(
+      'code-mirror-editor', path.posix.join('lib/renderer-process/elements/code-mirror-editor', 'code-mirror-editor.html')
+    );
   }
 
   async initialize(): Promise<void> {

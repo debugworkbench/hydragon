@@ -18,6 +18,7 @@ function loadTasks(grunt: IGrunt): void {
 export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
   grunt.loadNpmTasks('grunt-tsc');
   grunt.loadNpmTasks('grunt-tslint');
@@ -150,12 +151,18 @@ export = function(grunt: IGrunt) {
           cwd: '../src',
           src: [
             'renderer-process/elements/**/*.html',
-            '!renderer-process/elements/dependencies.html'
+            '!renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
           ],
           dest: '../lib'
         }],
         verbose: true,
         //pretend: true
+      }
+    },
+    'preprocess': {
+      elements: {
+        src: '../src/renderer-process/elements/code-mirror-editor/code-mirror-styles.html',
+        dest: '../lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
       }
     }
   });
