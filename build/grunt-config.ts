@@ -151,6 +151,7 @@ export = function(grunt: IGrunt) {
           cwd: '../src',
           src: [
             'renderer-process/elements/**/*.html',
+            '!renderer-process/elements/**/dependencies.html',
             '!renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
           ],
           dest: '../lib'
