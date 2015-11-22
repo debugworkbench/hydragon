@@ -20,6 +20,7 @@ function self(element: CodeMirrorEditorElement): ICodeMirrorEditorElement {
 export type ICodeMirrorEditorElement = CodeMirrorEditorElement & polymer.Base;
 
 @pd.is('code-mirror-editor')
+@pd.behavior(Polymer.IronResizableBehavior)
 export class CodeMirrorEditorElement {
   private _editorConfig: CodeMirror.EditorConfiguration;
   private _editor: CodeMirror.Editor;
@@ -43,6 +44,16 @@ export class CodeMirrorEditorElement {
       (editorElement) => { Polymer.dom(self(this).root).appendChild(editorElement); },
       this._editorConfig
     );
+    self(this).async(() => {
+      this._onIronResize();
+    });
+  }
+
+  @pd.listener('iron-resize')
+  private _onIronResize(): void {
+    if (this._editor) {
+      this._editor.setSize(self(this).clientWidth, self(this).clientHeight);
+    }
   }
 }
 
