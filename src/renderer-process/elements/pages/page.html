@@ -4,6 +4,10 @@ Copyright (c) 2015 Vadim Macagon
 -->
 
 <!--
+A page has a header which displays the page title and contains a button to close the page.
+Pages are generally used to display documents. The page content is placed below the header
+and can be anything. This element will fill its parent element.
+
 Example:
 
     <debug-workbench-page></debug-workbench-page>
@@ -17,6 +21,7 @@ Example:
       :host {
         box-sizing: border-box;
         @apply(--layout-flex-auto);
+        @apply(--layout-vertical);
       }
 
       :host > paper-toolbar {
@@ -26,7 +31,8 @@ Example:
         --paper-toolbar-title: {
           font-size: 14px;
           margin-left: 10px;
-        }
+        };
+        @apply(--layout-flex-none);
       }
 
       :host > paper-toolbar .close-button {
@@ -34,16 +40,22 @@ Example:
           width: 30px;
           height: 30px;
           padding: 5px;
-        }
+        };
       }
 
-    </style>
+      #contentWrapper {
+        position: relative;
+        @apply(--layout-flex-auto);
+      }
+      </style>
 
-    <paper-toolbar>
+    <paper-toolbar id="toolbar">
       <div class="title">[[title]]</div>
       <paper-icon-button icon="icons:close" alt="Close Page" class="close-button"></paper-icon-button>
     </paper-toolbar>
-    <content></content>
+    <div id="contentWrapper">
+      <content></content>
+    </div>
   </template>
 </dom-module>
 

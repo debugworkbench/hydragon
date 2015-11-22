@@ -5,6 +5,15 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext } from '../../renderer-context';
 
+interface ILocalDOM {
+  toolbar: HTMLElement;
+  contentWrapper: HTMLElement;
+}
+
+function $(element: PageElement): ILocalDOM {
+  return (<any> element).$;
+}
+
 function self(element: PageElement): IPageElement {
   return <any> element;
 }
@@ -16,6 +25,7 @@ export interface IPageState {
 }
 
 @pd.is('debug-workbench-page')
+@pd.behavior(Polymer.IronResizableBehavior)
 export class PageElement {
   @pd.property({ type: String, value: '' })
   title: string;
@@ -31,6 +41,14 @@ export class PageElement {
     if (state) {
       this.title = state.title || this.title;
     }
+  }
+
+  @pd.listener('iron-resize')
+  private _onIronResize(): void {
+    // FIXME: In theory this shouldn't be necessary since the cotentWrapper is a flex-child that
+    // should expand to fill the flex container (which is the page element), in practice this
+    // doesn't seem to work for whatever reason so I set the size explicitely here.
+    $(this).contentWrapper.style.height = (self(this).parentElement.clientHeight - $(this).toolbar.offsetHeight) + 'px';
   }
 }
 
