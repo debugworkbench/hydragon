@@ -22,9 +22,10 @@ function self(element: WorkspaceElement): IWorkspaceElement {
   return <any> element;
 }
 
-export type IWorkspaceElement = WorkspaceElement & polymer.Base;
+export type IWorkspaceElement = WorkspaceElement & typeof Polymer.IronResizableBehavior & polymer.Base;
 
 @pd.is('debug-workbench-workspace')
+@pd.behavior(Polymer.IronResizableBehavior)
 export class WorkspaceElement {
   private _rootContainer: IHorizontalContainerElement;
   private _editorElement: ICodeMirrorEditorElement;
@@ -41,7 +42,7 @@ export class WorkspaceElement {
     const leftPanel = PanelElement.createSync({ width: 300, resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
     const documentPanel = PanelElement.createSync();
-    const page = PageElement.createSync({ title: 'Debug Workbench' });
+    const page = PageElement.createSync({ title: 'Test Page' });
     const statusPanel = PanelElement.createSync({ height: 20 });
 
     this._editorElement = CodeMirrorEditorElement.createSync({
@@ -63,9 +64,9 @@ export class WorkspaceElement {
     self(this).async(() => {
       this.calculateSize();
       this.updateStyle();
+      self(this).notifyResize();
 
       this._editorElement.editor.focus();
-      this._editorElement.editor.refresh();
     });
   }
 

@@ -4,7 +4,8 @@
 import * as path from 'path';
 import * as remote from 'remote';
 import { ElementFactory } from './elements/element-factory';
-import { WorkspaceElement, IWorkspaceElement } from './elements/workspace/workspace';
+// NOTE: WorkspaceElement must be lazy-loaded (see intialize() for more info).
+import * as WorkspaceModule from './elements/workspace/workspace';
 import { importHref } from './utils';
 
 export const enum Cursor {
@@ -19,7 +20,7 @@ export class RendererContext {
   private _cursorOverlay: HTMLElement;
 
   elementFactory: ElementFactory;
-  workspace: IWorkspaceElement;
+  workspace: WorkspaceModule.IWorkspaceElement;
 
   /** Create the renderer context for the current process. */
   static async create(): Promise<RendererContext> {
@@ -64,7 +65,12 @@ export class RendererContext {
   async initialize(): Promise<void> {
     await importHref('app://bower_components/dependencies_bundle.html');
     await this.elementFactory.initialize();
-    this.workspace = WorkspaceElement.createSync();
+    // WorkspaceElement can't be required until the Polymer dependencies have been loaded,
+    // if it's required on import then the decorators that apply behaviors won't work as
+    // expected because the Polymer behaviors haven't been loaded yet at that point and
+    // you'll end up with undefined behaviors in WorkspaceElement.prototype.behaviors.
+    const workspace: typeof WorkspaceModule = require('./elements/workspace/workspace');
+    this.workspace = workspace.WorkspaceElement.createSync();
     document.body.appendChild(this.workspace);
   }
 
