@@ -25,9 +25,14 @@ Example:
     <style>
       :host {
         box-sizing: border-box;
+        overflow: hidden;
         @apply(--layout-fit);
         /* Make this element a flex container */
         @apply(--layout);
+      }
+
+      :host > ::content > * {
+        @apply(--layout-flex-auto);
       }
 
     </style>

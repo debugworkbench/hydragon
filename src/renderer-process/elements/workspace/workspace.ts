@@ -62,7 +62,6 @@ export class WorkspaceElement {
 
   attached(): void {
     self(this).async(() => {
-      this.calculateSize();
       this.updateStyle();
       self(this).notifyResize();
 
@@ -70,18 +69,11 @@ export class WorkspaceElement {
     });
   }
 
-  calculateSize(): void {
-    const layoutContainer: ILayoutContainer = <any> self(this).getContentChildren()[0];
-    layoutContainer.calculateSize();
-  }
-
   updateStyle(): void {
     const container: ILayoutContainer & HTMLElement = <any> self(this).getContentChildren()[0];
 
-    if (container.curWidth === undefined) {
-      container.style.flex = "1 1 auto";
-    } else {
-      container.style.flex = `0 0 ${container.curWidth}px`;
+    if (container.width !== undefined) {
+      container.style.flex = `0 0 ${container.width}px`;
     }
 
     container.updateStyle();

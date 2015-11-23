@@ -5,9 +5,11 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext, Cursor } from '../../renderer-context';
 
-function base(element: SplitterElement): polymer.Base {
+function self(element: SplitterElement): ISplitterElement {
   return <any> element;
 }
+
+export type ISplitterElement = SplitterElement & polymer.Base;
 
 class MouseEventHandler {
   constructor(
@@ -72,20 +74,22 @@ export class SplitterElement {
     event.stopPropagation();
     event.preventDefault();
 
-    const prevSibling: ILayoutContainer = <any> Polymer.dom(<any> this).previousElementSibling;
-
     if (this.orientation === 'vertical') {
       const delta = event.pageX - this._lastPageCoord;
       this._lastPageCoord = event.pageX;
-      prevSibling.adjustWidth(delta);
+      adjustWidth(Polymer.dom(<any> this).previousElementSibling, delta);
     } else {
       const delta = event.pageY - this._lastPageCoord;
       this._lastPageCoord = event.pageY;
-      prevSibling.adjustHeight(delta);
+      adjustHeight(Polymer.dom(<any> this).previousElementSibling, delta);
     }
 
-    const parent: ILayoutContainer = <any> Polymer.dom(<any> this).parentNode;
-    parent.updateStyle();
+    const parent: any = Polymer.dom(<any> this).parentNode;
+    if (parent.notifyResize) {
+      self(this).async(() => {
+        parent.notifyResize();
+      })
+    }
   }
 
   private _onMouseUp(event: MouseEvent): void {
@@ -97,7 +101,20 @@ export class SplitterElement {
   }
 }
 
-export interface ISplitterElement extends SplitterElement, HTMLElement {
+function adjustWidth(element: HTMLElement, delta: number): void {
+  let newWidth = element.clientWidth + delta;
+  if (newWidth < 0) {
+    newWidth = 0;
+  }
+  element.style.flexBasis = `${newWidth}px`;
+}
+
+function adjustHeight(element: HTMLElement, delta: number): void {
+  let newHeight = element.clientHeight + delta;
+  if (newHeight < 0) {
+    newHeight = 0;
+  }
+  element.style.flexBasis = `${newHeight}px`;
 }
 
 export function register(): typeof SplitterElement {
