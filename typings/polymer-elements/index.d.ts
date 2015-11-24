@@ -1,3 +1,4 @@
+/// <reference path="./iron-pages.d.ts" />
 /// <reference path="./iron-selector.d.ts" />
 /// <reference path="./paper-dialog.d.ts" />
 /// <reference path="./paper-dropdown-menu.d.ts" />
