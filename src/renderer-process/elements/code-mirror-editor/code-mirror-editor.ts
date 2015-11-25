@@ -44,15 +44,19 @@ export class CodeMirrorEditorElement {
       (editorElement) => { Polymer.dom(self(this).root).appendChild(editorElement); },
       this._editorConfig
     );
-    self(this).async(() => {
-      this._onIronResize();
-    });
   }
 
   @pd.listener('iron-resize')
   private _onIronResize(): void {
     if (this._editor) {
-      this._editor.setSize(self(this).clientWidth, self(this).clientHeight);
+      const newWidth = self(this).clientWidth;
+      const newHeight = self(this).clientHeight;
+      // don't bother resizing the editor if it's not going to be visible
+      if ((newWidth !== 0) && (newHeight !== 0)) {
+        this._editor.setSize(newWidth, newHeight);
+        // force a refresh so the gutters are drawn correctly
+        this._editor.refresh();
+      }
     }
   }
 }
