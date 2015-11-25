@@ -27,7 +27,8 @@
     "paper-toggle-button": "PolymerElements/paper-toggle-button#~1.0.11",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.1",
     "polymer": "Polymer/polymer#~1.2.1",
-    "iron-flex-layout": "enlight/iron-flex-layout#no-shadow"
+    "iron-flex-layout": "enlight/iron-flex-layout#no-shadow",
+    "iron-pages": "PolymerElements/iron-pages#~1.0.4"
   },
   "devDependencies": {},
   "resolutions": {
