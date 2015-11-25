@@ -12,17 +12,17 @@ function self(element: PanelElement): IPanelElement {
 export type IPanelElement = PanelElement & polymer.Base;
 
 export interface IPanelState {
-  width?: number;
-  height?: number;
+  width?: string;
+  height?: string;
   resizable?: boolean;
 }
 
 @pd.is('debug-workbench-panel')
 export class PanelElement implements ILayoutContainer {
-  @pd.property({ type: Number, value: undefined })
-  width: number;
-  @pd.property({ type: Number, value: undefined })
-  height: number;
+  @pd.property({ type: String, value: undefined })
+  width: string;
+  @pd.property({ type: String, value: undefined })
+  height: string;
   @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
   resizable: boolean;
 
@@ -40,10 +40,10 @@ export class PanelElement implements ILayoutContainer {
       this.resizable = state.resizable || this.resizable;
 
       if (state.width !== undefined) {
-        self(this).style.width = `${state.width}px`;
+        self(this).style.width = `${state.width}`;
       }
       if (state.height !== undefined) {
-        self(this).style.height = `${state.height}px`;
+        self(this).style.height = `${state.height}`;
       }
     }
   }

@@ -28,7 +28,6 @@ export type IWorkspaceElement = WorkspaceElement & typeof Polymer.IronResizableB
 @pd.behavior(Polymer.IronResizableBehavior)
 export class WorkspaceElement {
   private _rootContainer: IHorizontalContainerElement;
-  private _editorElement: ICodeMirrorEditorElement;
 
   static createSync(): IWorkspaceElement {
     return RendererContext.get().elementFactory.createElementSync<IWorkspaceElement>(
@@ -39,20 +38,20 @@ export class WorkspaceElement {
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(): void {
     this._rootContainer = HorizontalContainerElement.createSync();
-    const leftPanel = PanelElement.createSync({ width: 300, resizable: true });
+    const leftPanel = PanelElement.createSync({ width: '300px', resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
     const documentPanel = PanelElement.createSync();
-    const page = PageElement.createSync({ title: 'Test Page' });
-    const statusPanel = PanelElement.createSync({ height: 20 });
+    const page1 = PageElement.createSync({ title: 'Test Page' });
+    const statusPanel = PanelElement.createSync({ height: '20px' });
 
-    this._editorElement = CodeMirrorEditorElement.createSync({
+    const editorElement1 = CodeMirrorEditorElement.createSync({
       value: 'int main(int argc, char** argv) {}',
       mode: 'text/x-c++src'
     });
     statusPanel.innerText = 'Status';
 
-    Polymer.dom(page).appendChild(this._editorElement);
-    Polymer.dom(documentPanel).appendChild(page);
+    Polymer.dom(page1).appendChild(editorElement1);
+    Polymer.dom(documentPanel).appendChild(page1);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
     Polymer.dom(this._rootContainer).appendChild(leftPanel);
@@ -64,8 +63,6 @@ export class WorkspaceElement {
     self(this).async(() => {
       this.updateStyle();
       self(this).notifyResize();
-
-      this._editorElement.editor.focus();
     });
   }
 

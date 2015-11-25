@@ -1,6 +1,6 @@
 export interface ILayoutContainer {
-  width: number;
-  height: number;
+  width: string;
+  height: string;
 
   updateStyle(): void;
 }

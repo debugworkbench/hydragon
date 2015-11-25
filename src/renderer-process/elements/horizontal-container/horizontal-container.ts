@@ -17,10 +17,10 @@ export type IHorizontalContainerElement =
 @pd.is('debug-workbench-horizontal-container')
 @pd.behaviors([SplittableBehavior, Polymer.IronResizableBehavior])
 export class HorizontalContainerElement implements ILayoutContainer {
-  @pd.property({ type: Number, value: undefined })
-  width: number; // initial width
-  @pd.property({ type: Number, value: undefined })
-  height: number; // initial height
+  @pd.property({ type: String, value: undefined })
+  width: string;
+  @pd.property({ type: String, value: undefined })
+  height: string;
 
   static createSync(): IHorizontalContainerElement {
     return RendererContext.get().elementFactory.createElementSync<IHorizontalContainerElement>(
@@ -29,6 +29,8 @@ export class HorizontalContainerElement implements ILayoutContainer {
   }
 
   attached(): void {
+    // FIXME: new splitters may need to be created whenever new children are attached,
+    // it's not sufficient to just create them when this element is attached
     self(this).createSplitters(true);
   }
 
@@ -42,7 +44,7 @@ export class HorizontalContainerElement implements ILayoutContainer {
         // using Flexbox, however if an explicit width is set for a child then the child should
         // always maintain that exact width even if this container is resized.
         if (childContainer.width !== undefined) {
-          child.style.flex = `0 0 ${childContainer.width}px`;
+          child.style.flex = `0 0 ${childContainer.width}`;
         }
         childContainer.updateStyle();
       }

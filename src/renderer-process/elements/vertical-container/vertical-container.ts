@@ -21,10 +21,10 @@ export interface IVerticalContainerState {
 @pd.is('debug-workbench-vertical-container')
 @pd.behaviors([SplittableBehavior, Polymer.IronResizableBehavior])
 export class VerticalContainerElement implements ILayoutContainer {
-  @pd.property({ type: Number, value: undefined })
-  width: number; // initial width
-  @pd.property({ type: Number, value: undefined })
-  height: number; // initial height
+  @pd.property({ type: String, value: undefined })
+  width: string;
+  @pd.property({ type: String, value: undefined })
+  height: string;
   @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
   resizable: boolean;
 
@@ -55,7 +55,7 @@ export class VerticalContainerElement implements ILayoutContainer {
         // using Flexbox, however if an explicit height is set for a child then the child should
         // always maintain that exact height even if this container is resized.
         if (childContainer.height !== undefined) {
-          child.style.flex = `0 0 ${childContainer.height}px`;
+          child.style.flex = `0 0 ${childContainer.height}`;
         }
         childContainer.updateStyle();
       }
