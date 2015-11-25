@@ -86,9 +86,7 @@ export class SplitterElement {
 
     const parent: any = Polymer.dom(<any> this).parentNode;
     if (parent.notifyResize) {
-      self(this).async(() => {
         parent.notifyResize();
-      })
     }
   }
 

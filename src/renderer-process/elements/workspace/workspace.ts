@@ -60,10 +60,10 @@ export class WorkspaceElement {
   }
 
   attached(): void {
+    this.updateStyle();
     self(this).async(() => {
-      this.updateStyle();
       self(this).notifyResize();
-    });
+    }, 10);
   }
 
   updateStyle(): void {
