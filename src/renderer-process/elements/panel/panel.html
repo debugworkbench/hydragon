@@ -17,13 +17,9 @@ Example:
       :host {
         box-sizing: border-box;
         position: relative;
-        @apply(--layout-vertical);
+        display: block;
       }
-      /*
-      :host ::content > * {
-        @apply(--layout-flex-none);
-      }
-      */
+
       #content-wrapper {
         @apply(--layout-fit);
       }

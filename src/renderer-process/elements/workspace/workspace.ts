@@ -8,6 +8,7 @@ import { HorizontalContainerElement, IHorizontalContainerElement } from '../hori
 import { VerticalContainerElement } from '../vertical-container/vertical-container';
 import { PanelElement } from '../panel/panel';
 import { PageElement } from '../pages/page';
+import { PageSetElement } from '../pages/page-set';
 import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirror-editor/code-mirror-editor';
 
 interface ILocalDOM {
@@ -41,17 +42,26 @@ export class WorkspaceElement {
     const leftPanel = PanelElement.createSync({ width: '300px', resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
     const documentPanel = PanelElement.createSync();
+    const pageSet = PageSetElement.createSync({ height: '100%' });
     const page1 = PageElement.createSync({ title: 'Test Page' });
+    const page2 = PageElement.createSync({ title: 'Test Page 2' });
     const statusPanel = PanelElement.createSync({ height: '20px' });
 
     const editorElement1 = CodeMirrorEditorElement.createSync({
       value: 'int main(int argc, char** argv) {}',
       mode: 'text/x-c++src'
     });
+    const editorElement2 = CodeMirrorEditorElement.createSync({
+      value: 'int main(int argc, char** argv) { return 0; }',
+      mode: 'text/x-c++src'
+    });
     statusPanel.innerText = 'Status';
 
     Polymer.dom(page1).appendChild(editorElement1);
-    Polymer.dom(documentPanel).appendChild(page1);
+    Polymer.dom(page2).appendChild(editorElement2);
+    pageSet.addPage(page1);
+    pageSet.addPage(page2);
+    Polymer.dom(documentPanel).appendChild(pageSet);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
     Polymer.dom(this._rootContainer).appendChild(leftPanel);

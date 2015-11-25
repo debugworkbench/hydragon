@@ -56,12 +56,14 @@ export class ElementFactory {
    * Set the path to an element's main `.html` file.
    *
    * @param tagName The name under which the custom element will be registered with the document.
-   * @param relativePath The path to the element's `.html` file relative to the
-   *                     `debug-workbench-core-components` package directory. If omitted this
-   *                      path will be deduced from the [[tagName]].
+   * @param relativePath TODO
    */
   addElementPath(tagName: string, relativePath?: string): void {
-    this.elements.set(tagName, { documentPath: this.resolvePath(tagName, relativePath) });
+    if (!this.elements.has(tagName)) {
+      this.elements.set(tagName, { documentPath: this.resolvePath(tagName, relativePath) });
+    } else {
+      throw new Error(`The path for element <${tagName}> has already been specified.`);
+    }
   }
 
   setElementConstructor(tagName: string, elementConstructor: Function): void {

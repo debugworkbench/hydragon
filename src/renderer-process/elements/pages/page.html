@@ -21,9 +21,6 @@ Example:
       :host {
         box-sizing: border-box;
         position: relative;
-        width: 100%;
-        height: 100%;
-        @apply(--layout-flex-auto);
         @apply(--layout-vertical);
       }
 
@@ -49,6 +46,10 @@ Example:
       #contentWrapper {
         position: relative;
         @apply(--layout-flex-auto);
+      }
+
+      #contentWrapper > ::content > * {
+        @apply(--layout-fit);
       }
       </style>
 

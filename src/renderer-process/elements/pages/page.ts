@@ -22,12 +22,16 @@ export type IPageElement = PageElement & polymer.Base;
 
 export interface IPageState {
   title?: string;
+  isActive?: boolean;
 }
 
 @pd.is('debug-workbench-page')
+@pd.behavior(Polymer.IronResizableBehavior)
 export class PageElement {
   @pd.property({ type: String, value: '' })
   title: string;
+
+  isActive: boolean;
 
   static createSync(state?: IPageState): IPageElement {
     return RendererContext.get().elementFactory.createElementSync<IPageElement>(
@@ -39,7 +43,13 @@ export class PageElement {
   factoryImpl(state?: IPageState): void {
     if (state) {
       this.title = state.title || this.title;
+      this.isActive = (state.isActive !== undefined) ? state.isActive : false;
     }
+  }
+
+  resizerShouldNotify(element: HTMLElement): boolean {
+    // don't send resize events to descendants if the page is inactive
+    return this.isActive;
   }
 }
 

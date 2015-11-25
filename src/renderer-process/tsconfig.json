@@ -21,6 +21,7 @@
         "elements/code-mirror-editor/code-mirror-editor.ts",
         "elements/horizontal-container/horizontal-container.ts",
         "elements/pages/page.ts",
+        "elements/pages/page-set.ts",
         "elements/panel/panel.ts",
         "elements/register-element/register-element.ts",
         "elements/splitter/splitter.ts",

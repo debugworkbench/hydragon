@@ -1,0 +1,41 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+
+<!--
+An element that displays only one element at a time from a set of page elements.
+The child elements must be of type debug-workbench-page.
+
+Example:
+
+    <debug-workbench-page-set>
+      <debug-workbench-page title="Page 1"></debug-workbench-page>
+      <debug-workbench-page title="Page 2"></debug-workbench-page>
+      <debug-workbench-page title="Page 3"></debug-workbench-page>
+    </debug-workbench-page-set>
+
+@group Debug Workbench
+@element debug-workbench-page-set
+-->
+<dom-module id="debug-workbench-page-set">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        position: relative;
+        display: block;
+      }
+
+      :host > iron-pages > ::content > * {
+        @apply(--layout-fit);
+      }
+    </style>
+
+    <iron-pages id="ironPages">
+      <content></content>
+    </iron-pages>
+  </template>
+</dom-module>
+
+<register-element path="./page-set"></register-element>
