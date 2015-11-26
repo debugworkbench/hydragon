@@ -42,6 +42,14 @@ export = function(grunt: IGrunt) {
           'transform-es2015-destructuring'
         ]
       },
+      'common': {
+        files: [{
+          expand: true,
+          cwd: '../lib/',
+          src: ['common/**/*.js'],
+          dest: '../lib/'
+        }]
+      },
       'main-process': {
         files: [{
           expand: true,
@@ -94,12 +102,12 @@ export = function(grunt: IGrunt) {
       },
       'main-process': {
         options: {
-          project: '../src/main-process'
+          project: '../src/main-tsconfig.json'
         }
       },
       'renderer-process': {
         options: {
-          project: '../src/renderer-process'
+          project: '../src/renderer-tsconfig.json'
         }
       }
     },
