@@ -5,6 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext } from '../../renderer-context';
 import { IPageElement } from './page';
+import { EventEmitter, EventSubscription } from '../../../common/events';
 
 interface ILocalDOM {
   ironPages: PolymerElements.IronPages;
@@ -24,10 +25,17 @@ export interface IPageSetState {
   height?: string;
 }
 
-type IPageSetElement = PageSetElement & polymer.Base;
+enum EventId {
+  DidAddPage,
+  DidRemovePage,
+  DidActivatePage
+}
+
+export type IPageSetElement = PageSetElement & polymer.Base;
 
 @pd.is('debug-workbench-page-set')
 export class PageSetElement {
+  private _emitter: EventEmitter<EventId>;
   width: string;
   height: string;
 
@@ -50,6 +58,10 @@ export class PageSetElement {
     );
   }
 
+  created(): void {
+    this._emitter = new EventEmitter<EventId>();
+  }
+
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(state?: IPageSetState): void {
     if (state) {
@@ -67,6 +79,7 @@ export class PageSetElement {
 
   addPage(page: IPageElement): void {
     Polymer.dom(<any> this).appendChild(page);
+    this._emitter.emit(EventId.DidAddPage, page);
     if (!this.activePage) {
       this.activatePage(page);
     }
@@ -83,9 +96,23 @@ export class PageSetElement {
       if (activePageIndex !== undefined) {
         this.pages[<number> activePageIndex].isActive = false;
       }
-      this.pages[pageIndex].isActive = true;
+      const page = this.pages[pageIndex];
+      page.isActive = true;
       ironPages.selected = pageIndex;
+      this._emitter.emit(EventId.DidActivatePage, page);
     }
+  }
+
+  onDidAddPage(handler: (page: IPageElement) => void): EventSubscription {
+    return this._emitter.on(EventId.DidAddPage, handler);
+  }
+
+  onDidRemovePage(handler: (page: IPageElement) => void): EventSubscription {
+    return this._emitter.on(EventId.DidRemovePage, handler);
+  }
+
+  onDidActivatePage(handler: (page: IPageElement) => void): EventSubscription {
+    return this._emitter.on(EventId.DidActivatePage, handler);
   }
 }
 
