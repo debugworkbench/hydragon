@@ -16,6 +16,8 @@ export type IVerticalContainerElement =
 
 export interface IVerticalContainerState {
   resizable?: boolean;
+  width?: string;
+  height?: string;
 }
 
 @pd.is('debug-workbench-vertical-container')
@@ -37,7 +39,9 @@ export class VerticalContainerElement implements ILayoutContainer {
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(state?: IVerticalContainerState): void {
     if (state) {
-      this.resizable = state.resizable || this.resizable;
+      this.width = (state.width !== undefined) ? state.width : this.width;
+      this.height = (state.height !== undefined) ? state.height : this.height;
+      this.resizable = (state.resizable !== undefined) ? state.resizable : this.resizable;
     }
   }
 
