@@ -35,9 +35,12 @@ export type IPageSetElement = PageSetElement & polymer.Base;
 
 @pd.is('debug-workbench-page-set')
 export class PageSetElement {
-  private _emitter: EventEmitter<EventId>;
   width: string;
   height: string;
+
+  private _emitter: EventEmitter<EventId>;
+  private _pageSubscriptions: WeakMap<IPageElement, EventSubscription>;
+  private _boundOnPageDidClose: (page: IPageElement) => void;
 
   get activePage(): IPageElement {
     const activePageIndex = <number> $(this).ironPages.selected;
@@ -60,6 +63,19 @@ export class PageSetElement {
 
   created(): void {
     this._emitter = new EventEmitter<EventId>();
+    this._pageSubscriptions = new WeakMap();
+    this._boundOnPageDidClose = this._onPageDidClose.bind(this);
+  }
+
+  destroyed(): void {
+    this._emitter.destroy();
+    this._emitter = null;
+    for (const page of this.pages) {
+      this._pageSubscriptions.get(page).destroy();
+      this._pageSubscriptions.delete(page);
+      page.destroyed();
+    }
+    this._boundOnPageDidClose = null;
   }
 
   /** Called after ready() with arguments passed to the element constructor function. */
@@ -78,6 +94,7 @@ export class PageSetElement {
   }
 
   addPage(page: IPageElement): void {
+    this._pageSubscriptions.set(page, page.onDidClose(this._boundOnPageDidClose));
     Polymer.dom(<any> this).appendChild(page);
     this._emitter.emit(EventId.DidAddPage, page);
     if (!this.activePage) {
@@ -85,21 +102,69 @@ export class PageSetElement {
     }
   }
 
+  removePage(page: IPageElement): void {
+    this._pageSubscriptions.get(page).destroy();
+    this._pageSubscriptions.delete(page);
+
+    // if the active page is being removed figure out which page should be activated afterwards,
+    // generally the previous page should be activated, unless there is no previous page (in which
+    // case the next page should be activated)
+    const pages = this.pages;
+    let activePageIndex = <number> $(this).ironPages.selected;
+    let shouldUpdateActivePage = (pages.indexOf(page) === activePageIndex);
+    if (shouldUpdateActivePage) {
+      if (pages.length === 1) {
+        activePageIndex = undefined;
+      } else if (activePageIndex > 0) {
+        activePageIndex -= 1;
+      }
+    }
+
+    Polymer.dom(<any> this).removeChild(page);
+    if (shouldUpdateActivePage) {
+      this._onlyActivatePageAtIndex(activePageIndex);
+    }
+    this._emitter.emit(EventId.DidRemovePage, page);
+  }
+
   activatePage(page: IPageElement): void {
     this.activatePageAtIndex(this.pages.indexOf(page));
   }
 
   activatePageAtIndex(pageIndex: number): void {
-    const ironPages = $(this).ironPages;
-    const activePageIndex = ironPages.selected;
+    const activePageIndex = $(this).ironPages.selected;
     if (activePageIndex !== pageIndex) {
       if (activePageIndex !== undefined) {
         this.pages[<number> activePageIndex].isActive = false;
       }
+      this._onlyActivatePageAtIndex(pageIndex);
+    }
+  }
+
+  private _onlyActivatePageAtIndex(pageIndex: number): void {
+    $(this).ironPages.selected = pageIndex;
+    if (pageIndex !== undefined) {
       const page = this.pages[pageIndex];
       page.isActive = true;
-      ironPages.selected = pageIndex;
       this._emitter.emit(EventId.DidActivatePage, page);
+    }
+  }
+
+  activateNextPage(): void {
+    const activePageIndex = <number> $(this).ironPages.selected;
+    if ((activePageIndex !== undefined) && (activePageIndex < this.pages.length - 1)) {
+      this.activatePageAtIndex(activePageIndex + 1);
+    } else if (this.pages.length > 0) {
+      this.activatePageAtIndex(0);
+    }
+  }
+
+  activatePreviousPage(): void {
+    const activePageIndex = <number> $(this).ironPages.selected;
+    if ((activePageIndex !== undefined) && (activePageIndex > 0)) {
+      this.activatePageAtIndex(activePageIndex - 1);
+    } else if (this.pages.length > 0) {
+      this.activatePageAtIndex(this.pages.length - 1);
     }
   }
 
@@ -113,6 +178,11 @@ export class PageSetElement {
 
   onDidActivatePage(handler: (page: IPageElement) => void): EventSubscription {
     return this._emitter.on(EventId.DidActivatePage, handler);
+  }
+
+  private _onPageDidClose(page: IPageElement): void {
+    this.removePage(page);
+    page.destroyed();
   }
 }
 

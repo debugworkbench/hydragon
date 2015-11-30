@@ -9,6 +9,7 @@ import { VerticalContainerElement } from '../vertical-container/vertical-contain
 import { PanelElement } from '../panel/panel';
 import { PageElement } from '../pages/page';
 import { PageSetElement } from '../pages/page-set';
+import { PageTreeElement } from '../pages/page-tree';
 import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirror-editor/code-mirror-editor';
 
 interface ILocalDOM {
@@ -39,10 +40,13 @@ export class WorkspaceElement {
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(): void {
     this._rootContainer = HorizontalContainerElement.createSync();
-    const leftPanel = PanelElement.createSync({ width: '300px', resizable: true });
+    const leftContainer = VerticalContainerElement.createSync({ width: '300px', resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
+    const pageTreePanel = PanelElement.createSync({ height: '300px', resizable: true });
     const documentPanel = PanelElement.createSync();
     const pageSet = PageSetElement.createSync({ height: '100%' });
+    const pageTree = PageTreeElement.createSync({ height: '100%' });
+    pageTree.pageSet = pageSet;
     const page1 = PageElement.createSync({ title: 'Test Page' });
     const page2 = PageElement.createSync({ title: 'Test Page 2' });
     const statusPanel = PanelElement.createSync({ height: '20px' });
@@ -61,10 +65,12 @@ export class WorkspaceElement {
     Polymer.dom(page2).appendChild(editorElement2);
     pageSet.addPage(page1);
     pageSet.addPage(page2);
+    Polymer.dom(pageTreePanel).appendChild(pageTree);
     Polymer.dom(documentPanel).appendChild(pageSet);
+    Polymer.dom(leftContainer).appendChild(pageTreePanel);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
-    Polymer.dom(this._rootContainer).appendChild(leftPanel);
+    Polymer.dom(this._rootContainer).appendChild(leftContainer);
     Polymer.dom(this._rootContainer).appendChild(rightContainer);
     Polymer.dom(<any> this).appendChild(this._rootContainer);
   }

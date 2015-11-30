@@ -61,6 +61,12 @@ export class RendererContext {
       'debug-workbench-page-set', path.posix.join('lib/renderer-process/elements/pages', 'page-set.html')
     );
     this.elementFactory.addElementPath(
+      'debug-workbench-page-tree', path.posix.join('lib/renderer-process/elements/pages', 'page-tree.html')
+    );
+    this.elementFactory.addElementPath(
+      'debug-workbench-page-tree-item', path.posix.join('lib/renderer-process/elements/pages', 'page-tree-item.html')
+    );
+    this.elementFactory.addElementPath(
       'code-mirror-editor', path.posix.join('lib/renderer-process/elements/code-mirror-editor', 'code-mirror-editor.html')
     );
   }

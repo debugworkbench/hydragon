@@ -23,6 +23,8 @@
         "renderer-process/elements/horizontal-container/horizontal-container.ts",
         "renderer-process/elements/pages/page.ts",
         "renderer-process/elements/pages/page-set.ts",
+        "renderer-process/elements/pages/page-tree.ts",
+        "renderer-process/elements/pages/page-tree-item.ts",
         "renderer-process/elements/panel/panel.ts",
         "renderer-process/elements/register-element/register-element.ts",
         "renderer-process/elements/splitter/splitter.ts",

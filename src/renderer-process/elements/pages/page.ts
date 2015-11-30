@@ -4,10 +4,12 @@
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext } from '../../renderer-context';
+import { EventSubscription, EventEmitter } from '../../../common/events';
 
 interface ILocalDOM {
   toolbar: HTMLElement;
   contentWrapper: HTMLElement;
+  closeButton: PolymerElements.PaperIconButton;
 }
 
 function $(element: PageElement): ILocalDOM {
@@ -18,7 +20,11 @@ function self(element: PageElement): IPageElement {
   return <any> element;
 }
 
-export type IPageElement = PageElement & polymer.Base;
+enum EventId {
+  DidClose
+}
+
+export type IPageElement = PageElement & typeof Polymer.IronResizableBehavior & polymer.Base;
 
 export interface IPageState {
   title?: string;
@@ -31,12 +37,37 @@ export class PageElement {
   @pd.property({ type: String, value: '' })
   title: string;
 
-  isActive: boolean;
+  private _emitter: EventEmitter<EventId>;
+  private _isActive: boolean;
+
+  get isActive(): boolean {
+    return this._isActive;
+  }
+
+  set isActive(active: boolean) {
+    this._isActive = active;
+    if (active) {
+      // An inactive page is usually not visible at all, so when it becomes active (and therefore
+      // visible) the child elements should be given a chance to update their layout. However,
+      // the resize notification must be delayed to allow the browser to update the size info of
+      // this element, otherwise child elements will get stale size info for their parent elements.
+      self(this).async(self(this).notifyResize, 1);
+    }
+  }
 
   static createSync(state?: IPageState): IPageElement {
     return RendererContext.get().elementFactory.createElementSync<IPageElement>(
       (<any> PageElement.prototype).is, state
     );
+  }
+
+  created(): void {
+    this._emitter = new EventEmitter<EventId>();
+  }
+
+  destroyed(): void {
+    this._emitter.destroy();
+    this._emitter = null;
   }
 
   /** Called after ready() with arguments passed to the element constructor function. */
@@ -47,9 +78,23 @@ export class PageElement {
     }
   }
 
+  // override Polymer.IronResizableBehavior
   resizerShouldNotify(element: HTMLElement): boolean {
     // don't send resize events to descendants if the page is inactive
     return this.isActive;
+  }
+
+  close(): void {
+    this._emitter.emit(EventId.DidClose, this);
+  }
+
+  onDidClose(handler: (page: IPageElement) => void): EventSubscription {
+    return this._emitter.on(EventId.DidClose, handler);
+  }
+
+  @pd.listener('closeButton.tap')
+  private _onCloseButtonPressed(): void {
+    this.close();
   }
 }
 

@@ -1,0 +1,56 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+
+<!--
+An element that represents an item that is displayed in a debug-workbench-page-tree element.
+
+Example:
+
+    <debug-workbench-page-tree>
+      <debug-workbench-page-tree-item title="Page 1"></debug-workbench-page-tree-item>
+      <debug-workbench-page-tree-item title="Folder 1" class="page-tree-folder">
+        <debug-workbench-page-tree-item title="Page 2"></debug-workbench-page-tree-item>
+      </debug-workbench-page-tree-folder>
+    </debug-workbench-page-tree>
+
+@group Debug Workbench
+@element debug-workbench-page-tree-item
+-->
+<dom-module id="debug-workbench-page-tree-item">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        position: relative;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      :host #title {
+        @apply(--paper-font-common-base);
+        padding-left: 8px;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        @apply(--layout-flex-auto)
+      }
+
+      :host #closeButton {
+        @apply(--layout-flex-none);
+
+        --paper-icon-button: {
+          width: 30px;
+          height: 30px;
+          padding: 5px;
+        };
+      }
+    </style>
+
+    <div id="title">[[title]]</div>
+    <paper-icon-button id="closeButton" icon="icons:close" alt="Close Page"></paper-icon-button>
+  </template>
+</dom-module>
+
+<register-element path="./page-tree-item"></register-element>

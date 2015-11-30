@@ -1,0 +1,61 @@
+<!--
+@license
+Copyright (c) 2015 Vadim Macagon
+-->
+
+<!--
+An element that displays the titles of the pages from a page-set in a tree view.
+
+Example:
+
+    <debug-workbench-page-tree>
+      <debug-workbench-page-tree-item title="Page 1"></debug-workbench-page-tree-item>
+      <debug-workbench-page-tree-item title="Page 2"></debug-workbench-page-tree-item>
+    </debug-workbench-page-tree>
+
+@group Debug Workbench
+@element debug-workbench-page-tree
+-->
+<dom-module id="debug-workbench-page-tree">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        position: relative;
+        background-color: rgb(37, 37, 38);
+        color: rgb(204, 204, 204);
+        cursor: pointer;
+        -webkit-user-select: none;
+        outline: none;
+        @apply(--layout-vertical);
+      }
+
+      :host > ::content > *:hover {
+        background-color: rgb(42, 45, 46);
+      }
+
+      :host(:not([focused])) > ::content > *.selected {
+        background-color: rgb(63, 63, 70);
+      }
+
+      /* class based variant would be written as :host(:not(.focused)) > ::content > *.focused:not(.selected) */
+      :host(:not([focused])) > ::content > *.focused:not(.selected) {
+        background-color: rgb(47, 51, 52);
+      }
+
+      /* class based variant would be written as :host(.focused) > ::content > *.selected */
+      :host([focused]) > ::content > *.focused {
+        background-color: rgb(7, 54, 85);
+      }
+
+      :host([focused]) > ::content > *.selected {
+        background-color: rgb(9, 71, 113);
+      }
+
+    </style>
+
+    <content select="debug-workbench-page-tree-item"></content>
+  </template>
+</dom-module>
+
+<register-element path="./page-tree"></register-element>
