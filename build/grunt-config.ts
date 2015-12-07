@@ -39,7 +39,8 @@ export = function(grunt: IGrunt) {
         plugins: [
           'transform-strict-mode',
           'transform-es2015-parameters',
-          'transform-es2015-destructuring'
+          'transform-es2015-destructuring',
+          'transform-es2015-spread'
         ]
       },
       'common': {
