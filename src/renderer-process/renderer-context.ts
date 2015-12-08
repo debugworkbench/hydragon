@@ -69,6 +69,15 @@ export class RendererContext {
     this.elementFactory.addElementPath(
       'code-mirror-editor', path.posix.join('lib/renderer-process/elements/code-mirror-editor', 'code-mirror-editor.html')
     );
+    this.elementFactory.addElementPath(
+      'hydragon-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'tree-view.html')
+    );
+    this.elementFactory.addElementPath(
+      'hydragon-directory-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view.html')
+    );
+    this.elementFactory.addElementPath(
+      'hydragon-directory-tree-view-item', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view-item.html')
+    );
   }
 
   async initialize(): Promise<void> {

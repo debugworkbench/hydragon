@@ -28,7 +28,8 @@
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.1",
     "polymer": "Polymer/polymer#~1.2.1",
     "iron-flex-layout": "enlight/iron-flex-layout#no-shadow",
-    "iron-pages": "PolymerElements/iron-pages#~1.0.4"
+    "iron-pages": "PolymerElements/iron-pages#~1.0.4",
+    "iron-list": "PolymerElements/iron-list#~1.1.6"
   },
   "devDependencies": {},
   "resolutions": {

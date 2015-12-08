@@ -11,6 +11,8 @@ import { PageElement } from '../pages/page';
 import { PageSetElement } from '../pages/page-set';
 import { PageTreeElement } from '../pages/page-tree';
 import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirror-editor/code-mirror-editor';
+import { DirectoryTree } from '../tree-view/directory-tree';
+import { DirectoryTreeViewElement } from '../tree-view/directory-tree-view';
 
 interface ILocalDOM {
 
@@ -30,6 +32,7 @@ export type IWorkspaceElement = WorkspaceElement & typeof Polymer.IronResizableB
 @pd.behavior(Polymer.IronResizableBehavior)
 export class WorkspaceElement {
   private _rootContainer: IHorizontalContainerElement;
+  private _directoryTree: DirectoryTree;
 
   static createSync(): IWorkspaceElement {
     return RendererContext.get().elementFactory.createElementSync<IWorkspaceElement>(
@@ -43,6 +46,7 @@ export class WorkspaceElement {
     const leftContainer = VerticalContainerElement.createSync({ width: '300px', resizable: true });
     const rightContainer = VerticalContainerElement.createSync({ resizable: true });
     const pageTreePanel = PanelElement.createSync({ height: '300px', resizable: true });
+    const dirTreePanel = PanelElement.createSync({ height: '300px', resizable: true });
     const documentPanel = PanelElement.createSync();
     const pageSet = PageSetElement.createSync({ height: '100%' });
     const pageTree = PageTreeElement.createSync({ height: '100%' });
@@ -61,13 +65,18 @@ export class WorkspaceElement {
     });
     statusPanel.innerText = 'Status';
 
+    this._directoryTree = new DirectoryTree();
+    const dirTreeView = DirectoryTreeViewElement.createSync({ tree: this._directoryTree, indent: 30 });
+
     Polymer.dom(page1).appendChild(editorElement1);
     Polymer.dom(page2).appendChild(editorElement2);
     pageSet.addPage(page1);
     pageSet.addPage(page2);
     Polymer.dom(pageTreePanel).appendChild(pageTree);
+    Polymer.dom(dirTreePanel).appendChild(dirTreeView);
     Polymer.dom(documentPanel).appendChild(pageSet);
     Polymer.dom(leftContainer).appendChild(pageTreePanel);
+    Polymer.dom(leftContainer).appendChild(dirTreePanel);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
     Polymer.dom(this._rootContainer).appendChild(leftContainer);
@@ -78,6 +87,7 @@ export class WorkspaceElement {
   attached(): void {
     this.updateStyle();
     self(this).async(() => {
+      this._directoryTree.addDirectory('.');
       self(this).notifyResize();
     }, 10);
   }
