@@ -35,7 +35,7 @@ This element is meant to be used with the `hydragon-directory-tree-view` element
 
       :host #expander {
         /* reduce the gap between the expander and folder icons */
-        margin-right: -8px;
+        /*margin-right: -10px;*/
       }
 
       :host #expander, #folder {
@@ -55,7 +55,7 @@ This element is meant to be used with the `hydragon-directory-tree-view` element
         flex: 1 0 auto;
       }
 
-      :host #dirButtons:not([hidden]) {
+      :host #folderButtons:not([hidden]) {
         @apply(--layout-flex-none);
         @apply(--layout-horizontal);
       }
@@ -64,7 +64,7 @@ This element is meant to be used with the `hydragon-directory-tree-view` element
     <span id="indent"></span>
     <div id="folderButtons" hidden$="[[!item.expandable]]">
       <paper-icon-button id="expander" icon="icons:chevron-right"></paper-icon-button>
-      <paper-icon-button id="folder" icon="icons:folder" alt="Folder"></paper-icon-button>
+      <!--<paper-icon-button id="folder" icon="icons:folder" alt="Folder"></paper-icon-button>-->
     </div>
     <span id="title">[[item.title]]</span>
   </template>

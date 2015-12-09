@@ -52,11 +52,11 @@ export class DirectoryTreeViewItemElement {
     if (expanded) {
       _.expander.style.transform = 'rotate(90deg)';
       _.expander.setAttribute('alt', 'Collapse');
-      _.folder.icon = 'icons:folder-open';
+      //_.folder.icon = 'icons:folder-open';
     } else {
       _.expander.style.transform = '';
       _.expander.setAttribute('alt', 'Expand');
-      _.folder.icon = 'icons:folder';
+      //_.folder.icon = 'icons:folder';
     }
   }
 

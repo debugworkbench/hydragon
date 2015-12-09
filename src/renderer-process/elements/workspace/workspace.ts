@@ -66,7 +66,7 @@ export class WorkspaceElement {
     statusPanel.innerText = 'Status';
 
     this._directoryTree = new DirectoryTree();
-    const dirTreeView = DirectoryTreeViewElement.createSync({ tree: this._directoryTree, indent: 30 });
+    const dirTreeView = DirectoryTreeViewElement.createSync({ tree: this._directoryTree, indent: 25 });
 
     Polymer.dom(page1).appendChild(editorElement1);
     Polymer.dom(page2).appendChild(editorElement2);
