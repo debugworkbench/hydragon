@@ -67,6 +67,7 @@ export class DirectoryTree implements ITree {
     if (item.expandable && !item.expanded) {
       if (!item.children) {
         item.children = await getDirEntries(item);
+        item.children.sort(compareDirEntries);
       }
       item.expanded = true;
       this._emitter.emit(EventId.DidExpandItem, item);
@@ -97,6 +98,16 @@ async function getDirEntries(dirItem: DirectoryTreeItem): Promise<Array<Director
     }
   }
   return items;
+}
+
+function compareDirEntries(a: ITreeItem, b: ITreeItem): number {
+  if (a.expandable && !b.expandable) {
+    return -1;
+  }
+  if (!a.expandable && b.expandable) {
+    return 1;
+  }
+  return a.title.localeCompare(b.title);
 }
 
 async function getStats(entries: string[]): Promise<Array<fs.Stats>> {
