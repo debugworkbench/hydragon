@@ -46,6 +46,9 @@ export class TreeViewElement {
   /** Array that will contain the result of flattening the current tree into a list. */
   @pd.property({ type: Array, notify: true })
   items: ITreeItem[];
+  /** Set to `true` to exclude the tree root from the generated [[items]] array, defaults to `false`. */
+  @pd.property({ type: Boolean, value: false })
+  rootExcluded: boolean;
 
   private _itemIndices: Map<ITreeItem, number>;
   private _subscriptions: EventSubscriptionSet;
@@ -75,8 +78,11 @@ export class TreeViewElement {
     this._subscriptions.add(newTree.onDidRemoveItem(this._onDidRemoveItem.bind(this)));
 
     if (newTree.root) {
-      const flattenedItems = [newTree.root];
-      this._itemIndices.set(newTree.root, 0);
+      let flattenedItems: ITreeItem[] = [];
+      if (!this.rootExcluded) {
+        flattenedItems = [newTree.root];
+        this._itemIndices.set(newTree.root, 0);
+      }
       this._flattenSubTree(newTree.root, flattenedItems);
       this.items = flattenedItems;
     } else {
@@ -140,7 +146,11 @@ export class TreeViewElement {
   }
 
   private _addItems(start: ITreeItem, items: ITreeItem[]): void {
-    this._spliceItems(this._itemIndices.get(start) + 1, 0, items);
+    if (this.rootExcluded && (start === this.tree.root)) {
+      this._spliceItems(0, 0, items);
+    } else {
+      this._spliceItems(this._itemIndices.get(start) + 1, 0, items);
+    }
   }
 
   private _removeItems(start: ITreeItem, deleteCount: number): void {
