@@ -8,10 +8,10 @@
 declare namespace PolymerElements {
     interface IronOverlayBackdrop extends polymer.Base<any> {
         // Properties that can be bound to
-        
+
         /** `true` if the backdrop is currently displayed. */
         opened: boolean;
-        
+
         /** Append the backdrop to the document body. */
         prepare(): void;
         /** Display the backdrop (unless another is already displayed). */
@@ -21,21 +21,21 @@ declare namespace PolymerElements {
         /** Remove the backdrop from the document body. */
         complete(): void;
     }
-    
+
     // NOTE: This interface gets merged with the one in paper-dialog-behavior.
     interface IClosingReason {
         /** `true` if user clicked out of bounds or pressed the escape key. */
         canceled: boolean;
     }
-    
+
     /** Custom event that's emitted by [[IronOverlayBehavior]] after the overlay is closed. */
 	interface IronOverlayClosedEvent extends CustomEvent {
 		detail: IClosingReason;
 	}
-    
+
     interface IronOverlayBehaviorImpl {
         // Properties that can be bound to
-        
+
         /** `true` if the overlay is currently displayed. */
         opened: boolean;
         /** `true` if the overlay was cancelled last time it was closed. */
@@ -56,11 +56,11 @@ declare namespace PolymerElements {
         noCancelOnOutsideClick: boolean;
         /** The reason the overlay last closed. */
         closingReason: IClosingReason;
-        
+
         // Properties that can't be bound to
-        
+
         backdropElement: IronOverlayBackdrop;
-        
+
         /** Open/close the overlay. */
         toggle(): void;
         /** Open the overlay. */
@@ -71,7 +71,7 @@ declare namespace PolymerElements {
         cancel(): void;
     }
     interface IronOverlayBehavior extends IronFitBehavior, IronResizableBehavior, IronOverlayBehaviorImpl {
-        
+
     }
 }
 

@@ -11,7 +11,7 @@ declare namespace PolymerElements {
 		 * If the `src` property is set the `icon` property should not be.
 		 */
 		src: string;
-		/** 
+		/**
 		 * Icon name or index in the set of icons available in the icon's icon set.
 		 * If the `icon` property is set the `src` property should not be.
 		 */

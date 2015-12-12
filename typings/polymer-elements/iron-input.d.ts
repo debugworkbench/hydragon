@@ -12,7 +12,7 @@ declare namespace PolymerElements {
 		preventInvalidInput: boolean;
 		/** Regexp to match valid input characters. */
 		allowedPattern: string;
-		
+
 		/** @return `true` if the current input value is valid, or `false` otherwise. */
 		validate(): boolean;
 	}

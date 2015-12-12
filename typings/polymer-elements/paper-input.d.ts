@@ -40,9 +40,9 @@ declare namespace PolymerElements {
 		autoValidate: boolean;
 		/** Name of validator to use. */
 		validator: string;
-		
+
 		// HTMLInputElement attributes that can be bound to
-		
+
 		/** Defaults to `off`. */
 		autocomplete: string;
 		autofocus: boolean;
@@ -58,17 +58,17 @@ declare namespace PolymerElements {
 		/** Defaults to `false`. */
 		readonly: boolean;
 		size: number;
-		
+
 		// Non-standard attributes that can be bound to
-		
+
 		/** Defaults to `none`. */
 		autocapitalize: string;
 		/** Defaults to `off`. */
 		autocorrect: string;
-		
+
 		/** Reference to the underlying input element (can't be bound to). */
 		inputElement: PolymerElements.IronInput;
-		
+
 		/** Validate the input and set an error style if needed. */
 		validate(): void;
 		updateValueAndPreserveCaret(newValue: string): void;

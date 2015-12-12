@@ -26,7 +26,7 @@ declare namespace PolymerElements {
 		alwaysFloatLabel: boolean;
 		/** Set to `true` to disable animation of the opening and closing of the dropdown. */
 		noAnimations: boolean;
-		
+
 		/** @return Content element that is contained by the dropdown menu, if any. */
 		contentElement(): HTMLElement;
 		/** Show the dropdown content. */
