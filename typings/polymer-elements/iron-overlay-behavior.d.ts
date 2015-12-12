@@ -6,7 +6,7 @@
 /// <reference path="./iron-resizable-behavior.d.ts" />
 
 declare namespace PolymerElements {
-    interface IronOverlayBackdrop extends polymer.Base {
+    interface IronOverlayBackdrop extends polymer.Base<any> {
         // Properties that can be bound to
         
         /** `true` if the backdrop is currently displayed. */

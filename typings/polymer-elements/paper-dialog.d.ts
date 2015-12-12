@@ -6,6 +6,6 @@
 /// <reference path="./neon-animation.d.ts" />
 
 declare namespace PolymerElements {
-    interface PaperDialog extends polymer.Base, PaperDialogBehavior, NeonAnimationRunnerBehavior {
+    interface PaperDialog extends polymer.Base<any>, PaperDialogBehavior, NeonAnimationRunnerBehavior {
     }
 }

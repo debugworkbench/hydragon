@@ -8,7 +8,7 @@
 /// <reference path="./iron-selector.d.ts" />
 
 declare namespace PolymerElements {
-	interface IronPages extends polymer.Base, IronResizableBehavior, IronSelectableBehavior {
+	interface IronPages extends polymer.Base<any>, IronResizableBehavior, IronSelectableBehavior {
     // NOTE: activateEvent property is explicitely set to null to disable the corresponding event
 	}
 }

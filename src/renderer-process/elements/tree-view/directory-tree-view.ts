@@ -7,20 +7,16 @@ import { EventSubscription, EventSubscriptionSet } from '../../../common/events'
 import { ITree, ITreeItem } from './tree-view';
 import { IDirectoryTreeViewItemElement } from './directory-tree-view-item';
 
-function self(element: DirectoryTreeViewElement): IDirectoryTreeViewElement {
-  return <any> element;
-}
-
 export interface IDirectoryTreeViewState {
   tree: ITree;
   indent: number;
 }
 
-export type IDirectoryTreeViewElement = DirectoryTreeViewElement & polymer.Base;
+export type IDirectoryTreeViewElement = DirectoryTreeViewElement;
 
 @pd.is('hydragon-directory-tree-view')
 @pd.hostAttributes({ 'tabindex': '0' })
-export class DirectoryTreeViewElement {
+export class DirectoryTreeViewElement extends Polymer.BaseClass() {
   @pd.property({ type: Object })
   tree: ITree;
   /** This should never be set directly, it will be managed by the child TreeViewElement. */

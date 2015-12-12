@@ -8,16 +8,8 @@ import { IPageSetElement } from './page-set';
 import { IPageElement } from './page';
 import { EventSubscription, EventEmitter } from '../../../common/events';
 
-interface ILocalDOM {
+export interface ILocalDOM {
   closeButton: PolymerElements.PaperIconButton;
-}
-
-function self(element: PageTreeItemElement): IPageTreeItemElement {
-  return <IPageTreeItemElement> element;
-}
-
-function $(element: PageTreeItemElement): ILocalDOM {
-  return <ILocalDOM> this;
 }
 
 const STYLE_CLASS_SELECTED = 'selected';
@@ -26,10 +18,10 @@ enum EventId {
   DidTap
 }
 
-export type IPageTreeItemElement = PageTreeItemElement & polymer.Base;
+export type IPageTreeItemElement = PageTreeItemElement;
 
 @pd.is('debug-workbench-page-tree-item')
-export class PageTreeItemElement {
+export class PageTreeItemElement extends Polymer.BaseClass<ILocalDOM>() {
   private _emitter: EventEmitter<EventId>;
   private _page: IPageElement;
 
@@ -62,7 +54,7 @@ export class PageTreeItemElement {
   }
 
   select(isSelected?: boolean): void {
-    self(this).toggleClass(STYLE_CLASS_SELECTED, isSelected);
+    this.toggleClass(STYLE_CLASS_SELECTED, isSelected);
   }
 
   onDidTap(handler: (event: MouseEvent) => void): EventSubscription {

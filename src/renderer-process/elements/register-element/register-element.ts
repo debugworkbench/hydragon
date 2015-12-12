@@ -9,25 +9,16 @@ import { RendererContext } from '../../renderer-context';
 // TODO: Consider eliminating the dependency on Polymer, this element is very simple and doesn't
 //       really need any of the features Polymer provides.
 
-function base(element: RegisterElementElement): polymer.Base {
-  return <any> element;
-}
-
 /** Custom element that loads and registers a custom element from a CommonJS module. */
 @pd.is('register-element')
-export class RegisterElementElement {
-  /** The returned object will only be valid after the element has been upgraded to a custom element. */
-  get base(): polymer.Base {
-    return <any> this;
-  }
-
+export class RegisterElementElement extends Polymer.BaseClass() {
   @pd.property({ type: String })
   path: string;
 
   ready(): void {
     if (this.path) {
       // get the absolute path of the document this tag was found in
-      let { protocol, hostname, pathname } = url.parse(base(this).root.baseURI);
+      let { protocol, hostname, pathname } = url.parse(this.root.baseURI);
       if (pathname && (pathname.length > 0) && (pathname[0] === '/')) {
         if ((protocol === 'file:') || (protocol === 'app:')) {
           pathname = pathname.slice(1);

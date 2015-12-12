@@ -9,21 +9,18 @@ import { IPageElement } from './page';
 import { PageTreeItemElement, IPageTreeItemElement } from './page-tree-item';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 
-function self(element: PageTreeElement): IPageTreeElement {
-  return <any> element;
-}
-
 export interface IPageTreeState {
   width?: string;
   height?: string;
 }
 
-export type IPageTreeElement = PageTreeElement & polymer.Base;
+export type IBehaviors = typeof Polymer.IronControlState;
+export type IPageTreeElement = PageTreeElement & IBehaviors;
 
 @pd.is('debug-workbench-page-tree')
 @pd.behavior(Polymer.IronControlState)
 @pd.hostAttributes({ 'tabindex': '0' })
-export class PageTreeElement {
+export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _subscriptions: EventSubscriptionSet;
   private _itemSubscriptions: WeakMap<IPageTreeItemElement, EventSubscription>;
   private _pageSet: IPageSetElement;
@@ -55,10 +52,10 @@ export class PageTreeElement {
   factoryImpl(state?: IPageTreeState): void {
     if (state) {
       if (state.width !== undefined) {
-        self(this).style.width = state.width;
+        this.style.width = state.width;
       }
       if (state.height !== undefined) {
-        self(this).style.height = state.height;
+        this.style.height = state.height;
       }
     }
   }
@@ -83,7 +80,7 @@ export class PageTreeElement {
     this._pageItemMap.set(page, item);
     // TODO: figure out the sort order and set the order CSS property on the item so flexbox
     //       can take care of the rest
-    Polymer.dom(<any> this).appendChild(item);
+    Polymer.dom(this).appendChild(item);
   }
 
   private _onPageSetDidRemovePage(page: IPageElement): void {
@@ -91,7 +88,7 @@ export class PageTreeElement {
     this._itemSubscriptions.get(item).destroy();
     this._itemSubscriptions.delete(item)
     this._pageItemMap.delete(page);
-    Polymer.dom(<any> this).removeChild(item);
+    Polymer.dom(this).removeChild(item);
     item.destroyed();
   }
 

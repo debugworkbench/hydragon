@@ -6,25 +6,18 @@ import { ILayoutContainer } from '../interfaces';
 import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventEmitter } from '../../../common/events';
 
-interface ILocalDOM {
+export interface ILocalDOM {
   toolbar: HTMLElement;
   contentWrapper: HTMLElement;
   closeButton: PolymerElements.PaperIconButton;
-}
-
-function $(element: PageElement): ILocalDOM {
-  return (<any> element).$;
-}
-
-function self(element: PageElement): IPageElement {
-  return <any> element;
 }
 
 enum EventId {
   DidClose
 }
 
-export type IPageElement = PageElement & typeof Polymer.IronResizableBehavior & polymer.Base;
+export type IBehaviors = typeof Polymer.IronResizableBehavior;
+export type IPageElement = PageElement & IBehaviors;
 
 export interface IPageState {
   title?: string;
@@ -33,7 +26,7 @@ export interface IPageState {
 
 @pd.is('debug-workbench-page')
 @pd.behavior(Polymer.IronResizableBehavior)
-export class PageElement {
+export class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors>() {
   @pd.property({ type: String, value: '' })
   title: string;
 
@@ -51,7 +44,7 @@ export class PageElement {
       // visible) the child elements should be given a chance to update their layout. However,
       // the resize notification must be delayed to allow the browser to update the size info of
       // this element, otherwise child elements will get stale size info for their parent elements.
-      self(this).async(self(this).notifyResize, 1);
+      this.async(this.behavior.notifyResize, 1);
     }
   }
 

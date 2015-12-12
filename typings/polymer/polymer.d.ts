@@ -58,7 +58,7 @@ declare namespace polymer {
     is: string;
   }
 
-  interface Base extends HTMLElement {
+  interface Base<TLocalDOM> extends HTMLElement {
     /** The root of the local DOM. */
     root: HTMLElement;
     /**
@@ -66,7 +66,7 @@ declare namespace polymer {
      * Any node specified in the element's template with an `id` is stored in the auto-generated
      * map, e.g. a node with an `id` of `name` can be retrived via `this.$.name`.
      */
-    $: any;
+    $: TLocalDOM;
 
     // Property metadata functions
 
@@ -317,7 +317,7 @@ declare namespace polymer {
     Class<T>(elementDefinition: Object): T;
 
     dom: DomApi_Static;
-    Base: Base;
+    Base: Base<any>;
   }
 }
 

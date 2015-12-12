@@ -7,12 +7,8 @@ import { SplitterElement } from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
 import { RendererContext } from '../../renderer-context';
 
-function self(element: VerticalContainerElement): IVerticalContainerElement {
-  return <any> element;
-}
-
-export type IVerticalContainerElement =
-  VerticalContainerElement & SplittableBehavior & polymer.Base;
+export type IBehaviors = SplittableBehavior & typeof Polymer.IronResizableBehavior;
+export type IVerticalContainerElement = VerticalContainerElement & IBehaviors;
 
 export interface IVerticalContainerState {
   resizable?: boolean;
@@ -22,7 +18,7 @@ export interface IVerticalContainerState {
 
 @pd.is('debug-workbench-vertical-container')
 @pd.behaviors([SplittableBehavior, Polymer.IronResizableBehavior])
-export class VerticalContainerElement implements ILayoutContainer {
+export class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;
   @pd.property({ type: String, value: undefined })
@@ -46,13 +42,13 @@ export class VerticalContainerElement implements ILayoutContainer {
   }
 
   attached(): void {
-    self(this).createSplitters();
+    this.behavior.createSplitters();
   }
 
   updateStyle(): void {
     // this element's flex style should have already been set by the parent,
     // so all that remains is to update the flex styles of all the children
-    self(this).getContentChildren().forEach((child) => {
+    this.getContentChildren().forEach((child) => {
       if (!(child instanceof SplitterElement)) {
         const childContainer: ILayoutContainer = <any> child;
         // By default all children will have "flex: 1 1 auto" so their height will be computed

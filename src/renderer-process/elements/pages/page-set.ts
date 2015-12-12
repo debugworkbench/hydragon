@@ -7,16 +7,8 @@ import { RendererContext } from '../../renderer-context';
 import { IPageElement } from './page';
 import { EventEmitter, EventSubscription } from '../../../common/events';
 
-interface ILocalDOM {
+export interface ILocalDOM {
   ironPages: PolymerElements.IronPages;
-}
-
-function $(element: PageSetElement): ILocalDOM {
-  return (<any> element).$;
-}
-
-function self(element: PageSetElement): IPageSetElement {
-  return <any> element;
 }
 
 export interface IPageSetState {
@@ -31,10 +23,10 @@ enum EventId {
   DidActivatePage
 }
 
-export type IPageSetElement = PageSetElement & polymer.Base;
+export type IPageSetElement = PageSetElement;
 
 @pd.is('debug-workbench-page-set')
-export class PageSetElement {
+export class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
   width: string;
   height: string;
 
@@ -43,7 +35,7 @@ export class PageSetElement {
   private _boundOnPageDidClose: (page: IPageElement) => void;
 
   get activePage(): IPageElement {
-    const activePageIndex = <number> $(this).ironPages.selected;
+    const activePageIndex = <number> this.$.ironPages.selected;
     const pages = this.pages;
     if ((pages.length > 0) && (activePageIndex >= 0) && (activePageIndex < pages.length)) {
       return pages[activePageIndex];
@@ -52,7 +44,7 @@ export class PageSetElement {
   }
 
   get pages(): IPageElement[] {
-    return <any> self(this).getContentChildren();
+    return <any> this.getContentChildren();
   }
 
   static createSync(state?: IPageSetState): IPageSetElement {
@@ -85,17 +77,17 @@ export class PageSetElement {
       this.height = state.height;
 
       if (this.width !== undefined) {
-        self(this).style.width = this.width;
+        this.style.width = this.width;
       }
       if (this.height !== undefined) {
-        self(this).style.height = this.height;
+        this.style.height = this.height;
       }
     }
   }
 
   addPage(page: IPageElement): void {
     this._pageSubscriptions.set(page, page.onDidClose(this._boundOnPageDidClose));
-    Polymer.dom(<any> this).appendChild(page);
+    Polymer.dom(this).appendChild(page);
     this._emitter.emit(EventId.DidAddPage, page);
     if (!this.activePage) {
       this.activatePage(page);
@@ -110,7 +102,7 @@ export class PageSetElement {
     // generally the previous page should be activated, unless there is no previous page (in which
     // case the next page should be activated)
     const pages = this.pages;
-    let activePageIndex = <number> $(this).ironPages.selected;
+    let activePageIndex = <number> this.$.ironPages.selected;
     let shouldUpdateActivePage = (pages.indexOf(page) === activePageIndex);
     if (shouldUpdateActivePage) {
       if (pages.length === 1) {
@@ -132,7 +124,7 @@ export class PageSetElement {
   }
 
   activatePageAtIndex(pageIndex: number): void {
-    const activePageIndex = $(this).ironPages.selected;
+    const activePageIndex = this.$.ironPages.selected;
     if (activePageIndex !== pageIndex) {
       if (activePageIndex !== undefined) {
         this.pages[<number> activePageIndex].isActive = false;
@@ -142,7 +134,7 @@ export class PageSetElement {
   }
 
   private _onlyActivatePageAtIndex(pageIndex: number): void {
-    $(this).ironPages.selected = pageIndex;
+    this.$.ironPages.selected = pageIndex;
     if (pageIndex !== undefined) {
       const page = this.pages[pageIndex];
       page.isActive = true;
@@ -151,7 +143,7 @@ export class PageSetElement {
   }
 
   activateNextPage(): void {
-    const activePageIndex = <number> $(this).ironPages.selected;
+    const activePageIndex = <number> this.$.ironPages.selected;
     if ((activePageIndex !== undefined) && (activePageIndex < this.pages.length - 1)) {
       this.activatePageAtIndex(activePageIndex + 1);
     } else if (this.pages.length > 0) {
@@ -160,7 +152,7 @@ export class PageSetElement {
   }
 
   activatePreviousPage(): void {
-    const activePageIndex = <number> $(this).ironPages.selected;
+    const activePageIndex = <number> this.$.ironPages.selected;
     if ((activePageIndex !== undefined) && (activePageIndex > 0)) {
       this.activatePageAtIndex(activePageIndex - 1);
     } else if (this.pages.length > 0) {

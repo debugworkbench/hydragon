@@ -14,23 +14,12 @@ import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirro
 import { DirectoryTree } from '../tree-view/directory-tree';
 import { DirectoryTreeViewElement } from '../tree-view/directory-tree-view';
 
-interface ILocalDOM {
-
-}
-
-function $(element: WorkspaceElement): ILocalDOM {
-  return (<any> element).$;
-}
-
-function self(element: WorkspaceElement): IWorkspaceElement {
-  return <any> element;
-}
-
-export type IWorkspaceElement = WorkspaceElement & typeof Polymer.IronResizableBehavior & polymer.Base;
+export type IBehaviors = typeof Polymer.IronResizableBehavior;
+export type IWorkspaceElement = WorkspaceElement & IBehaviors;
 
 @pd.is('debug-workbench-workspace')
 @pd.behavior(Polymer.IronResizableBehavior)
-export class WorkspaceElement {
+export class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _rootContainer: IHorizontalContainerElement;
   private _directoryTree: DirectoryTree;
 
@@ -86,14 +75,14 @@ export class WorkspaceElement {
 
   attached(): void {
     this.updateStyle();
-    self(this).async(() => {
+    this.async(() => {
       this._directoryTree.addDirectory('.');
-      self(this).notifyResize();
+      this.behavior.notifyResize();
     }, 10);
   }
 
   updateStyle(): void {
-    const container: ILayoutContainer & HTMLElement = <any> self(this).getContentChildren()[0];
+    const container: ILayoutContainer & HTMLElement = <any> this.getContentChildren()[0];
 
     if (container.width !== undefined) {
       container.style.flex = `0 0 ${container.width}px`;

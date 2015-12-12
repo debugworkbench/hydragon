@@ -12,20 +12,12 @@ interface ILocalDOM {
   folder: PolymerElements.PaperIconButton;
 }
 
-function $(element: DirectoryTreeViewItemElement): ILocalDOM {
-  return (<any> element).$;
-}
-
-function self(element: DirectoryTreeViewItemElement): IDirectoryTreeViewItemElement {
-  return <any> element;
-}
-
-export type IDirectoryTreeViewItemElement = DirectoryTreeViewItemElement & polymer.Base;
+export type IDirectoryTreeViewItemElement = DirectoryTreeViewItemElement;
 
 @pd.is('hydragon-directory-tree-view-item')
 @pd.hostAttributes({ 'tabindex': '0' })
 @pd.observers(['_observeExpanded(item.expanded)'])
-export class DirectoryTreeViewItemElement {
+export class DirectoryTreeViewItemElement extends Polymer.BaseClass<ILocalDOM>() {
   @pd.property({ type: Object })
   item: ITreeItem;
   @pd.property({ type: Number, value: 0, observer: '_observeIndent' })
@@ -41,14 +33,14 @@ export class DirectoryTreeViewItemElement {
   private _onTap(e: MouseEvent): void {
     e.stopPropagation();
     if (this.item.expanded) {
-      self(this).fire('tree-view-item-collapse');
+      this.fire('tree-view-item-collapse');
     } else if (this.item.expandable) {
-      self(this).fire('tree-view-item-expand');
+      this.fire('tree-view-item-expand');
     }
   }
 
   private _observeExpanded(expanded: boolean): void {
-    const _ = $(this);
+    const _ = this.$;
     if (expanded) {
       _.expander.style.transform = 'rotate(90deg)';
       _.expander.setAttribute('alt', 'Collapse');
@@ -61,7 +53,7 @@ export class DirectoryTreeViewItemElement {
   }
 
   private _observeIndent(newIndent: number, oldIndent: number): void {
-    $(this).indent.style.flexBasis = `${newIndent}px`;
+    this.$.indent.style.flexBasis = `${newIndent}px`;
   }
 }
 

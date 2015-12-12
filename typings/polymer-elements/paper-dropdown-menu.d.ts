@@ -5,8 +5,8 @@
 /// <reference path="./iron-behaviors.d.ts" />
 
 declare namespace PolymerElements {
-    interface PaperDropdownMenu extends polymer.Base, IronControlState, IronButtonState {
-		/** 
+    interface PaperDropdownMenu extends polymer.Base<any>, IronControlState, IronButtonState {
+		/**
 		 * Derived "label" of the currently selected item, which is either the value
 		 * of the `label` property on the selected item, or the trimmed text content of
 		 * the selected item.

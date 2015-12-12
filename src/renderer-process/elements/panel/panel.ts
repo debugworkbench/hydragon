@@ -5,11 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext } from '../../renderer-context';
 
-function self(element: PanelElement): IPanelElement {
-  return <any> element;
-}
-
-export type IPanelElement = PanelElement & polymer.Base;
+export type IPanelElement = PanelElement;
 
 export interface IPanelState {
   width?: string;
@@ -18,7 +14,7 @@ export interface IPanelState {
 }
 
 @pd.is('debug-workbench-panel')
-export class PanelElement implements ILayoutContainer {
+export class PanelElement extends Polymer.BaseClass() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;
   @pd.property({ type: String, value: undefined })
@@ -40,10 +36,10 @@ export class PanelElement implements ILayoutContainer {
       this.resizable = state.resizable || this.resizable;
 
       if (state.width !== undefined) {
-        self(this).style.width = `${state.width}`;
+        this.style.width = `${state.width}`;
       }
       if (state.height !== undefined) {
-        self(this).style.height = `${state.height}`;
+        this.style.height = `${state.height}`;
       }
     }
   }

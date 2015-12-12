@@ -16,6 +16,7 @@
         "../typings/github-electron/github-electron.d.ts",
         "../typings/github-electron/github-electron-renderer.d.ts",
         "../typings/polymer/polymer.d.ts",
+        "../typings/polymer/polymer-typescript-helpers.d.ts",
         "../typings/polymer-elements/index.d.ts",
         "common/events.ts",
         "main-process/application.ts",

@@ -40,7 +40,8 @@ export = function(grunt: IGrunt) {
           'transform-strict-mode',
           'transform-es2015-parameters',
           'transform-es2015-destructuring',
-          'transform-es2015-spread'
+          'transform-es2015-spread',
+          'transform-polymer-base'
         ]
       },
       'common': {

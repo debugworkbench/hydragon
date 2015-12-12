@@ -5,7 +5,7 @@
 /// <reference path="./paper-behaviors.d.ts" />
 
 declare namespace PolymerElements {
-    interface PaperIconButton extends polymer.Base, PaperInkyFocusBehavior {
+    interface PaperIconButton extends polymer.Base<any>, PaperInkyFocusBehavior {
 		/**
 		 * URL of an image for the icon.
 		 * If the `src` property is set the `icon` property should not be.

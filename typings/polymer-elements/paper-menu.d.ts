@@ -5,6 +5,6 @@
 /// <reference path="./iron-menu-behavior.d.ts" />
 
 declare namespace PolymerElements {
-    interface PaperMenu extends polymer.Base, IronMenuBehavior {
+    interface PaperMenu extends polymer.Base<any>, IronMenuBehavior {
     }
 }

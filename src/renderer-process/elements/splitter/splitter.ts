@@ -5,11 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { RendererContext, Cursor } from '../../renderer-context';
 
-function self(element: SplitterElement): ISplitterElement {
-  return <any> element;
-}
-
-export type ISplitterElement = SplitterElement & polymer.Base;
+export type ISplitterElement = SplitterElement;
 
 class MouseEventHandler {
   constructor(
@@ -26,7 +22,7 @@ class MouseEventHandler {
 }
 
 @pd.is('debug-workbench-splitter')
-export class SplitterElement {
+export class SplitterElement extends Polymer.BaseClass() {
   @pd.property({ type: String, value: 'horizontal', reflectToAttribute: true })
   orientation: string; // horizontal or vertical
 
@@ -77,14 +73,14 @@ export class SplitterElement {
     if (this.orientation === 'vertical') {
       const delta = event.pageX - this._lastPageCoord;
       this._lastPageCoord = event.pageX;
-      adjustWidth(Polymer.dom(<any> this).previousElementSibling, delta);
+      adjustWidth(Polymer.dom(this).previousElementSibling, delta);
     } else {
       const delta = event.pageY - this._lastPageCoord;
       this._lastPageCoord = event.pageY;
-      adjustHeight(Polymer.dom(<any> this).previousElementSibling, delta);
+      adjustHeight(Polymer.dom(this).previousElementSibling, delta);
     }
 
-    const parent: any = Polymer.dom(<any> this).parentNode;
+    const parent: any = Polymer.dom(this).parentNode;
     if (parent.notifyResize) {
         parent.notifyResize();
     }

@@ -4,6 +4,6 @@
 /// <reference path="../polymer/polymer.d.ts" />
 
 declare namespace PolymerElements {
-    interface PaperItem extends polymer.Base {
+    interface PaperItem extends polymer.Base<any> {
 	}
 }

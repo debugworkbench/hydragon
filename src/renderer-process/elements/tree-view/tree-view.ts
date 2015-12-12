@@ -5,10 +5,6 @@ import * as pd from 'polymer-ts-decorators';
 import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 
-function self(element: TreeViewElement): ITreeViewElement {
-  return <any> element;
-}
-
 export interface ITree {
   root: ITreeItem;
 
@@ -37,10 +33,12 @@ export interface ITreeItem {
   level: number;
 }
 
-export type ITreeViewElement = TreeViewElement & polymer.Base;
+export type ITreeViewElement = TreeViewElement;
 
+// FIXME: This doesn't have a visual representation of any kind, perhaps it's better off being a behavior?
+//        As a behavior there'd be less binding required to get it working.
 @pd.is('hydragon-tree-view')
-export class TreeViewElement {
+export class TreeViewElement extends Polymer.BaseClass() {
   @pd.property({ type: Object, observer: '_treeChanged' })
   tree: ITree;
   /** Array that will contain the result of flattening the current tree into a list. */
@@ -106,7 +104,7 @@ export class TreeViewElement {
     this._flattenSubTree(item, flattenedItems);
     this._addItems(item, flattenedItems);
     // force update of computed bindings that depend on item.expanded
-    self(this).set(['items', this._itemIndices.get(item), 'expanded'], item.expanded);
+    this.set(['items', this._itemIndices.get(item), 'expanded'], item.expanded);
   }
 
   private _onWillCollapseItem(item: ITreeItem): void {
@@ -117,7 +115,7 @@ export class TreeViewElement {
 
   private _onDidCollapseItem(item: ITreeItem): void {
     // force update of computed bindings that depend on item.expanded
-    self(this).set(['items', this._itemIndices.get(item), 'expanded'], item.expanded);
+    this.set(['items', this._itemIndices.get(item), 'expanded'], item.expanded);
   }
 
   private _onWillAddItem(item: ITreeItem): void {
@@ -142,7 +140,7 @@ export class TreeViewElement {
   }
 
   private _onDidChangeItem(item: ITreeItem): void {
-    self(this).set(['items', this._itemIndices.get(item)], item);
+    this.set(['items', this._itemIndices.get(item)], item);
   }
 
   private _addItems(start: ITreeItem, items: ITreeItem[]): void {
@@ -176,9 +174,9 @@ export class TreeViewElement {
       this._itemIndices.set(this.items[i], i + deltaIndex);
     }
     if (newItems) {
-      self(this).splice('items', startIndex, deleteCount, ...newItems);
+      this.splice('items', startIndex, deleteCount, ...newItems);
     } else {
-      self(this).splice('items', startIndex, deleteCount);
+      this.splice('items', startIndex, deleteCount);
     }
   }
 

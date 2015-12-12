@@ -75,7 +75,7 @@ declare namespace PolymerElements {
 	}
 	interface PaperInputBehavior extends IronControlState, PaperInputBehaviorImpl {
 	}
-    interface PaperInput extends polymer.Base, IronFormElementBehavior, PaperInputBehavior, IronControlState {
+    interface PaperInput extends polymer.Base<any>, IronFormElementBehavior, PaperInputBehavior, IronControlState {
 	}
 }
 

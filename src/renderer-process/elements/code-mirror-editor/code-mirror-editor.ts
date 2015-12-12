@@ -13,15 +13,12 @@ CodeMirror.defaults.lineNumbers = true;
 CodeMirror.defaults.inputStyle = 'contenteditable';
 CodeMirror.defaults.scrollbarStyle = 'simple';
 
-function self(element: CodeMirrorEditorElement): ICodeMirrorEditorElement {
-  return <any> element;
-}
-
-export type ICodeMirrorEditorElement = CodeMirrorEditorElement & polymer.Base;
+export type IBehaviors = typeof Polymer.IronResizableBehavior;
+export type ICodeMirrorEditorElement = CodeMirrorEditorElement & IBehaviors;
 
 @pd.is('code-mirror-editor')
 @pd.behavior(Polymer.IronResizableBehavior)
-export class CodeMirrorEditorElement {
+export class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _editorConfig: CodeMirror.EditorConfiguration;
   private _editor: CodeMirror.Editor;
 
@@ -41,7 +38,7 @@ export class CodeMirrorEditorElement {
 
   attached(): void {
     this._editor = CodeMirror(
-      (editorElement) => { Polymer.dom(self(this).root).appendChild(editorElement); },
+      (editorElement) => { Polymer.dom(this.root).appendChild(editorElement); },
       this._editorConfig
     );
   }
@@ -49,8 +46,8 @@ export class CodeMirrorEditorElement {
   @pd.listener('iron-resize')
   private _onIronResize(): void {
     if (this._editor) {
-      const newWidth = self(this).clientWidth;
-      const newHeight = self(this).clientHeight;
+      const newWidth = this.clientWidth;
+      const newHeight = this.clientHeight;
       // don't bother resizing the editor if it's not going to be visible
       if ((newWidth !== 0) && (newHeight !== 0)) {
         this._editor.setSize(newWidth, newHeight);

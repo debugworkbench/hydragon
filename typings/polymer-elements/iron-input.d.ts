@@ -5,7 +5,7 @@
 /// <reference path="./iron-validatable-behavior.d.ts" />
 
 declare namespace PolymerElements {
-	interface IronInput extends polymer.Base, IronValidatableBehavior {
+	interface IronInput extends polymer.Base<any>, IronValidatableBehavior {
 		/** Used instead of `value` when doing two-way data binding. */
 		bindValue: string;
 		/** Set to `true` to prevent entry of invalid input */

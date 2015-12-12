@@ -14,7 +14,7 @@ function containsResizableElement(elements: HTMLElement[], startIndex: number): 
   return false;
 }
 
-export type ISplittableBehavior = SplittableBehavior & polymer.Base;
+export type ISplittableBehavior = SplittableBehavior & polymer.Base<any>;
 
 /**
  * A behavior that can be used to add splitter elements between an element's children.
