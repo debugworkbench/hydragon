@@ -3,7 +3,6 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { RendererContext } from '../../renderer-context';
 import { IPageSetElement } from './page-set';
 import { IPageElement } from './page';
 import { EventSubscription, EventEmitter } from '../../../common/events';
@@ -30,12 +29,6 @@ export class PageTreeItemElement extends Polymer.BaseClass<ILocalDOM>() {
 
   get page(): IPageElement {
     return this._page;
-  }
-
-  static createSync(page: IPageElement): IPageTreeItemElement {
-    return RendererContext.get().elementFactory.createElementSync<IPageTreeItemElement>(
-      (<any> PageTreeItemElement.prototype).is, page
-    );
   }
 
   created(): void {

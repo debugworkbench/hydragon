@@ -3,7 +3,6 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { RendererContext } from '../../renderer-context';
 
 export type IPanelElement = PanelElement;
 
@@ -21,12 +20,6 @@ export class PanelElement extends Polymer.BaseClass() implements ILayoutContaine
   height: string;
   @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
   resizable: boolean;
-
-  static createSync(state?: IPanelState): IPanelElement {
-    return RendererContext.get().elementFactory.createElementSync<IPanelElement>(
-      (<any> PanelElement.prototype).is, state
-    );
-  }
 
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(state?: IPanelState): void {

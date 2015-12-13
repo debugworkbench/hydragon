@@ -2,130 +2,94 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
-import { register as registerRegisterElement } from './register-element/register-element';
-import { importHref } from '../utils';
-
-interface IElementMapEntry {
-  /** Absolute path to the element's main .html file. */
-  documentPath?: string;
-  /** Element constructor (for Polymer-based elements this is the function returned by `Polymer()`). */
-  elementConstructor?: Function;
-}
+import ElementRegistry from './element-registry';
+import { WorkspaceElement, IWorkspaceElement } from './workspace/workspace';
+import { VerticalContainerElement, IVerticalContainerElement, IVerticalContainerState } from './vertical-container/vertical-container';
+import { HorizontalContainerElement, IHorizontalContainerElement } from './horizontal-container/horizontal-container';
+import { PanelElement, IPanelElement, IPanelState } from './panel/panel';
+import { SplitterElement, ISplitterElement } from './splitter/splitter';
+import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
+import { PageElement, IPageElement, IPageState } from './pages/page';
+import { PageSetElement, IPageSetElement, IPageSetState } from './pages/page-set';
+import { PageTreeElement, IPageTreeElement, IPageTreeState } from './pages/page-tree';
+import { PageTreeItemElement, IPageTreeItemElement } from './pages/page-tree-item';
+import { TreeViewElement, ITreeViewElement } from './tree-view/tree-view';
+import { DirectoryTreeViewElement, IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
+import { DirectoryTreeViewItemElement, IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 
 /**
  * Creates new instances of custom elements.
- *
- * Elements can be added to the factory in two ways. Directly, by specifying a path to the
- * element's main `.html` file (@see [[addElementPath]]). Or, indirectly, by being
- * referenced in an HTML import. Either way, the element is registered with the document
- * by the `register-element` custom element, and the element constructor is stored in the
- * factory.
  */
-export class ElementFactory {
-  private elements = new Map</* tagName: */string, IElementMapEntry>();
-
-  /**
-   * Initialize the factory.
-   *
-   * All registered custom elements will be imported.
-   * @return A promise that will be resolved when initialization completes.
-   */
-  async initialize(): Promise<void> {
-    await importHref(this.resolvePath('register-element'));
-    registerRegisterElement();
-    await this._importAllElements();
+export default class ElementFactory {
+  constructor(private _elementRegistry: ElementRegistry) {
   }
 
-  private async _importAllElements(): Promise<any[]> {
-    const promises: Promise<any>[] = [];
-    for (const elementTag of this.elements.keys()) {
-      promises.push(this.importElement(elementTag));
-    }
-    return Promise.all(promises);
+  createWorkspace(): IWorkspaceElement {
+    return this._createElement((<any> WorkspaceElement.prototype).is, this);
   }
 
-  resolvePath(tagName: string, relativePath?: string): string {
-    if (relativePath) {
-      return 'app://' + path.posix.normalize(relativePath);
-    } else {
-      return `app://lib/renderer-process/elements/${tagName}/${tagName}.html`;
-    }
+  createVerticalContainer(state?: IVerticalContainerState): IVerticalContainerElement {
+    return this._createElement((<any> VerticalContainerElement.prototype).is, this, state);
   }
 
-  /**
-   * Set the path to an element's main `.html` file.
-   *
-   * @param tagName The name under which the custom element will be registered with the document.
-   * @param relativePath TODO
-   */
-  addElementPath(tagName: string, relativePath?: string): void {
-    if (!this.elements.has(tagName)) {
-      this.elements.set(tagName, { documentPath: this.resolvePath(tagName, relativePath) });
-    } else {
-      throw new Error(`The path for element <${tagName}> has already been specified.`);
-    }
+  createHorizontalContainer(): IHorizontalContainerElement {
+    return this._createElement((<any> HorizontalContainerElement.prototype).is, this);
   }
 
-  setElementConstructor(tagName: string, elementConstructor: Function): void {
-    const elementEntry = this.elements.get(tagName);
-    if (elementEntry) {
-      elementEntry.elementConstructor = elementConstructor;
-    } else {
-      this.elements.set(tagName, { elementConstructor });
-    }
+  createPanel(state?: IPanelState): IPanelElement {
+    return this._createElement((<any> PanelElement.prototype).is, state);
   }
 
-  /**
-   * Import a custom element from a previously specified location.
-   *
-   * @param tagName The name of known custom element previously added to the factory via
-   *                [[addElementPath]].
-   * @return A promise that will be resolved with a custom element constructor function.
-   */
-  importElement(tagName: string): Promise<Function> {
-    return Promise.resolve().then(() => {
-      const elementEntry = this.elements.get(tagName);
-      if (!elementEntry) {
-        throw new Error(`Can't import <${tagName}> element because no path was specified.`);
-      } else {
-        return importHref(elementEntry.documentPath).then(() => {
-          // note: the <register-element> in the imported document will add the element constructor
-          // to this.elements
-          return this.elements.get(tagName).elementConstructor;
-        });
-      }
-    });
+  createSplitter(vertical?: boolean): ISplitterElement {
+    return this._createElement((<any> SplitterElement.prototype).is, vertical);
+  }
+
+  createCodeMirrorEditor(config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorElement {
+    return this._createElement((<any> CodeMirrorEditorElement.prototype).is, config);
+  }
+
+  createPage(state?: IPageState): IPageElement {
+    return this._createElement((<any> PageElement.prototype).is, state);
+  }
+
+  createPageSet(state?: IPageSetState): IPageSetElement {
+    return this._createElement((<any> PageSetElement.prototype).is, state);
+  }
+
+  createPageTree(state?: IPageTreeState): IPageTreeElement {
+    return this._createElement((<any> PageTreeElement.prototype).is, this, state);
+  }
+
+  createPageTreeItem(page: IPageElement): IPageTreeItemElement {
+    return this._createElement((<any> PageTreeItemElement.prototype).is, page);
+  }
+
+  createTreeView(): ITreeViewElement {
+    return this._createElement((<any> TreeViewElement.prototype).is);
+  }
+
+  createDirectoryTreeView(state?: IDirectoryTreeViewState): IDirectoryTreeViewElement {
+    return this._createElement((<any> DirectoryTreeViewElement.prototype).is, state);
+  }
+
+  createDirectoryTreeViewItem(): IDirectoryTreeViewItemElement {
+    return this._createElement((<any> DirectoryTreeViewItemElement.prototype).is);
   }
 
   /**
    * Create a new instance of a custom element.
    *
-   * If the element hasn't been imported yet it will be automatically imported.
-   * @param tagName The name of a known custom element.
-   * @return A promise that will be resolved with a new custom element instance.
+   * @param tagName The name of a previously registered custom element.
+   * @return A new custom element instance.
    */
-  async createElement<T extends HTMLElement>(tagName: string, ...args: any[]): Promise<T> {
-    let element = this.createElementSync.apply(this, arguments);
-    if (element === null) {
-      const elementConstructor = await this.importElement(tagName);
-      element = new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
-    }
-    return element;
-  }
-
-  createElementSync<T extends HTMLElement>(tagName: string, ...args: any[]): T {
-    let element: T = null;
-    const elementConstructor = this.elements.get(tagName).elementConstructor;
+  private _createElement(tagName: string, ...args: any[]): any {
+    const elementConstructor = this._elementRegistry.getElementConstructor(tagName);
     if (elementConstructor) {
       // invoke the constructor with the given args
       // TODO: in ES6 this can be simplified to Reflect.construct(elementConstructor, args),
       //       but have to wait for Chrome and Electron to support it.
-      element = new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
+      return new (Function.prototype.bind.apply(elementConstructor, [null].concat(args)));
     }
-    return element;
-  }
-
-  createCoreElement(tagName: string, ...args: any[]): Promise<HTMLElement> {
-    return this.createElement('debug-workbench-' + tagName, args);
+    throw new Error(`No constructor was found for element <${tagName}>.`);
   }
 }

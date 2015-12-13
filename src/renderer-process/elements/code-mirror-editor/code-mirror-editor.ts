@@ -3,7 +3,6 @@
 
 import * as pd from 'polymer-ts-decorators';
 import * as CodeMirror from 'codemirror';
-import { RendererContext } from '../../renderer-context';
 import 'codemirror/addon/scroll/simplescrollbars';
 // TODO: maybe lazy load this as needed, consider using CodeMirror.requireMode()
 // register modes for C, C++, Java and such
@@ -24,12 +23,6 @@ export class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBehaviors>(
 
   get editor(): CodeMirror.Editor {
     return this._editor;
-  }
-
-  static createSync(config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorElement {
-    return RendererContext.get().elementFactory.createElementSync<ICodeMirrorEditorElement>(
-      (<any> CodeMirrorEditorElement.prototype).is, config
-    );
   }
 
   factoryImpl(config?: CodeMirror.EditorConfiguration): void {

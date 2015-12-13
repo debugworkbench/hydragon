@@ -5,7 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { SplitterElement } from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
-import { RendererContext } from '../../renderer-context';
+import ElementFactory from '../element-factory';
 
 export type IBehaviors = SplittableBehavior & typeof Polymer.IronResizableBehavior;
 export type IVerticalContainerElement = VerticalContainerElement & IBehaviors;
@@ -26,14 +26,11 @@ export class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>
   @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
   resizable: boolean;
 
-  static createSync(state?: IVerticalContainerState): IVerticalContainerElement {
-    return RendererContext.get().elementFactory.createElementSync<IVerticalContainerElement>(
-      (<any> VerticalContainerElement.prototype).is, state
-    );
-  }
+  private _elementFactory: ElementFactory;
 
   /** Called after ready() with arguments passed to the element constructor function. */
-  factoryImpl(state?: IVerticalContainerState): void {
+  factoryImpl(elementFactory: ElementFactory, state?: IVerticalContainerState): void {
+    this._elementFactory = elementFactory;
     if (state) {
       this.width = (state.width !== undefined) ? state.width : this.width;
       this.height = (state.height !== undefined) ? state.height : this.height;
@@ -42,7 +39,7 @@ export class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>
   }
 
   attached(): void {
-    this.behavior.createSplitters();
+    this.behavior.createSplitters(this._elementFactory);
   }
 
   updateStyle(): void {

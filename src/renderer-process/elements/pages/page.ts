@@ -3,7 +3,6 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventEmitter } from '../../../common/events';
 
 export interface ILocalDOM {
@@ -46,12 +45,6 @@ export class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors>() {
       // this element, otherwise child elements will get stale size info for their parent elements.
       this.async(this.behavior.notifyResize, 1);
     }
-  }
-
-  static createSync(state?: IPageState): IPageElement {
-    return RendererContext.get().elementFactory.createElementSync<IPageElement>(
-      (<any> PageElement.prototype).is, state
-    );
   }
 
   created(): void {

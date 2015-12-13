@@ -30,13 +30,6 @@ export class SplitterElement extends Polymer.BaseClass() {
   private _mouseUpEventHandler: MouseEventHandler;
   private _lastPageCoord: number;
 
-  static createSync(vertical?: boolean): ISplitterElement {
-    return RendererContext.get().elementFactory.createElementSync<ISplitterElement>(
-      (<any> SplitterElement.prototype).is,
-      vertical
-    );
-  }
-
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(vertical?: boolean): void {
     this.orientation = vertical ? 'vertical' : 'horizontal';

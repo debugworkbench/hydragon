@@ -5,7 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { SplitterElement } from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
-import { RendererContext } from '../../renderer-context';
+import ElementFactory from '../element-factory';
 
 export type IBehaviors = SplittableBehavior & typeof Polymer.IronResizableBehavior;
 export type IHorizontalContainerElement = HorizontalContainerElement & IBehaviors;
@@ -18,16 +18,17 @@ export class HorizontalContainerElement extends Polymer.BaseClass<any, IBehavior
   @pd.property({ type: String, value: undefined })
   height: string;
 
-  static createSync(): IHorizontalContainerElement {
-    return RendererContext.get().elementFactory.createElementSync<IHorizontalContainerElement>(
-      (<any> HorizontalContainerElement.prototype).is
-    );
+  private _elementFactory: ElementFactory;
+
+  /** Called after ready() with arguments passed to the element constructor function. */
+  factoryImpl(elementFactory: ElementFactory): void {
+    this._elementFactory = elementFactory;
   }
 
   attached(): void {
     // FIXME: new splitters may need to be created whenever new children are attached,
     // it's not sufficient to just create them when this element is attached
-    this.behavior.createSplitters(true);
+    this.behavior.createSplitters(this._elementFactory, true);
   }
 
   updateStyle(): void {

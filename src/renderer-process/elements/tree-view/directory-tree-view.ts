@@ -2,7 +2,6 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
-import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 import { ITree, ITreeItem } from './tree-view';
 import { IDirectoryTreeViewItemElement } from './directory-tree-view-item';
@@ -25,12 +24,6 @@ export class DirectoryTreeViewElement extends Polymer.BaseClass() {
   /** Number of pixels to indent each level of the tree by. */
   @pd.property({ type: Number, value: 0 })
   indent: number;
-
-  static createSync(state?: IDirectoryTreeViewState): IDirectoryTreeViewElement {
-    return RendererContext.get().elementFactory.createElementSync<IDirectoryTreeViewElement>(
-      (<any> DirectoryTreeViewElement.prototype).is, state
-    );
-  }
 
   factoryImpl(state?: IDirectoryTreeViewState): void {
     if (state) {

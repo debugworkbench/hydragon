@@ -3,11 +3,11 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { RendererContext } from '../../renderer-context';
 import { IPageSetElement } from './page-set';
 import { IPageElement } from './page';
-import { PageTreeItemElement, IPageTreeItemElement } from './page-tree-item';
+import { IPageTreeItemElement } from './page-tree-item';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
+import ElementFactory from '../element-factory';
 
 export interface IPageTreeState {
   width?: string;
@@ -27,6 +27,7 @@ export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _pageItemMap: Map<IPageElement, IPageTreeItemElement>;
   private _selectedItem: IPageTreeItemElement;
   private _boundOnDidClickItem: (event: MouseEvent) => void;
+  private _elementFactory: ElementFactory;
 
   set pageSet(pageSet: IPageSetElement) {
     this._subscriptions.clear();
@@ -36,12 +37,6 @@ export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
     this._subscriptions.add(pageSet.onDidActivatePage(this._onPageSetDidActivatePage.bind(this)));
   }
 
-  static createSync(state?: IPageTreeState): IPageTreeElement {
-    return RendererContext.get().elementFactory.createElementSync<IPageTreeElement>(
-      (<any> PageTreeElement.prototype).is, state
-    );
-  }
-
   created(): void {
     this._subscriptions = new EventSubscriptionSet();
     this._itemSubscriptions = new WeakMap();
@@ -49,7 +44,8 @@ export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
     this._boundOnDidClickItem = this._onDidClickItem.bind(this);
   }
 
-  factoryImpl(state?: IPageTreeState): void {
+  factoryImpl(elementFactory: ElementFactory, state?: IPageTreeState): void {
+    this._elementFactory = elementFactory;
     if (state) {
       if (state.width !== undefined) {
         this.style.width = state.width;
@@ -75,7 +71,7 @@ export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
   }
 
   private _onPageSetDidAddPage(page: IPageElement): void {
-    const item = PageTreeItemElement.createSync(page);
+    const item = this._elementFactory.createPageTreeItem(page);
     this._itemSubscriptions.set(item, item.onDidTap(this._boundOnDidClickItem));
     this._pageItemMap.set(page, item);
     // TODO: figure out the sort order and set the order CSS property on the item so flexbox

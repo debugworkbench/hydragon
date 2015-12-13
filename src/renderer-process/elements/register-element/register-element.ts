@@ -35,7 +35,7 @@ export class RegisterElementElement extends Polymer.BaseClass() {
         path.isAbsolute(this.path) ? this.path : path.resolve(path.dirname(pathname), this.path);
 
       const elementConstructor = require(scriptPath).register();
-      RendererContext.get().elementFactory.setElementConstructor(
+      RendererContext.get().elementRegistry.setElementConstructor(
         elementConstructor.prototype.is, elementConstructor
       );
     }

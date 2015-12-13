@@ -36,6 +36,7 @@
         "renderer-process/elements/vertical-container/vertical-container.ts",
         "renderer-process/elements/workspace/workspace.ts",
         "renderer-process/elements/element-factory.ts",
+        "renderer-process/elements/element-registry.ts",
         "renderer-process/elements/interfaces.ts",
         "renderer-process/init-window.ts",
         "renderer-process/renderer-context.ts",

@@ -3,9 +3,9 @@
 
 import * as path from 'path';
 import * as remote from 'remote';
-import { ElementFactory } from './elements/element-factory';
-// NOTE: WorkspaceElement must be lazy-loaded (see intialize() for more info).
-import * as WorkspaceModule from './elements/workspace/workspace';
+import ElementRegistry from './elements/element-registry';
+import ElementFactory from './elements/element-factory';
+import { IWorkspaceElement } from './elements/workspace/workspace';
 import { importHref } from './utils';
 
 export const enum Cursor {
@@ -19,8 +19,9 @@ export const enum Cursor {
 export class RendererContext {
   private _cursorOverlay: HTMLElement;
 
+  elementRegistry: ElementRegistry;
   elementFactory: ElementFactory;
-  workspace: WorkspaceModule.IWorkspaceElement;
+  workspace: IWorkspaceElement;
 
   /** Create the renderer context for the current process. */
   static async create(): Promise<RendererContext> {
@@ -36,59 +37,55 @@ export class RendererContext {
   }
 
   constructor() {
-    this.elementFactory = new ElementFactory();
-    this.elementFactory.addElementPath(
+    this.elementRegistry = new ElementRegistry();
+    this.elementRegistry.addElementPath(
       'debug-workbench-workspace', path.posix.join('lib/renderer-process/elements/workspace', 'workspace.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-panel', path.posix.join('lib/renderer-process/elements/panel', 'panel.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-horizontal-container',
       path.posix.join('lib/renderer-process/elements/horizontal-container', 'horizontal-container.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-vertical-container',
       path.posix.join('lib/renderer-process/elements/vertical-container', 'vertical-container.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-splitter', path.posix.join('lib/renderer-process/elements/splitter', 'splitter.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-page', path.posix.join('lib/renderer-process/elements/pages', 'page.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-page-set', path.posix.join('lib/renderer-process/elements/pages', 'page-set.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-page-tree', path.posix.join('lib/renderer-process/elements/pages', 'page-tree.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'debug-workbench-page-tree-item', path.posix.join('lib/renderer-process/elements/pages', 'page-tree-item.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'code-mirror-editor', path.posix.join('lib/renderer-process/elements/code-mirror-editor', 'code-mirror-editor.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'hydragon-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'tree-view.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'hydragon-directory-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view.html')
     );
-    this.elementFactory.addElementPath(
+    this.elementRegistry.addElementPath(
       'hydragon-directory-tree-view-item', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view-item.html')
     );
   }
 
   async initialize(): Promise<void> {
     await importHref('app://bower_components/dependencies_bundle.html');
-    await this.elementFactory.initialize();
-    // WorkspaceElement can't be required until the Polymer dependencies have been loaded,
-    // if it's required on import then the decorators that apply behaviors won't work as
-    // expected because the Polymer behaviors haven't been loaded yet at that point and
-    // you'll end up with undefined behaviors in WorkspaceElement.prototype.behaviors.
-    const workspace: typeof WorkspaceModule = require('./elements/workspace/workspace');
-    this.workspace = workspace.WorkspaceElement.createSync();
+    await this.elementRegistry.initialize();
+    this.elementFactory = new ElementFactory(this.elementRegistry);
+    this.workspace = this.elementFactory.createWorkspace();
     document.body.appendChild(this.workspace);
   }
 

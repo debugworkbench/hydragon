@@ -3,16 +3,9 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { RendererContext } from '../../renderer-context';
-import { HorizontalContainerElement, IHorizontalContainerElement } from '../horizontal-container/horizontal-container';
-import { VerticalContainerElement } from '../vertical-container/vertical-container';
-import { PanelElement } from '../panel/panel';
-import { PageElement } from '../pages/page';
-import { PageSetElement } from '../pages/page-set';
-import { PageTreeElement } from '../pages/page-tree';
-import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from '../code-mirror-editor/code-mirror-editor';
+import { IHorizontalContainerElement } from '../horizontal-container/horizontal-container';
 import { DirectoryTree } from '../tree-view/directory-tree';
-import { DirectoryTreeViewElement } from '../tree-view/directory-tree-view';
+import ElementFactory from '../element-factory';
 
 export type IBehaviors = typeof Polymer.IronResizableBehavior;
 export type IWorkspaceElement = WorkspaceElement & IBehaviors;
@@ -23,39 +16,33 @@ export class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _rootContainer: IHorizontalContainerElement;
   private _directoryTree: DirectoryTree;
 
-  static createSync(): IWorkspaceElement {
-    return RendererContext.get().elementFactory.createElementSync<IWorkspaceElement>(
-      (<any> WorkspaceElement.prototype).is
-    );
-  }
-
   /** Called after ready() with arguments passed to the element constructor function. */
-  factoryImpl(): void {
-    this._rootContainer = HorizontalContainerElement.createSync();
-    const leftContainer = VerticalContainerElement.createSync({ width: '300px', resizable: true });
-    const rightContainer = VerticalContainerElement.createSync({ resizable: true });
-    const pageTreePanel = PanelElement.createSync({ height: '300px', resizable: true });
-    const dirTreePanel = PanelElement.createSync({ height: '300px', resizable: true });
-    const documentPanel = PanelElement.createSync();
-    const pageSet = PageSetElement.createSync({ height: '100%' });
-    const pageTree = PageTreeElement.createSync({ height: '100%' });
+  factoryImpl(elementFactory: ElementFactory): void {
+    this._rootContainer = elementFactory.createHorizontalContainer();
+    const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
+    const rightContainer = elementFactory.createVerticalContainer({ resizable: true });
+    const pageTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
+    const dirTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
+    const documentPanel = elementFactory.createPanel();
+    const pageSet = elementFactory.createPageSet({ height: '100%' });
+    const pageTree = elementFactory.createPageTree({ height: '100%' });
     pageTree.pageSet = pageSet;
-    const page1 = PageElement.createSync({ title: 'Test Page' });
-    const page2 = PageElement.createSync({ title: 'Test Page 2' });
-    const statusPanel = PanelElement.createSync({ height: '20px' });
+    const page1 = elementFactory.createPage({ title: 'Test Page' });
+    const page2 = elementFactory.createPage({ title: 'Test Page 2' });
+    const statusPanel = elementFactory.createPanel({ height: '20px' });
 
-    const editorElement1 = CodeMirrorEditorElement.createSync({
+    const editorElement1 = elementFactory.createCodeMirrorEditor({
       value: 'int main(int argc, char** argv) {}',
       mode: 'text/x-c++src'
     });
-    const editorElement2 = CodeMirrorEditorElement.createSync({
+    const editorElement2 = elementFactory.createCodeMirrorEditor({
       value: 'int main(int argc, char** argv) { return 0; }',
       mode: 'text/x-c++src'
     });
     statusPanel.innerText = 'Status';
 
     this._directoryTree = new DirectoryTree();
-    const dirTreeView = DirectoryTreeViewElement.createSync({ tree: this._directoryTree, indent: 25 });
+    const dirTreeView = elementFactory.createDirectoryTreeView({ tree: this._directoryTree, indent: 25 });
 
     Polymer.dom(page1).appendChild(editorElement1);
     Polymer.dom(page2).appendChild(editorElement2);

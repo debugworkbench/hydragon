@@ -2,7 +2,6 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
-import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 
 export interface ITree {
@@ -50,12 +49,6 @@ export class TreeViewElement extends Polymer.BaseClass() {
 
   private _itemIndices: Map<ITreeItem, number>;
   private _subscriptions: EventSubscriptionSet;
-
-  static createSync(): ITreeViewElement {
-    return RendererContext.get().elementFactory.createElementSync<ITreeViewElement>(
-      (<any> TreeViewElement.prototype).is
-    );
-  }
 
   created(): void {
     this._itemIndices = new Map();

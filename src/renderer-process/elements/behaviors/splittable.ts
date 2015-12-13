@@ -1,8 +1,5 @@
 import { SplitterElement } from '../splitter/splitter';
-
-function self(element: SplittableBehavior): ISplittableBehavior {
-  return <ISplittableBehavior> element;
-}
+import ElementFactory from '../element-factory';
 
 /** @return `true` iff at least one of the elements in the given array has the resizable attribute set. */
 function containsResizableElement(elements: HTMLElement[], startIndex: number): boolean {
@@ -14,13 +11,13 @@ function containsResizableElement(elements: HTMLElement[], startIndex: number): 
   return false;
 }
 
-export type ISplittableBehavior = SplittableBehavior & polymer.Base<any>;
+export type ISplittableBehavior = SplittableBehavior;
 
 /**
  * A behavior that can be used to add splitter elements between an element's children.
  */
-export class SplittableBehavior {
-  createSplitters(vertical?: boolean): void {
+export class SplittableBehavior extends Polymer.BaseClass() {
+  createSplitters(elementFactory: ElementFactory, vertical?: boolean): void {
     // insert splitters between child elements in the light DOM
     const lightDom = Polymer.dom(<any> this);
     const children = lightDom.children;
@@ -31,7 +28,7 @@ export class SplittableBehavior {
         // previous sibling must be resizable, and at least one of the following siblings must
         // be resizable, if this is not the case there's no point in creating the splitter.
         if (children[i - 1].hasAttribute('resizable') && containsResizableElement(children, i)) {
-          lightDom.insertBefore(SplitterElement.createSync(vertical), children[i]);
+          lightDom.insertBefore(elementFactory.createSplitter(vertical), children[i]);
           ++i; // adjust the iterator to account for the newly inserted splitter element
         }
       }

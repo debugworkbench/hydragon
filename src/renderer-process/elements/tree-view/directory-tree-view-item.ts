@@ -2,7 +2,6 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
-import { RendererContext } from '../../renderer-context';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 import { ITree, ITreeItem } from './tree-view';
 
@@ -22,12 +21,6 @@ export class DirectoryTreeViewItemElement extends Polymer.BaseClass<ILocalDOM>()
   item: ITreeItem;
   @pd.property({ type: Number, value: 0, observer: '_observeIndent' })
   indent: number;
-
-  static createSync(): IDirectoryTreeViewItemElement {
-    return RendererContext.get().elementFactory.createElementSync<IDirectoryTreeViewItemElement>(
-      (<any> DirectoryTreeViewItemElement.prototype).is
-    );
-  }
 
   @pd.listener('tap')
   private _onTap(e: MouseEvent): void {
