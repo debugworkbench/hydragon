@@ -25,7 +25,7 @@ export interface IPageState {
 }
 
 @pd.is('debug-workbench-page')
-@pd.behavior(Polymer.IronResizableBehavior)
+@pd.behaviors(() => [Polymer.IronResizableBehavior])
 export class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors>() {
   @pd.property({ type: String, value: '' })
   title: string;

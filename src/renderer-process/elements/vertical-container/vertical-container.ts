@@ -17,7 +17,7 @@ export interface IVerticalContainerState {
 }
 
 @pd.is('debug-workbench-vertical-container')
-@pd.behaviors([SplittableBehavior, Polymer.IronResizableBehavior])
+@pd.behaviors(() => [SplittableBehavior, Polymer.IronResizableBehavior])
 export class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;

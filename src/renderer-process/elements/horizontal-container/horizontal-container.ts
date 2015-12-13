@@ -11,7 +11,7 @@ export type IBehaviors = SplittableBehavior & typeof Polymer.IronResizableBehavi
 export type IHorizontalContainerElement = HorizontalContainerElement & IBehaviors;
 
 @pd.is('debug-workbench-horizontal-container')
-@pd.behaviors([SplittableBehavior, Polymer.IronResizableBehavior])
+@pd.behaviors(() => [SplittableBehavior, Polymer.IronResizableBehavior])
 export class HorizontalContainerElement extends Polymer.BaseClass<any, IBehaviors>() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;

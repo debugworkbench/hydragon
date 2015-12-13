@@ -17,7 +17,7 @@ export type IBehaviors = typeof Polymer.IronResizableBehavior;
 export type ICodeMirrorEditorElement = CodeMirrorEditorElement & IBehaviors;
 
 @pd.is('code-mirror-editor')
-@pd.behavior(Polymer.IronResizableBehavior)
+@pd.behaviors(() => [Polymer.IronResizableBehavior])
 export class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _editorConfig: CodeMirror.EditorConfiguration;
   private _editor: CodeMirror.Editor;

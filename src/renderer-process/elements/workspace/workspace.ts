@@ -18,7 +18,7 @@ export type IBehaviors = typeof Polymer.IronResizableBehavior;
 export type IWorkspaceElement = WorkspaceElement & IBehaviors;
 
 @pd.is('debug-workbench-workspace')
-@pd.behavior(Polymer.IronResizableBehavior)
+@pd.behaviors(() => [Polymer.IronResizableBehavior])
 export class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _rootContainer: IHorizontalContainerElement;
   private _directoryTree: DirectoryTree;
