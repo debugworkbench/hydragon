@@ -25,7 +25,7 @@ enum EventId {
 export type IPageSetElement = PageSetElement;
 
 @pd.is('debug-workbench-page-set')
-export class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
+export default class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
   width: string;
   height: string;
 

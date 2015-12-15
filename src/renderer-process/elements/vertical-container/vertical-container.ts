@@ -3,7 +3,7 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { SplitterElement } from '../splitter/splitter';
+import SplitterElement from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
 import ElementFactory from '../element-factory';
 
@@ -18,7 +18,7 @@ export interface IVerticalContainerState {
 
 @pd.is('debug-workbench-vertical-container')
 @pd.behaviors(() => [SplittableBehavior, Polymer.IronResizableBehavior])
-export class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>() implements ILayoutContainer {
+export default class VerticalContainerElement extends Polymer.BaseClass<any, IBehaviors>() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;
   @pd.property({ type: String, value: undefined })

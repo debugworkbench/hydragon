@@ -1,4 +1,4 @@
-import { SplitterElement } from '../splitter/splitter';
+import SplitterElement from '../splitter/splitter';
 import ElementFactory from '../element-factory';
 
 /** @return `true` iff at least one of the elements in the given array has the resizable attribute set. */

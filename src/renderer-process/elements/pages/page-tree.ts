@@ -20,7 +20,7 @@ export type IPageTreeElement = PageTreeElement & IBehaviors;
 @pd.is('debug-workbench-page-tree')
 @pd.behaviors(() => [Polymer.IronControlState])
 @pd.hostAttributes({ 'tabindex': '0' })
-export class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
+export default class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _subscriptions: EventSubscriptionSet;
   private _itemSubscriptions: WeakMap<IPageTreeItemElement, EventSubscription>;
   private _pageSet: IPageSetElement;

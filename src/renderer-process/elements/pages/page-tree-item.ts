@@ -20,7 +20,7 @@ enum EventId {
 export type IPageTreeItemElement = PageTreeItemElement;
 
 @pd.is('debug-workbench-page-tree-item')
-export class PageTreeItemElement extends Polymer.BaseClass<ILocalDOM>() {
+export default class PageTreeItemElement extends Polymer.BaseClass<ILocalDOM>() {
   private _emitter: EventEmitter<EventId>;
   private _page: IPageElement;
 

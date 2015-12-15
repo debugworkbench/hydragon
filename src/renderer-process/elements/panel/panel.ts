@@ -13,7 +13,7 @@ export interface IPanelState {
 }
 
 @pd.is('debug-workbench-panel')
-export class PanelElement extends Polymer.BaseClass() implements ILayoutContainer {
+export default class PanelElement extends Polymer.BaseClass() implements ILayoutContainer {
   @pd.property({ type: String, value: undefined })
   width: string;
   @pd.property({ type: String, value: undefined })

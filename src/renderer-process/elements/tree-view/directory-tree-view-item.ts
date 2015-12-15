@@ -16,7 +16,7 @@ export type IDirectoryTreeViewItemElement = DirectoryTreeViewItemElement;
 @pd.is('hydragon-directory-tree-view-item')
 @pd.hostAttributes({ 'tabindex': '0' })
 @pd.observers(['_observeExpanded(item.expanded)'])
-export class DirectoryTreeViewItemElement extends Polymer.BaseClass<ILocalDOM>() {
+export default class DirectoryTreeViewItemElement extends Polymer.BaseClass<ILocalDOM>() {
   @pd.property({ type: Object })
   item: ITreeItem;
   @pd.property({ type: Number, value: 0, observer: '_observeIndent' })

@@ -15,7 +15,7 @@ export type IDirectoryTreeViewElement = DirectoryTreeViewElement;
 
 @pd.is('hydragon-directory-tree-view')
 @pd.hostAttributes({ 'tabindex': '0' })
-export class DirectoryTreeViewElement extends Polymer.BaseClass() {
+export default class DirectoryTreeViewElement extends Polymer.BaseClass() {
   @pd.property({ type: Object })
   tree: ITree;
   /** This should never be set directly, it will be managed by the child TreeViewElement. */

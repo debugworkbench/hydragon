@@ -3,19 +3,19 @@
 
 import * as path from 'path';
 import ElementRegistry from './element-registry';
-import { WorkspaceElement, IWorkspaceElement } from './workspace/workspace';
-import { VerticalContainerElement, IVerticalContainerElement, IVerticalContainerState } from './vertical-container/vertical-container';
-import { HorizontalContainerElement, IHorizontalContainerElement } from './horizontal-container/horizontal-container';
-import { PanelElement, IPanelElement, IPanelState } from './panel/panel';
-import { SplitterElement, ISplitterElement } from './splitter/splitter';
-import { CodeMirrorEditorElement, ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
-import { PageElement, IPageElement, IPageState } from './pages/page';
-import { PageSetElement, IPageSetElement, IPageSetState } from './pages/page-set';
-import { PageTreeElement, IPageTreeElement, IPageTreeState } from './pages/page-tree';
-import { PageTreeItemElement, IPageTreeItemElement } from './pages/page-tree-item';
-import { TreeViewElement, ITreeViewElement } from './tree-view/tree-view';
-import { DirectoryTreeViewElement, IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
-import { DirectoryTreeViewItemElement, IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
+import WorkspaceElement, { IWorkspaceElement } from './workspace/workspace';
+import VerticalContainerElement, { IVerticalContainerElement, IVerticalContainerState } from './vertical-container/vertical-container';
+import HorizontalContainerElement, { IHorizontalContainerElement } from './horizontal-container/horizontal-container';
+import PanelElement, { IPanelElement, IPanelState } from './panel/panel';
+import SplitterElement, { ISplitterElement } from './splitter/splitter';
+import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
+import PageElement, { IPageElement, IPageState } from './pages/page';
+import PageSetElement, { IPageSetElement, IPageSetState } from './pages/page-set';
+import PageTreeElement, { IPageTreeElement, IPageTreeState } from './pages/page-tree';
+import PageTreeItemElement, { IPageTreeItemElement } from './pages/page-tree-item';
+import TreeViewElement, { ITreeViewElement } from './tree-view/tree-view';
+import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
+import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 
 /**
  * Creates new instances of custom elements.

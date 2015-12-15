@@ -37,7 +37,7 @@ export type ITreeViewElement = TreeViewElement;
 // FIXME: This doesn't have a visual representation of any kind, perhaps it's better off being a behavior?
 //        As a behavior there'd be less binding required to get it working.
 @pd.is('hydragon-tree-view')
-export class TreeViewElement extends Polymer.BaseClass() {
+export default class TreeViewElement extends Polymer.BaseClass() {
   @pd.property({ type: Object, observer: '_treeChanged' })
   tree: ITree;
   /** Array that will contain the result of flattening the current tree into a list. */
