@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as fs from 'fs';
+import * as fs from '../../../common/fs-promisified';
 import * as path from 'path';
 import { ITree, ITreeItem } from './tree-view';
 import { EventSubscription, EventSubscriptionSet, EventEmitter } from '../../../common/events';
@@ -26,7 +26,7 @@ export class DirectoryTree implements ITree {
   }
 
   async addDirectory(absolutePath: string): Promise<void> {
-    const dirStat = await stat(absolutePath);
+    const dirStat = await fs.stat(absolutePath);
     if (!dirStat.isDirectory()) {
       throw new Error(`"${absolutePath}" is not a directory.`);
     }
@@ -84,7 +84,7 @@ export class DirectoryTree implements ITree {
 }
 
 async function getDirEntries(dirItem: DirectoryTreeItem): Promise<Array<DirectoryTreeItem>> {
-  let entries = await readdir(dirItem.path);
+  let entries = await fs.readdir(dirItem.path);
   entries = entries.map(entry => path.join(dirItem.path, entry));
   const entryStats = await getStats(entries);
   const items: DirectoryTreeItem[] = [];
@@ -111,23 +111,7 @@ function compareDirEntries(a: ITreeItem, b: ITreeItem): number {
 }
 
 async function getStats(entries: string[]): Promise<Array<fs.Stats>> {
-  return Promise.all(entries.map((entry) => stat(entry)));
-}
-
-function readdir(dirPath: string): Promise<Array<string>> {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirPath, (err, files) => {
-      err ? reject(err) : resolve(files);
-    });
-  });
-}
-
-function stat(path: string): Promise<fs.Stats> {
-  return new Promise((resolve, reject) => {
-    fs.stat(path, (err, stats) => {
-      err ? reject(err) : resolve(stats);
-    });
-  });
+  return Promise.all(entries.map((entry) => fs.stat(entry)));
 }
 
 interface IDirectoryTreeItemOptions {

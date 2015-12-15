@@ -25,6 +25,7 @@
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
   },
   "dependencies": {
-    "codemirror": "^5.8.0"
+    "codemirror": "^5.8.0",
+    "thenify": "^3.1.1"
   }
 }

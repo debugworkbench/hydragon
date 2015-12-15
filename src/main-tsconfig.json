@@ -14,6 +14,7 @@
         "../typings/github-electron/github-electron.d.ts",
         "../typings/github-electron/github-electron-main.d.ts",
         "common/events.ts",
+        "common/fs-promisified.d.ts",
         "main-process/application.ts",
         "main-process/application-window.ts",
         "main-process/main.ts",

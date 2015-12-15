@@ -19,6 +19,7 @@
         "../typings/polymer/polymer-typescript-helpers.d.ts",
         "../typings/polymer-elements/index.d.ts",
         "common/events.ts",
+        "common/fs-promisified.d.ts",
         "renderer-process/elements/behaviors/splittable.ts",
         "renderer-process/elements/code-mirror-editor/code-mirror-editor.ts",
         "renderer-process/elements/horizontal-container/horizontal-container.ts",

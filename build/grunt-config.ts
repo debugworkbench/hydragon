@@ -156,6 +156,15 @@ export = function(grunt: IGrunt) {
       }
     },
     'sync': {
+      default: {
+        files: [{
+          cwd: '../src',
+          src: [
+            'common/fs-promisified.js'
+          ],
+          dest: '../lib'
+        }]
+      },
       elements: {
         files: [{
           cwd: '../src',
@@ -179,6 +188,6 @@ export = function(grunt: IGrunt) {
   });
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
-  grunt.registerTask('build', ['tsc', 'babel']);
+  grunt.registerTask('build', ['tsc', 'sync:default', 'babel']);
   grunt.registerTask('default', ['lint', 'build']);
 };
