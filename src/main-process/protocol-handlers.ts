@@ -4,6 +4,7 @@
 import * as ProtocolModule from 'protocol';
 import * as url from 'url';
 import * as path from 'path';
+import UriPathResolver from '../common/uri-path-resolver';
 
 type URLRequest = GitHubElectron.URLRequest;
 type FileProtocolHandlerCallback = GitHubElectron.FileProtocolHandlerCallback;
@@ -16,24 +17,21 @@ type FileProtocolHandlerCallback = GitHubElectron.FileProtocolHandlerCallback;
 export class AppProtocolHandler {
   static scheme = 'app';
 
-  constructor(private rootPath: string) {
+  constructor(private uriPathResolver: UriPathResolver) {
     // NOTE: The protocol module is lazy loaded because it can only be loaded after Electron
     // has emitted the app.ready event, and using TypeScript's standard top-level imports
     // makes it very easy to violate this requirement.
     const protocol: typeof ProtocolModule = require('protocol');
-    protocol.registerFileProtocol(AppProtocolHandler.scheme, this.resolve.bind(this), (error: string) => {
-      if (error) {
-        console.log(error);
-      } else {
-        protocol.registerStandardSchemes([AppProtocolHandler.scheme]);
+    protocol.registerFileProtocol(
+      AppProtocolHandler.scheme,
+      (request, callback) => callback(this.uriPathResolver.resolve(request.url)),
+      (error: string) => {
+        if (error) {
+          console.log(error);
+        } else {
+          protocol.registerStandardSchemes([AppProtocolHandler.scheme]);
+        }
       }
-    });
-  }
-
-  resolve(request: URLRequest, callback: FileProtocolHandlerCallback): void {
-    // strip 'scheme://' from the URL leaving just the path
-    const relativePath = request.url.substr(AppProtocolHandler.scheme.length + 3);
-    const filePath = path.join(this.rootPath, relativePath);
-    callback(filePath);
+    );
   }
 }
