@@ -1,0 +1,76 @@
+{
+  "bundles":
+  [
+    {
+      "baseUri": "app:///lib/renderer-process/elements",
+      "elements":
+      [
+        {
+          "tag": "debug-workbench-workspace",
+          "template": "workspace/workspace.html",
+          "script": "workspace/workspace"
+        },
+        {
+          "tag": "debug-workbench-panel",
+          "template": "panel/panel.html",
+          "script": "panel/panel"
+        },
+        {
+          "tag": "debug-workbench-horizontal-container",
+          "template": "horizontal-container/horizontal-container.html",
+          "script": "horizontal-container/horizontal-container"
+        },
+        {
+          "tag": "debug-workbench-vertical-container",
+          "template": "vertical-container/vertical-container.html",
+          "script": "vertical-container/vertical-container"
+        },
+        {
+          "tag": "debug-workbench-splitter",
+          "template": "splitter/splitter.html",
+          "script": "splitter/splitter"
+        },
+        {
+          "tag": "debug-workbench-page",
+          "template": "pages/page.html",
+          "script": "pages/page"
+        },
+        {
+          "tag": "debug-workbench-page-set",
+          "template": "pages/page-set.html",
+          "script": "pages/page-set"
+        },
+        {
+          "tag": "debug-workbench-page-tree",
+          "template": "pages/page-tree.html",
+          "script": "pages/page-tree"
+        },
+        {
+          "tag": "debug-workbench-page-tree-item",
+          "template": "pages/page-tree-item.html",
+          "script": "pages/page-tree-item"
+        },
+        {
+          "tag": "code-mirror-editor",
+          "template": "code-mirror-editor/code-mirror-editor.html",
+          "script": "code-mirror-editor/code-mirror-editor"
+        },
+        {
+          "tag": "hydragon-tree-view",
+          "template": "tree-view/tree-view.html",
+          "script": "tree-view/tree-view"
+        },
+        {
+          "tag": "hydragon-directory-tree-view",
+          "template": "tree-view/directory-tree-view.html",
+          "script": "tree-view/directory-tree-view"
+        },
+        {
+          "tag": "hydragon-directory-tree-view-item",
+          "template": "tree-view/directory-tree-view-item.html",
+          "script": "tree-view/directory-tree-view-item"
+        }
+      ]
+    }
+  ]
+}

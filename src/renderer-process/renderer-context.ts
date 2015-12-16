@@ -3,10 +3,11 @@
 
 import * as path from 'path';
 import * as remote from 'remote';
-import ElementRegistry from './elements/element-registry';
+import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
 import { IWorkspaceElement } from './elements/workspace/workspace';
 import { importHref } from './utils';
+import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
 
 export const enum Cursor {
@@ -23,6 +24,7 @@ export class RendererContext {
   elementRegistry: ElementRegistry;
   elementFactory: ElementFactory;
   workspace: IWorkspaceElement;
+  rootPath: string;
 
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
@@ -37,54 +39,16 @@ export class RendererContext {
     return (<any> global).debugWorkbench;
   }
 
-  constructor() {
-    this.elementRegistry = new ElementRegistry();
-    this.elementRegistry.addElementPath(
-      'debug-workbench-workspace', path.posix.join('lib/renderer-process/elements/workspace', 'workspace.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-panel', path.posix.join('lib/renderer-process/elements/panel', 'panel.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-horizontal-container',
-      path.posix.join('lib/renderer-process/elements/horizontal-container', 'horizontal-container.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-vertical-container',
-      path.posix.join('lib/renderer-process/elements/vertical-container', 'vertical-container.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-splitter', path.posix.join('lib/renderer-process/elements/splitter', 'splitter.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-page', path.posix.join('lib/renderer-process/elements/pages', 'page.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-page-set', path.posix.join('lib/renderer-process/elements/pages', 'page-set.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-page-tree', path.posix.join('lib/renderer-process/elements/pages', 'page-tree.html')
-    );
-    this.elementRegistry.addElementPath(
-      'debug-workbench-page-tree-item', path.posix.join('lib/renderer-process/elements/pages', 'page-tree-item.html')
-    );
-    this.elementRegistry.addElementPath(
-      'code-mirror-editor', path.posix.join('lib/renderer-process/elements/code-mirror-editor', 'code-mirror-editor.html')
-    );
-    this.elementRegistry.addElementPath(
-      'hydragon-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'tree-view.html')
-    );
-    this.elementRegistry.addElementPath(
-      'hydragon-directory-tree-view', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view.html')
-    );
-    this.elementRegistry.addElementPath(
-      'hydragon-directory-tree-view-item', path.posix.join('lib/renderer-process/elements/tree-view', 'directory-tree-view-item.html')
-    );
+  constructor(config: IAppWindowConfig) {
+    this.rootPath = config.rootPath;
   }
 
   async initialize(): Promise<void> {
-    await importHref('app://bower_components/dependencies_bundle.html');
-    await this.elementRegistry.initialize();
+    await importHref('app:///bower_components/dependencies_bundle.html');
+    const uriPathResolver = new UriPathResolver(this.rootPath);
+    const elementManifestLoader = new ElementManifestLoader(uriPathResolver);
+    this.elementRegistry = new ElementRegistry(uriPathResolver, elementManifestLoader);
+    await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
     this.elementFactory = new ElementFactory(this.elementRegistry);
     this.workspace = this.elementFactory.createWorkspace();
     document.body.appendChild(this.workspace);

@@ -2,102 +2,114 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
-import { register as registerRegisterElement } from './register-element/register-element';
+import * as fs from '../../common/fs-promisified';
 import { importHref } from '../utils';
+import UriPathResolver from '../../common/uri-path-resolver';
 
-interface IElementMapEntry {
-  /** Absolute path to the element's main .html file. */
-  documentPath?: string;
-  /** Element constructor (for Polymer-based elements this is the function returned by `Polymer()`). */
-  elementConstructor?: Function;
+export interface IElementBundleEntry {
+  /** The name the element will be registered under. */
+  tag: string;
+  /** Path to the .html file containing the element template, relative to the bundle's `baseUri`. */
+  template: string;
+  /**
+   * Path to the .js file containing the element template (extension should generally be omitted),
+   * relative to the bundle's `baseUri`.
+   */
+  script: string;
+}
+
+export interface IElementBundle {
+  baseUri: string;
+  elements: IElementBundleEntry[];
+}
+
+export interface IElementManifest {
+  bundles: IElementBundle[];
+}
+
+/** Loads an element manifest from disk. */
+export class ElementManifestLoader {
+  constructor(private uriPathResolver: UriPathResolver) {
+  }
+
+  async loadFromUri(uri: string): Promise<IElementManifest> {
+    const fileContents = await fs.readFile(this.uriPathResolver.resolve(uri), 'utf8');
+    return JSON.parse(fileContents);
+  }
+}
+
+function importElementPrototype(basePath: string, entry: IElementBundleEntry): Object {
+  const modulePath = path.join(basePath, entry.script);
+  const elementClass = require(modulePath).default;
+  // sanity check
+  if (elementClass.prototype.is !== entry.tag) {
+    throw new Error(
+      `Tag <${entry.tag}> doesn't match the value of the element 'is' property in '${modulePath}'!`
+    );
+  }
+  return elementClass.prototype;
 }
 
 /**
  * Imports and registers custom elements.
  *
- * Elements can be added to the registry in two ways. Directly, by specifying a path to the
- * element's main `.html` file (@see [[addElementPath]]). Or, indirectly, by being
- * referenced in an HTML import. Either way, the element is registered with the document
- * by the `register-element` custom element, and the element constructor is stored in the
- * factory.
+ * NOTE: In order to be compatible with the registry an element class must be the default export
+ *       of the script/module it's implemented in.
  */
 export default class ElementRegistry {
-  private elements = new Map</* tagName: */string, IElementMapEntry>();
+  private _elements = new Map</* tagName: */string, /* constructor: */Function>();
 
-  /**
-   * Initialize the factory.
-   *
-   * All registered custom elements will be imported.
-   * @return A promise that will be resolved when initialization completes.
-   */
-  async initialize(): Promise<void> {
-    await importHref(this.resolvePath('register-element'));
-    registerRegisterElement();
-    await this._importAllElements();
+  constructor(private uriPathResolver: UriPathResolver, private manifestLoader: ElementManifestLoader) {
   }
 
-  private async _importAllElements(): Promise<any[]> {
+  /**
+   * Import and register all the elements in the given bundle.
+   *
+   * @return A promise that will be resolved when all elements in the bundle are registered.
+   */
+  importBundle(bundle: IElementBundle): Promise<void> {
+    const basePath = this.uriPathResolver.resolve(bundle.baseUri);
     const promises: Promise<any>[] = [];
-    for (const elementTag of this.elements.keys()) {
-      promises.push(this.importElement(elementTag));
+    for (const entry of bundle.elements) {
+      const promise = Promise.resolve()
+      .then(() => importHref(path.join(basePath, entry.template)))
+      .then(() => {
+        const elementConstructor = Polymer<any>(importElementPrototype(basePath, entry));
+        this._elements.set(entry.tag, elementConstructor);
+      });
+      promises.push(promise);
     }
-    return Promise.all(promises);
-  }
-
-  resolvePath(tagName: string, relativePath?: string): string {
-    if (relativePath) {
-      return 'app://' + path.posix.normalize(relativePath);
-    } else {
-      return `app://lib/renderer-process/elements/${tagName}/${tagName}.html`;
-    }
+    return Promise.all(promises).then(() => Promise.resolve());
   }
 
   /**
-   * Set the path to an element's main `.html` file.
+   * Import and register all the elements in the given manifest.
    *
-   * @param tagName The name under which the custom element will be registered with the document.
-   * @param relativePath TODO
+   * @return A promise that will be resolved when all elements in the manifest are registered.
    */
-  addElementPath(tagName: string, relativePath?: string): void {
-    if (!this.elements.has(tagName)) {
-      this.elements.set(tagName, { documentPath: this.resolvePath(tagName, relativePath) });
-    } else {
-      throw new Error(`The path for element <${tagName}> has already been specified.`);
-    }
+  importManifest(manifest: IElementManifest): Promise<void> {
+    const promises = manifest.bundles.map(bundle => this.importBundle(bundle));
+    return Promise.all(promises).then(() => Promise.resolve());
   }
 
-  setElementConstructor(tagName: string, elementConstructor: Function): void {
-    const elementEntry = this.elements.get(tagName);
-    if (elementEntry) {
-      elementEntry.elementConstructor = elementConstructor;
-    } else {
-      this.elements.set(tagName, { elementConstructor });
-    }
+  /**
+   * Import and register all the elements in the given manifest file.
+   *
+   * @return A promise that will be resolved when all elements in the manifest are registered.
+   */
+  importManifestFromUri(uri: string): Promise<void> {
+    return this.manifestLoader.loadFromUri(uri)
+    .then(manifest => this.importManifest(manifest));
   }
 
+  /**
+   * Find the constructor for the given element.
+   *
+   * @param tagName The name the element was registered under.
+   * @return A constructor that can be used to create a new instance of the element identified
+   *         by [[tagName]].
+   */
   getElementConstructor(tagName: string): Function {
-    return this.elements.get(tagName).elementConstructor;
-  }
-
-  /**
-   * Import a custom element from a previously specified location.
-   *
-   * @param tagName The name of known custom element previously added to the factory via
-   *                [[addElementPath]].
-   * @return A promise that will be resolved with a custom element constructor function.
-   */
-  importElement(tagName: string): Promise<Function> {
-    return Promise.resolve().then(() => {
-      const elementEntry = this.elements.get(tagName);
-      if (!elementEntry) {
-        throw new Error(`Can't import <${tagName}> element because no path was specified.`);
-      } else {
-        return importHref(elementEntry.documentPath).then(() => {
-          // note: the <register-element> in the imported document will add the element constructor
-          // to this.elements
-          return this.elements.get(tagName).elementConstructor;
-        });
-      }
-    });
+    return this._elements.get(tagName);
   }
 }
