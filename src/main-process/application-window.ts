@@ -3,15 +3,18 @@
 
 import * as path from 'path';
 import * as BrowserWindow from 'browser-window';
+import { IAppWindowConfig } from '../common/app-window-config';
+import * as AppWindowConfig from '../common/app-window-config';
 
 export interface IApplicationWindowOpenParams {
   windowUrl: string;
+  config: IAppWindowConfig;
 }
 
 export class ApplicationWindow {
   private _browserWindow: GitHubElectron.BrowserWindow;
 
-  open({ windowUrl }: IApplicationWindowOpenParams): void {
+  open({ windowUrl, config }: IApplicationWindowOpenParams): void {
     const options = <GitHubElectron.BrowserWindowOptions> {
       // the window will be shown later after everything is fully initialized
       show: false,
@@ -21,7 +24,7 @@ export class ApplicationWindow {
       }
     };
     this._browserWindow = new BrowserWindow(options);
-    this._browserWindow.loadUrl(windowUrl);
+    this._browserWindow.loadUrl(windowUrl + '#' + AppWindowConfig.encodeToUriComponent(config));
     this._bindEventHandlers();
   }
 

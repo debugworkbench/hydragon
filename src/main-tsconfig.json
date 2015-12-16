@@ -13,6 +13,7 @@
         "../typings/github-electron/node.d.ts",
         "../typings/github-electron/github-electron.d.ts",
         "../typings/github-electron/github-electron-main.d.ts",
+        "common/app-window-config.ts",
         "common/events.ts",
         "common/fs-promisified.d.ts",
         "main-process/application.ts",

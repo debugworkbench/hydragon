@@ -18,6 +18,7 @@
         "../typings/polymer/polymer.d.ts",
         "../typings/polymer/polymer-typescript-helpers.d.ts",
         "../typings/polymer-elements/index.d.ts",
+        "common/app-window-config.ts",
         "common/events.ts",
         "common/fs-promisified.d.ts",
         "renderer-process/elements/behaviors/splittable.ts",

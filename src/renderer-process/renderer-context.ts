@@ -7,6 +7,7 @@ import ElementRegistry from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
 import { IWorkspaceElement } from './elements/workspace/workspace';
 import { importHref } from './utils';
+import { IAppWindowConfig } from '../common/app-window-config';
 
 export const enum Cursor {
   HorizontalResize,
@@ -24,8 +25,8 @@ export class RendererContext {
   workspace: IWorkspaceElement;
 
   /** Create the renderer context for the current process. */
-  static async create(): Promise<RendererContext> {
-    const newContext = new RendererContext();
+  static async create(config: IAppWindowConfig): Promise<RendererContext> {
+    const newContext = new RendererContext(config);
     (<any> global).debugWorkbench = newContext;
     await newContext.initialize();
     return newContext;

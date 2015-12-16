@@ -24,7 +24,7 @@ export class Application {
       pathname: `${args.rootPath}/static/index.html`
     });
     this._window.open({
-      windowUrl
+      windowUrl, config: { rootPath: args.rootPath }
     });
   }
 }

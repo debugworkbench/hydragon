@@ -1,11 +1,14 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { RendererContext } from './renderer-context';
 import * as remote from 'remote';
+import * as url from 'url';
+import { RendererContext } from './renderer-context';
+import * as AppWindowConfig from '../common/app-window-config';
 
 window.onload = (e: Event) => {
-  RendererContext.create().then(() => {
+  const config = AppWindowConfig.decodeFromUriComponent(window.location.hash.substr(1));
+  RendererContext.create(config).then(() => {
     RendererContext.get().showWindow();
   })
   .catch((error) => {
