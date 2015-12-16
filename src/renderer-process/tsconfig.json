@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": false,
+        "noLib": false,
+        "outDir": "../../lib",
+        "rootDir": "../",
+        "experimentalDecorators": true
+    },
+    "files": [
+        "../../typings/codemirror/codemirror.d.ts",
+        "../../typings/node/node.d.ts",
+        "../../typings/github-electron/node.d.ts",
+        "../../typings/github-electron/github-electron.d.ts",
+        "../../typings/github-electron/github-electron-renderer.d.ts",
+        "../../typings/polymer/polymer.d.ts",
+        "../../typings/polymer/polymer-typescript-helpers.d.ts",
+        "../../typings/polymer-elements/index.d.ts",
+        "elements/behaviors/splittable.ts",
+        "elements/code-mirror-editor/code-mirror-editor.ts",
+        "elements/horizontal-container/horizontal-container.ts",
+        "elements/pages/page.ts",
+        "elements/pages/page-set.ts",
+        "elements/pages/page-tree.ts",
+        "elements/pages/page-tree-item.ts",
+        "elements/panel/panel.ts",
+        "elements/splitter/splitter.ts",
+        "elements/tree-view/directory-tree.ts",
+        "elements/tree-view/directory-tree-view.ts",
+        "elements/tree-view/directory-tree-view-item.ts",
+        "elements/tree-view/tree-view.ts",
+        "elements/vertical-container/vertical-container.ts",
+        "elements/workspace/workspace.ts",
+        "elements/element-factory.ts",
+        "elements/interfaces.ts",
+        "init-window.ts",
+        "renderer-context.ts",
+        "utils.ts"
+    ]
+}

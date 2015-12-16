@@ -102,14 +102,19 @@ export = function(grunt: IGrunt) {
       options: {
         tscPath: path.resolve('node_modules', 'typescript', 'bin', 'tsc')
       },
-      'main-process': {
+      'common': {
         options: {
-          project: '../src/main-tsconfig.json'
+          project: '../src/common/'
         }
       },
-      'renderer-process': {
+      'main': {
         options: {
-          project: '../src/renderer-tsconfig.json'
+          project: '../src/main-process/'
+        }
+      },
+      'renderer': {
+        options: {
+          project: '../src/renderer-process/'
         }
       }
     },

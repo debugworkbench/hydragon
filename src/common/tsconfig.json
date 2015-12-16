@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": false,
+        "noLib": false,
+        "outDir": "../../lib",
+        "rootDir": "../"
+    },
+    "files": [
+        "../../typings/node/node.d.ts",
+        "app-window-config.ts",
+        "events.ts",
+        "fs-promisified.d.ts",
+        "uri-path-resolver.ts"
+    ]
+}
