@@ -1,13 +1,10 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as ProtocolModule from 'protocol';
+import * as electron from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 import UriPathResolver from '../common/uri-path-resolver';
-
-type URLRequest = GitHubElectron.URLRequest;
-type FileProtocolHandlerCallback = GitHubElectron.FileProtocolHandlerCallback;
 
 /**
  * Resolves URLs with the `app://` scheme to file paths.
@@ -18,10 +15,7 @@ export class AppProtocolHandler {
   static scheme = 'app';
 
   constructor(private uriPathResolver: UriPathResolver) {
-    // NOTE: The protocol module is lazy loaded because it can only be loaded after Electron
-    // has emitted the app.ready event, and using TypeScript's standard top-level imports
-    // makes it very easy to violate this requirement.
-    const protocol: typeof ProtocolModule = require('protocol');
+    const protocol = electron.protocol;
     protocol.registerFileProtocol(
       AppProtocolHandler.scheme,
       (request, callback) => callback(this.uriPathResolver.resolve(request.url)),

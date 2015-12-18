@@ -1,13 +1,13 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as app from 'app';
-import * as BrowserWindow from 'browser-window';
+import * as electron from 'electron';
 import * as path from 'path';
 import { Application } from './application';
 
 //require('crash-reporter').start();
 
+const app = electron.app;
 let application: Application;
 
 interface CommandLineArgs {

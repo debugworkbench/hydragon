@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as remote from 'remote';
+import * as electron from 'electron';
 import * as url from 'url';
 import { RendererContext } from './renderer-context';
 import * as AppWindowConfig from '../common/app-window-config';
@@ -17,7 +17,7 @@ window.onload = (e: Event) => {
 };
 
 function showError(error: any): void {
-  const currentWindow = remote.getCurrentWindow();
+  const currentWindow = electron.remote.getCurrentWindow();
   currentWindow.setSize(800, 600);
   currentWindow.center();
   currentWindow.show();

@@ -1,13 +1,16 @@
-// Type definitions for Electron 0.25.2 (shared between main and rederer processes)
+// Type definitions for Electron 0.34.5 (shared between main and rederer processes)
 // Project: http://electron.atom.io/
-// Definitions by: jedmao <https://github.com/jedmao/>
+// Definitions by: jedmao <https://github.com/jedmao/>, Vadim Macagon <https://github.com/enlight/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 /// <reference path="../node/node.d.ts" />
 
-// NOTE: Some parts have been updated for Electron v0.34.1, and have been marked as such.
+// NOTE: Some parts have been updated for Electron v0.35.4, and have been marked as such,
+//       others may be somewhat outdated. The API docs for v0.35.4 can be found at
+//       https://github.com/atom/electron/tree/v0.35.4/docs
 
 declare module GitHubElectron {
+	// current as at v0.35.4
 	/**
 	 * This class is used to represent an image.
 	 */
@@ -53,51 +56,49 @@ declare module GitHubElectron {
 		 * Marks the image as template image.
 		 */
 		setTemplateImage(option: boolean): void;
+		/** @return `true` if this is a template image. */
+		isTemplateImage(): boolean;
 	}
 
-	module Clipboard {
-		/**
-		 * @returns The contents of the clipboard as a NativeImage.
-		 */
-		function readImage(type?: string): NativeImage;
-		/**
-		 * Writes the image into the clipboard.
-		 */
-		function writeImage(image: NativeImage, type?: string): void;
+	interface IPoint {
+		x: number;
+		y: number;
 	}
 
-	class Screen implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): Screen;
-		on(event: string, listener: Function): Screen;
-		once(event: string, listener: Function): Screen;
-		removeListener(event: string, listener: Function): Screen;
-		removeAllListeners(event?: string): Screen;
-		setMaxListeners(n: number): void;
-		listeners(event: string): Function[];
-		emit(event: string, ...args: any[]): boolean;
+	interface Display {
+		id: number;
+		bounds: Rectangle;
+		rotation: number;
+		scaleFactor: number;
+		size: { width: number, height: number };
+		touchSupport: string;
+		workArea: Rectangle;
+		workAreaSize: { width: number, height: number };
+	}
+
+	// current as at v0.35.4
+	/** Provides information about the screen size, displays, cursor position, etc. */
+	interface Screen extends NodeJS.EventEmitter {
 		/**
 		 * @returns The current absolute position of the mouse pointer.
 		 */
-		getCursorScreenPoint(): any;
+		getCursorScreenPoint(): IPoint;
 		/**
 		 * @returns The primary display.
 		 */
-		getPrimaryDisplay(): any;
+		getPrimaryDisplay(): Display;
 		/**
 		 * @returns An array of displays that are currently available.
 		 */
-		getAllDisplays(): any[];
+		getAllDisplays(): Display[];
 		/**
 		 * @returns The display nearest the specified point.
 		 */
-		getDisplayNearestPoint(point: {
-			x: number;
-			y: number;
-		}): any;
+		getDisplayNearestPoint(point: IPoint): Display;
 		/**
 		 * @returns The display that most closely intersects the provided bounds.
 		 */
-		getDisplayMatching(rect: Rectangle): any;
+		getDisplayMatching(rect: Rectangle): Display;
 	}
 
 	/**
@@ -113,6 +114,7 @@ declare module GitHubElectron {
 		setMaxListeners(n: number): void;
 		listeners(event: string): Function[];
 		emit(event: string, ...args: any[]): boolean;
+
 		constructor(options?: BrowserWindowOptions);
 		/**
 		 * @returns All opened browser windows.
@@ -380,11 +382,12 @@ declare module GitHubElectron {
 			landscape?: boolean;
 		}, callback: (error: Error, data: Buffer) => void): void;
 		/**
-		 * Same with webContents.loadUrl(url).
+		 * Convenience method that calls webContents.loadURL(), see [[WebContents.loadURL]].
 		 */
-		loadUrl(url: string, options?: {
+		loadURL(url: string, options?: {
 			httpReferrer?: string;
 			userAgent?: string;
+			extraHeaders?: string;
 		}): void;
 		/**
 		 * Same with webContents.reload.
@@ -450,10 +453,11 @@ declare module GitHubElectron {
 		isVisibleOnAllWorkspaces(): boolean;
 	}
 
-	// current as at v0.34.1
+	// current as at v0.35.4
+	/** Various features that can be enabled for web pages. */
 	interface WebPreferences {
-		/** Defaults to true. */
-		'node-integration'?: boolean;
+		/** Defaults to `true`. */
+		nodeIntegration?: boolean;
 		/**
 		 * Absolute path to script file that will be loaded before other scripts run in the page.
 		 * This script will always have access to node APIs no matter whether node integration is
@@ -470,86 +474,110 @@ declare module GitHubElectron {
 		 */
 		partition?: string;
 		/** Default zoom factor of the page, e.g. 3.0 represents 300% */
-		'zoom-factor'?: number;
+		zoomFactor?: number;
+		/** Enables support for JavaScript, defaults to `true`. */
 		javascript?: boolean;
 		/**
 		 * When set to `false` the same-origin policy is disabled,
 		 * and [[allow_displaying_insecure_content]] and [[allow_running_insecure_content]] are set
 		 * to `true` if those two options are not set by user.
 		 */
-		'web-security'?: boolean;
-		/** Set to `true` to allow an HTTPS page to display content like images from HTTP URLs. */
-		'allow-displaying-insecure-content'?: boolean;
-		/** Set to `true` to allow an HTTPS page to run JavaScript, CSS or plugins from HTTP URLs. */
-		'allow-running-insecure-content'?: boolean;
+		webSecurity?: boolean;
+		/** Enables an HTTPS page to display content like images from HTTP URLs. */
+		allowDisplayingInsecureContent?: boolean;
+		/** Enables an HTTPS page to run JavaScript, CSS or plugins from HTTP URLs. */
+		allowRunningInsecureContent?: boolean;
+		/** Enables support for images, defaults to `true`. */
 		images?: boolean;
+		/** Enables support for Java, defaults to `false`. */
 		java?: boolean;
-		'text-areas-are-resizable'?: boolean;
+		/** Enables resizing of `TextArea` elements, defaults to `true`. */
+		textAreasAreResizable?: boolean;
+		/** Enables support for WebGL, defaults to `true`. */
 		webgl?: boolean;
+		/** Enables support for WebAudio, defaults to `true`. */
 		webaudio?: boolean;
+		/** Defaults to `false`. */
 		plugins?: boolean;
-		'experimental-features'?: boolean;
-		'experimental-canvas-features'?: boolean;
-		'overlay-scrollbars'?: boolean;
-		'overlay-fullscreen-video'?: boolean;
-		'shared-worker'?: boolean;
-		/** Set to `true` to enable DirectWrite font rendering on Windows. */
-		'direct-write'?: boolean;
+		/** Enables Chromium's experimental features, defaults to `false`. */
+		experimentalFeatures?: boolean;
+		/** Enables Chromium's experimental Canvas features, defaults to `false`. */
+		experimentalCanvasFeatures?: boolean;
+		/** Defaults to `false`. */
+		overlayScrollbars?: boolean;
+		/** Defaults to `false`. */
+		overlayFullscreenVideo?: boolean;
+		/** Enables support for Shared Workers, defaults to `false`. */
+		sharedWorker?: boolean;
+		/** Enables DirectWrite font rendering on Windows, defaults to `false`. */
+		directWrite?: boolean;
 		/**
 		 * If set the page would be forced to be always in visible or hidden state instead of
-		 * reflecting current window's visibility. Users can set it to true to prevent
-		 * throttling of DOM timers.
+		 * reflecting current window's visibility. Users can set this option to `true` to prevent
+		 * throttling of DOM timers, by default this options is set to `false`.
 		 */
-		'page-visibility'?: boolean;
+		pageVisibility?: boolean;
 	}
 
-	// Includes all options BrowserWindow can take as of this writing
-	// http://electron.atom.io/docs/v0.29.0/api/browser-window/
-	interface BrowserWindowOptions extends Rectangle {
-		show?: boolean;
-		'use-content-size'?: boolean;
+	// Includes all options BrowserWindow can take as at v0.35.4.
+	// http://electron.atom.io/docs/v0.35.4/api/browser-window/
+	interface BrowserWindowOptions {
+		/** Window's width in pixels, defaults to 800. */
+		width?: number;
+		/** Window's height in pixels, defaults to 600. */
+		height?: number;
+		/** Offset of the window from the left side of the screen, by default the window is centered on screen. */
+		x?: number;
+		/** Offset of the window from the top of the screen, by default the window is centered on screen. */
+		y?: number;
+		/**
+		 * If set to `true` the [[width]] and [[height]] will be used to set the web page size,
+		 * which means that the size of the window itself will be slightly larger as it will
+		 * include the window frame. Defaults to `false`.
+		 */
+		useContentSize?: boolean;
+		/** If set to `true` the window will be shown at the center of the screen. */
 		center?: boolean;
-		'min-width'?: number;
-		'min-height'?: number;
-		'max-width'?: number;
-		'max-height'?: number;
+		/** Window's minimum width, defaults to zero. */
+		minWidth?: number;
+		/** Window's minimum height, defaults to zero. */
+		minHeight?: number;
+		/** Window's maximum width, by default no limit is set on the width of the window. */
+		maxWidth?: number;
+		/** Window's maximum height, by default no limit is set on the height of the window. */
+		maxHeight?: number;
+		/** If set to `true` the window can be resized, defaults to `true`. */
 		resizable?: boolean;
-		'always-on-top'?: boolean;
+		/** If set to `true` the window will always stay on top of other windows, defaults to `false`. */
+		alwaysOnTop?: boolean;
 		fullscreen?: boolean;
-		'skip-taskbar'?: boolean;
-		'zoom-factor'?: number;
+		/** If set to `true` the window will not appear in the taskbar, defaults to `false`. */
+		skipTaskbar?: boolean;
 		kiosk?: boolean;
 		title?: string;
 		icon?: NativeImage|string;
+		show?: boolean;
 		frame?: boolean;
-		'node-integration'?: boolean;
-		'accept-first-mouse'?: boolean;
-		'disable-auto-hide-cursor'?: boolean;
-		'auto-hide-menu-bar'?: boolean;
-		'enable-larger-than-screen'?: boolean;
-		'dark-theme'?: boolean;
-		preload?: string;
+		acceptFirstMouse?: boolean;
+		disableAutoHideCursor?: boolean;
+		autoHideMenuBar?: boolean;
+		enableLargerThanScreen?: boolean;
+		/**
+		 * The window's background color as a hexadecimal value (e.g. #66CD00 or #FFF).
+		 * This option is only supported on Linux and Windows, and defaults to `#000` (black).
+		 */
+		backgroundColor?: string;
+		/**
+		 * Set to `true` to force the use of a dark theme for the window.
+		 * This option only works on some GTK+3 desktop environments, and defaults to `false`.
+		 */
+		darkTheme?: boolean;
+		/** Set to `true` to make the window transparent, defaults to `false`. */
 		transparent?: boolean;
-		type?: string;
-		'standard-window'?: boolean;
-		'web-preferences'?: WebPreferences;
-		javascript?: boolean;
-		'web-security'?: boolean;
-		images?: boolean;
-		java?: boolean;
-		'text-areas-are-resizable'?: boolean;
-		webgl?: boolean;
-		webaudio?: boolean;
-		plugins?: boolean;
-		'extra-plugin-dirs'?: string[];
-		'experimental-features'?: boolean;
-		'experimental-canvas-features'?: boolean;
-		'subpixel-font-scaling'?: boolean;
-		'overlay-scrollbars'?: boolean;
-		'overlay-fullscreen-video'?: boolean;
-		'shared-worker'?: boolean;
-		'direct-write'?: boolean;
-		'page-visibility'?: boolean;
+		type?: 'desktop' | 'dock' | 'toolbar' | 'splash' | 'notification' | 'textured';
+		/** Only supported on OS X 10.10 Yosemite or later. */
+		titleBarStyle?: 'default' | 'hidden' | 'hidden-inset';
+		webPreferences?: WebPreferences;
 	}
 
 	interface Rectangle {
@@ -562,23 +590,24 @@ declare module GitHubElectron {
 	/**
 	 * A WebContents is responsible for rendering and controlling a web page.
 	 */
-	class WebContents implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): WebContents;
-		on(event: string, listener: Function): WebContents;
-		once(event: string, listener: Function): WebContents;
-		removeListener(event: string, listener: Function): WebContents;
-		removeAllListeners(event?: string): WebContents;
-		setMaxListeners(n: number): void;
-		listeners(event: string): Function[];
-		emit(event: string, ...args: any[]): boolean;
+	interface WebContents extends NodeJS.EventEmitter {
 		/**
-		 * Loads the url in the window.
+		 * Loads the URL in the window.
 		 * @param url Must contain the protocol prefix (e.g., the http:// or file://).
+		 * @param options.httpReferrer HTTP referrer url.
+		 * @param options.userAgent The user agent the request originated from.
+		 * @param options.extraHeaders Extra headers separated by `\n`.
 		 */
-		loadUrl(url: string, options?: {
+		loadURL(url: string, options?: {
 			httpReferrer?: string;
 			userAgent?: string;
+			extraHeaders: string;
 		}): void;
+		/**
+		 * Initiate a download of the resource at the given url without navigating.
+		 * The `will-download` event of `session` will be triggered.
+		 */
+		downloadURL(url: string): void;
 		/**
 		 * @returns The URL of current web page.
 		 */
@@ -810,6 +839,7 @@ declare module GitHubElectron {
 		send(channel: string, ...args: any[]): void;
 	}
 
+	// current as at v0.35.4
 	/**
 	 * The Menu class is used to create native menus that can be used as application
 	 * menus and context menus. Each menu consists of multiple menu items, and each
@@ -846,7 +876,8 @@ declare module GitHubElectron {
 		 * @param x Horizontal coordinate where the menu will be placed.
 		 * @param y Vertical coordinate where the menu will be placed.
 		 */
-		popup(browserWindow: BrowserWindow, x?: number, y?: number): void;
+		popup(browserWindow: BrowserWindow, x: number, y: number): void;
+		popup(browserWindow: BrowserWindow): void;
 		/**
 		 * Appends the menuItem to the menu.
 		 */
@@ -858,24 +889,27 @@ declare module GitHubElectron {
 		items: MenuItem[];
 	}
 
+	// current as at v0.35.4
 	class MenuItem {
 		constructor(options?: MenuItemOptions);
-		options: MenuItemOptions;
 	}
 
+	type MenuItemRole = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'selectall' | 'minimize' | 'close';
+	type MenuItemType = 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
+
 	interface MenuItemOptions {
+		/** Callback to invoke when the menu item is clicked. */
+		click?: (menuItem: MenuItem, browserWindow: BrowserWindow) => void;
 		/**
-		 * Callback when the menu item is clicked.
+		 * Defines the action of the menu item, if specified the [[click]] callback will not be invoked.
+		 * Note: This option is ignored on OS X.
 		 */
-		click?: Function;
+		role?: MenuItemRole;
 		/**
 		 * Call the selector of first responder when clicked (OS X only).
 		 */
 		selector?: string;
-		/**
-		 * Can be normal, separator, submenu, checkbox or radio.
-		 */
-		type?: string;
+		type?: MenuItemType;
 		label?: string;
 		sublabel?: string;
 		/**
@@ -920,7 +954,7 @@ declare module GitHubElectron {
 		 * In Electron for the APIs that take images, you can pass either file paths
 		 * or NativeImage instances. When passing null, an empty image will be used.
 		 */
-		icon?: NativeImage|string;
+		icon?: NativeImage | string;
 		enabled?: boolean;
 		visible?: boolean;
 		checked?: boolean;
@@ -941,7 +975,9 @@ declare module GitHubElectron {
 		position?: string;
 	}
 
-	class BrowserWindowProxy {
+	// current as at v0.35.4
+	/** Objects of this type are returned by `window.open`. */
+	interface BrowserWindowProxy {
 		/**
 		 * Removes focus from the child window.
 		 */
@@ -970,15 +1006,9 @@ declare module GitHubElectron {
 		postMessage(message: string, targetOrigin: string): void;
 	}
 
-	class App implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): App;
-		on(event: string, listener: Function): App;
-		once(event: string, listener: Function): App;
-		removeListener(event: string, listener: Function): App;
-		removeAllListeners(event?: string): App;
-		setMaxListeners(n: number): void;
-		listeners(event: string): Function[];
-		emit(event: string, ...args: any[]): boolean;
+	// current as at v0.35.4
+	/** Controls the application's lifecycle. */
+	interface App extends NodeJS.EventEmitter {
 		/**
 		 * Try to close all windows. The before-quit event will first be emitted.
 		 * If all windows are successfully closed, the will-quit event will be emitted
@@ -990,60 +1020,53 @@ declare module GitHubElectron {
 		 */
 		quit(): void;
 		/**
-		 * Quit the application directly, it will not try to close all windows so
-		 * cleanup code will not run.
+		 * Exits the application immediately with the specified exit code.
+		 * All windows will be closed immediately without asking user and the `before-quit` and
+		 * `will-quit` events will not be emitted.
 		 */
-		terminate(): void;
+		exit(exitCode: number): void;
 		/**
 		 * Returns the current application directory.
 		 */
 		getAppPath(): string;
 		/**
-		 * @param name One of: home, appData, userData, cache, userCache, temp, userDesktop, exe, module
-		 * @returns The path to a special directory or file associated with name.
-		 * On failure an Error would throw.
+		 * Retrieve a path to a special directory or file associated with the given name.
+		 * On failure an `Error` will be thrown.
+		 * @param name The name of the path to retrieve.
+		 * @return The path to a special directory or file associated with name.
 		 */
-		getPath(name: string): string;
+		getPath(name: App.AppPathName): string;
 		/**
 		 * Overrides the path to a special directory or file associated with name.
 		 * If the path specifies a directory that does not exist, the directory will
-		 * be created by this method. On failure an Error would throw.
+		 * be created by this method. On failure an `Error` will be thrown.
 		 *
-		 * You can only override paths of names defined in app.getPath.
-		 *
-		 * By default web pages' cookies and caches will be stored under userData
+		 * By default web pages' cookies and caches will be stored under `userData`
 		 * directory, if you want to change this location, you have to override the
-		 * userData path before the ready event of app module gets emitted.
+		 * `userData` path before the `ready` event of app module gets emitted.
 		 */
-		setPath(name: string, path: string): void;
+		setPath(name: App.AppPathName, path: string): void;
 		/**
 		 * @returns The version of loaded application, if no version is found in
 		 * application's package.json, the version of current bundle or executable.
 		 */
 		getVersion(): string;
 		/**
-		 *
-		 * @returns The current application's name, the name in package.json would be used.
-		 * Usually the name field of package.json is a short lowercased name, according to
-		 * the spec of npm modules. So usually you should also specify a productName field,
-		 * which is your application's full capitalized name, and it will be preferred over
-		 * name by Electron.
+		 * @return The name of the current application, which is the name in the application's
+		 *         `package.json` file.
 		 */
 		getName(): string;
+		/** @return The current application locale, e.g. `en-US`. */
+		getLocale(): string;
 		/**
-		 * Resolves the proxy information for url, the callback would be called with
-		 * callback(proxy) when the request is done.
-		 */
-		resolveProxy(url: string, callback: Function): void;
-		/**
-		 * Adds path to recent documents list.
+		 * Adds path to recent documents list (available on Windows and OS X).
 		 *
 		 * This list is managed by the system, on Windows you can visit the list from
 		 * task bar, and on Mac you can visit it from dock menu.
 		 */
 		addRecentDocument(path: string): void;
 		/**
-		 * Clears the recent documents list.
+		 * Clears the recent documents list (available on Windows and OS X).
 		 */
 		clearRecentDocuments(): void;
 		/**
@@ -1051,221 +1074,231 @@ declare module GitHubElectron {
 		 *
 		 * Note: This API is only available on Windows.
 		 */
-		setUserTasks(tasks: Task[]): void;
-		dock: BrowserWindow;
-		commandLine: CommandLine;
+		setUserTasks(tasks: App.Task[]): void;
+		allowNTLMCredentialsForAllDomains(allow: boolean): void;
+		/**
+		 * Ensure that only a single instance of the application is allowed to run.
+		 *
+		 * @return `false` if the current process is the primary application instance and should
+		 *         continue running, and `true` if another instance of the application is already
+		 *         running and the current process should exit.
+		 */
+		makeSingleInstance(callback: (cmdLine: string[], workingDirectory: string) => void): boolean;
+		/** Set the Application User Model ID, (only available on Windows). */
+		setAppUserModelId(id: string): void;
+		commandLine: App.CommandLine;
+		/** Only available on OS X. */
+		dock: App.Dock;
 	}
 
-	interface CommandLine {
-		/**
-		 * Append a switch [with optional value] to Chromium's command line.
-		 *
-		 * Note: This will not affect process.argv, and is mainly used by developers
-		 * to control some low-level Chromium behaviors.
-		 */
-		appendSwitch(_switch: string, value?: string|number): void;
-		/**
-		 * Append an argument to Chromium's command line. The argument will quoted properly.
-		 *
-		 * Note: This will not affect process.argv.
-		 */
-		appendArgument(value: any): void;
-	}
+	// current as at v0.35.4
+	namespace App {
+		export type AppPathName = 'home' | 'appData' | 'userData' | 'temp' | 'exe' | 'module'
+								| 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures'
+								| 'videos';
 
-	interface Task {
-		/**
-		 * Path of the program to execute, usually you should specify process.execPath
-		 * which opens current program.
-		 */
-		program: string;
-		/**
-		 * The arguments of command line when program is executed.
-		 */
-		arguments: string;
-		/**
-		 * The string to be displayed in a JumpList.
-		 */
-		title: string;
-		/**
-		 * Description of this task.
-		 */
-		description: string;
-		/**
-		 * The absolute path to an icon to be displayed in a JumpList, it can be
-		 * arbitrary resource file that contains an icon, usually you can specify
-		 * process.execPath to show the icon of the program.
-		 */
-		iconPath: string;
-		/**
-		 * The icon index in the icon file. If an icon file consists of two or more
-		 * icons, set this value to identify the icon. If an icon file consists of
-		 * one icon, this value is 0.
-		 */
-		iconIndex: number;
-		commandLine: CommandLine;
-		dock: {
+		export interface Task {
 			/**
-			 * When critical is passed, the dock icon will bounce until either the
-			 * application becomes active or the request is canceled.
-			 *
-			 * When informational is passed, the dock icon will bounce for one second.
-			 * The request, though, remains active until either the application becomes
-			 * active or the request is canceled.
-			 *
-			 * Note: This API is only available on Mac.
-			 * @param type Can be critical or informational, the default is informational.
-			 * @returns An ID representing the request
+			 * Path of the program to execute, usually you should specify process.execPath
+			 * which opens current program.
 			 */
-			bounce(type?: string): any;
+			program: string;
+			/** The arguments of command line when program is executed. */
+			arguments: string;
+			/** The string to be displayed in a JumpList. */
+			title: string;
+			/** Description of this task. */
+			description: string;
 			/**
-			 * Cancel the bounce of id.
-			 *
-			 * Note: This API is only available on Mac.
+			 * The absolute path to an icon to be displayed in a JumpList, it can be
+			 * arbitrary resource file that contains an icon, usually you can specify
+			 * process.execPath to show the icon of the program.
 			 */
+			iconPath: string;
+			/**
+			 * The icon index in the icon file. If an icon file consists of two or more
+			 * icons, set this value to identify the icon. If an icon file consists of
+			 * one icon, this value is 0.
+			 */
+			iconIndex: number;
+		}
+
+		export interface CommandLine {
+			/**
+			 * Append a switch with an optional value to Chromium's command line.
+			 *
+			 * Note: This will not affect process.argv, and is mainly used by developers
+			 * to control some low-level Chromium behaviors.
+			 */
+			appendSwitch(switchName: string, value?: string|number): void;
+			/**
+			 * Append an argument to Chromium's command line. The argument will quoted properly.
+			 *
+			 * Note: This will not affect process.argv.
+			 */
+			appendArgument(value: any): void;
+		}
+
+		export type DockBounceType = 'critical' | 'informational';
+
+		/** OS X dock functions. */
+		export interface Dock {
+			/**
+			 * @param type Defaults to `informational`.
+			 * @return An ID for the request.
+			 */
+			bounce(type?: DockBounceType): number;
 			cancelBounce(id: number): void;
-			/**
-			 * Sets the string to be displayed in the dock’s badging area.
-			 *
-			 * Note: This API is only available on Mac.
-			 */
 			setBadge(text: string): void;
-			/**
-			 * Returns the badge string of the dock.
-			 *
-			 * Note: This API is only available on Mac.
-			 */
 			getBadge(): string;
-			/**
-			 * Hides the dock icon.
-			 *
-			 * Note: This API is only available on Mac.
-			 */
 			hide(): void;
-			/**
-			 * Shows the dock icon.
-			 *
-			 * Note: This API is only available on Mac.
-			 */
 			show(): void;
-			/**
-			 * Sets the application dock menu.
-			 *
-			 * Note: This API is only available on Mac.
-			 */
+			/** Set the application dock menu. */
 			setMenu(menu: Menu): void;
 		}
 	}
 
-	class AutoUpdater implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): AutoUpdater;
-		on(event: string, listener: Function): AutoUpdater;
-		once(event: string, listener: Function): AutoUpdater;
-		removeListener(event: string, listener: Function): AutoUpdater;
-		removeAllListeners(event?: string): AutoUpdater;
-		setMaxListeners(n: number): void;
-		listeners(event: string): Function[];
-		emit(event: string, ...args: any[]): boolean;
+	// current as at v0.35.4
+	/** Provides integration with the `Squirrel` auto-updater framework. */
+	interface AutoUpdater extends NodeJS.EventEmitter {
 		/**
 		 * Set the url and initialize the auto updater.
 		 * The url cannot be changed once it is set.
 		 */
-		setFeedUrl(url: string): void;
+		setFeedURL(url: string): void;
 		/**
-		 * Ask the server whether there is an update, you have to call setFeedUrl
-		 * before using this API
+		 * Ask the server whether there is an update.
+		 * Note that [[setFeedURL]] must've be called prior to calling this method.
 		 */
 		checkForUpdates(): any;
+		/**
+		 * Restart the app and install the update after it has been downloaded.
+		 * This method should only be called after `update-downloaded` has been emitted.
+		 */
+		quitAndInstall(): void;
 	}
 
-	module Dialog {
+	// current as at v0.35.4
+	/**
+	 * Shows native system dialogs for opening files or alerting.
+	 */
+	interface Dialog {
 		/**
+		 * Show a native Open File/Directory dialog.
+		 *
+		 * @param browserWindow On OS X if this option is set the dialog will be presented as a sheet.
 		 * @param callback If supplied, the API call will be asynchronous.
-		 * @returns On success, returns an array of file paths chosen by the user,
-		 * otherwise returns undefined.
+		 * @return An array of file paths chosen by the user (unless [[callback]] was specified),
+		 *         and `undefined` if the operation failed (or [[callback]] was specified).
 		 */
-		export function showOpenDialog(
+		showOpenDialog(
 			browserWindow?: BrowserWindow,
-			options?: OpenDialogOptions,
+			options?: Dialog.OpenDialogOptions,
 			callback?: (fileNames: string[]) => void
-			): void;
-		export function showOpenDialog(
-			options?: OpenDialogOptions,
-			callback?: (fileNames: string[]) => void
-			): void;
-
-		interface OpenDialogOptions {
-			title?: string;
-			defaultPath?: string;
-			/**
-			 * File types that can be displayed or selected.
-			 */
-			filters?: {
-				name: string;
-				extensions: string[];
-			}[];
-			/**
-			 * Contains which features the dialog should use, can contain openFile,
-			 * openDirectory, multiSelections and createDirectory
-			 */
-			properties?: string|string[];
-		}
-
+		): string[];
+		showOpenDialog(options?: Dialog.OpenDialogOptions, callback?: (fileNames: string[]) => void): string[];
+		showOpenDialog(callback?: (fileNames: string[]) => void): string[];
 		/**
-		 * @param browserWindow
+		 * Show a native Save File dialog.
+		 *
+		 * @param browserWindow On OS X if this option is set the dialog will be presented as a sheet.
 		 * @param options
 		 * @param callback If supplied, the API call will be asynchronous.
-		 * @returns On success, returns the path of file chosen by the user, otherwise
-		 * returns undefined.
+		 * @return The file path chosen by the user (unless [[callback]] was specified),
+		 *         and `undefined` if the operation failed (or [[callback]] was specified).
 		 */
-		export function showSaveDialog(browserWindow?: BrowserWindow, options?: {
+		showSaveDialog(browserWindow?: BrowserWindow, options?: {
 			title?: string;
 			defaultPath?: string;
 			/**
 			 * File types that can be displayed, see dialog.showOpenDialog for an example.
 			 */
-			filters?: string[];
+			filters?: Dialog.IFilter[];
 		}, callback?: (fileName: string) => void): void;
-
 		/**
-		 * Shows a message box. It will block until the message box is closed. It returns .
+		 * Show a native message box dialog.
+		 *
+		 * This function will block until the message box is closed.
+		 * @param browserWindow On OS X if this option is set the dialog will be presented as a sheet.
 		 * @param callback If supplied, the API call will be asynchronous.
 		 * @returns The index of the clicked button.
 		 */
-		export function showMessageBox(
+		showMessageBox(
 			browserWindow?: BrowserWindow,
-			options?: ShowMessageBoxOptions,
-			callback?: (response: any) => void
-			): number;
-		export function showMessageBox(
-			options: ShowMessageBoxOptions,
-			callback?: (response: any) => void
-			): number;
+			options?: Dialog.ShowMessageBoxOptions,
+			callback?: (response: number) => void
+		): number;
+		showMessageBox(
+			options: Dialog.ShowMessageBoxOptions,
+			callback?: (response: number) => void
+		): number;
+		/**
+		 * Show an error message as a modal dialog.
+		 *
+		 * This function can be safely called before the `ready` event of the `app` module is emitted,
+		 * it is usually used to report errors in early stage of startup.
+		 *
+		 * NOTE: On Linux if this function is called before the app `ready` event, the message will be
+		 * emitted to `stderr`, and no GUI dialog will appear.
+		 */
+		showErrorBox(title: string, content: string): void;
+	}
+
+	// current as at v0.35.4
+	namespace Dialog {
+		export type OpenDialogProperty = 'openFile' | 'openDirectory' | 'multiSelections' | 'createDirectory';
+		export interface IFilter {
+			name: string;
+			/**
+			 * Extensions must be specified without wildcards or dots, e.g. `png` rather than `*.png`.
+			 * To show all files this array should contain a single wildcard `*`.
+			 */
+			extensions: string[];
+		}
+
+		export interface OpenDialogOptions {
+			title?: string;
+			defaultPath?: string;
+			/** Filter which file types will be displayed/selected. */
+			filters?: IFilter[];
+			/** Features that the dialog should use. */
+			properties?: OpenDialogProperty[];
+		}
+
+		export type MessageBoxType = 'none' | 'info' | 'warning';
 
 		export interface ShowMessageBoxOptions {
-			/**
-			 * Can be "none", "info" or "warning".
-			 */
-			type?: string;
-			/**
-			 * Texts for buttons.
-			 */
+			type?: MessageBoxType;
+			/** Button titles. */
 			buttons?: string[];
-			/**
-			 * Title of the message box (some platforms will not show it).
-			 */
+			/** Title of the message box (some platforms will not show it). */
 			title?: string;
-			/**
-			 * Contents of the message box.
-			 */
+			/** Contents of the message box. */
 			message?: string;
-			/**
-			 * Extra information of the message.
-			 */
+			/** Extra information of the message. */
 			detail?: string;
 			icon?: NativeImage;
+			/**
+			 * The value that will be returned when the user cancels the dialog instead of clicking the
+			 * buttons of the dialog. By default this value will be the index of the buttons that are
+			 * labelled "cancel" or "no", or zero if there are no such buttons.
+			 */
+			cancelId?: number;
+			/**
+			 * On Windows Electron will try to figure out which of the buttons are common buttons
+			 * (e.g. "Cancel" or "Yes"), and show the others as command links in the dialog.
+			 * This can make the dialog appear in the style of modern Windows apps, to prevent this
+			 * behavior set this option to `true`.
+			 */
+			noLink?: boolean;
 		}
 	}
 
+	// current as at v0.35.4
+	/**
+	 * Represents an icon in the notification area of an operating system,
+	 * usually there's also context menu associated with it.
+	 */
 	class Tray implements NodeJS.EventEmitter {
 		addListener(event: string, listener: Function): Tray;
 		on(event: string, listener: Function): Tray;
@@ -1315,11 +1348,19 @@ declare module GitHubElectron {
 			content?: string;
 		}): void;
 		/**
+		 * Pops up the context menu of the tray icon.
+		 * Note: This is only implemented on OS X and Windows.
+		 * @param menu If specified this menu will shown instead of the tray's context menu.
+		 * @param position Defaults to (0, 0). This option is only supported on Windows.
+		 */
+		popUpContextMenu(menu?: Menu, position?: IPoint): void;
+		/**
 		 * Sets the context menu for this icon.
 		 */
 		setContextMenu(menu: Menu): void;
 	}
 
+	/** Performs copy and paste operations. */
 	interface Clipboard {
 		/**
 		 * @returns The contents of the clipboard as plain text.
@@ -1329,18 +1370,22 @@ declare module GitHubElectron {
 		 * Writes the text into the clipboard as plain text.
 		 */
 		writeText(text: string, type?: string): void;
+		/** @return The contents of the clipboard as markup. */
+		readHtml(type?: string): string;
+		/** Write markup to the clipboard. */
+		writeHtml(markup: string, type?: string): void;
 		/**
 		 * @returns The contents of the clipboard as a NativeImage.
 		 */
-		readImage: typeof GitHubElectron.Clipboard.readImage;
+		readImage(type?: string): NativeImage;
 		/**
 		 * Writes the image into the clipboard.
 		 */
-		writeImage: typeof GitHubElectron.Clipboard.writeImage;
-		/**
-		 * Clears everything in clipboard.
-		 */
+		writeImage(image: NativeImage, type?: string): void;
+		/** Clears the clipboard content. */
 		clear(type?: string): void;
+		/** @return An array of supported formats for the given clipboard type. */
+		availableFormats(type?: string): string[];
 		/**
 		 * Note: This API is experimental and could be removed in future.
 		 * @returns Whether the clipboard has data in the specified format.
@@ -1351,6 +1396,8 @@ declare module GitHubElectron {
 		 * Note: This API is experimental and could be removed in future.
 		 */
 		read(format: string, type?: string): any;
+		/** Write data to the clipboard. */
+		write(data: { text?: string, html?: string, image?: NativeImage }, type?: string): void;
 	}
 
 	interface CrashReporterStartOptions {
@@ -1402,6 +1449,8 @@ declare module GitHubElectron {
 		*/
 		process_type: string;
 		ptime: number;
+		/** e.g. '5e1286fc-da97-479e-918b-6bfb0c3d1c72' */
+		guid: string;
 		/**
 		* The version in package.json.
 		*/
@@ -1424,17 +1473,20 @@ declare module GitHubElectron {
 		upload_file_minidump: File;
 	}
 
+	/** Sends crash reports. */
 	interface CrashReporter {
 		start(options?: CrashReporterStartOptions): void;
-
 		/**
 		 * @returns The date and ID of the last crash report. When there was no crash report
 		 * sent or the crash reporter is not started, null will be returned.
 		 */
 		getLastCrashReport(): CrashReporterPayload;
+		/** @return All uploaded crash reports. Each report contains the date and uploaded ID. */
+		getUploadedReports(): CrashReporterPayload[];
 	}
 
-	interface Shell{
+	/** Provides desktop integration. */
+	interface Shell {
 		/**
 		 * Show the given file in a file manager. If possible, select the file.
 		 */
@@ -1457,31 +1509,383 @@ declare module GitHubElectron {
 		 */
 		beep(): void;
 	}
+
+	/**
+	 * Collects tracing data generated by the underlying Chromium content module.
+	 */
+	interface ContentTracing  {
+		/**
+		 * Get a set of category groups. The category groups can change as new code paths are reached.
+		 * @param callback Called once all child processes have acked to the getCategories request.
+		 */
+		getCategories(callback: (categoryGroups: any[]) => void): void;
+		/**
+		 * Start recording on all processes. Recording begins immediately locally, and asynchronously
+		 * on child processes as soon as they receive the EnableRecording request.
+		 * @param categoryFilter A filter to control what category groups should be traced.
+		 * A filter can have an optional "-" prefix to exclude category groups that contain
+		 * a matching category. Having both included and excluded category patterns in the
+		 * same list would not be supported.
+		 * @param options controls what kind of tracing is enabled, it could be a OR-ed
+		 * combination of tracing.DEFAULT_OPTIONS, tracing.ENABLE_SYSTRACE, tracing.ENABLE_SAMPLING
+		 * and tracing.RECORD_CONTINUOUSLY.
+		 * @param callback Called once all child processes have acked to the startRecording request.
+		 */
+		startRecording(categoryFilter: string, options: number, callback: Function): void;
+		/**
+		 * Stop recording on all processes. Child processes typically are caching trace data and
+		 * only rarely flush and send trace data back to the main process. That is because it may
+		 * be an expensive operation to send the trace data over IPC, and we would like to avoid
+		 * much runtime overhead of tracing. So, to end tracing, we must asynchronously ask all
+		 * child processes to flush any pending trace data.
+		 * @param resultFilePath Trace data will be written into this file if it is not empty,
+		 * or into a temporary file.
+		 * @param callback Called once all child processes have acked to the stopRecording request.
+		 */
+		stopRecording(resultFilePath: string, callback:
+			/**
+			 * @param filePath A file that contains the traced data.
+			 */
+			(filePath: string) => void
+		): void;
+		/**
+		 * Start monitoring on all processes. Monitoring begins immediately locally, and asynchronously
+		 * on child processes as soon as they receive the startMonitoring request.
+		 * @param callback Called once all child processes have acked to the startMonitoring request.
+		 */
+		startMonitoring(categoryFilter: string, options: number, callback: Function): void;
+		/**
+		 * Stop monitoring on all processes.
+		 * @param callback Called once all child processes have acked to the stopMonitoring request.
+		 */
+		stopMonitoring(callback: Function): void;
+		/**
+		 * Get the current monitoring traced data. Child processes typically are caching trace data
+		 * and only rarely flush and send trace data back to the main process. That is because it may
+		 * be an expensive operation to send the trace data over IPC, and we would like to avoid much
+		 * runtime overhead of tracing. So, to end tracing, we must asynchronously ask all child
+		 * processes to flush any pending trace data.
+		 * @param callback Called once all child processes have acked to the captureMonitoringSnapshot request.
+		 */
+		captureMonitoringSnapshot(resultFilePath: string, callback:
+			/**
+			 * @param filePath A file that contains the traced data
+			 * @returns {}
+			 */
+			(filePath: string) => void
+		): void;
+		/**
+		 * Get the maximum across processes of trace buffer percent full state.
+		 * @param callback Called when the TraceBufferUsage value is determined.
+		 */
+		getTraceBufferUsage(callback: Function): void;
+		/**
+		 * @param callback Called every time the given event occurs on any process.
+		 */
+		setWatchEvent(categoryName: string, eventName: string, callback: Function): void;
+		/**
+		 * Cancel the watch event. If tracing is enabled, this may race with the watch event callback.
+		 */
+		cancelWatchEvent(): void;
+		DEFAULT_OPTIONS: number;
+		ENABLE_SYSTRACE: number;
+		ENABLE_SAMPLING: number;
+		RECORD_CONTINUOUSLY: number;
+	}
+
+	interface GlobalShortcut {
+		/**
+		 * Registers a global shortcut of accelerator.
+		 * @param accelerator Represents a keyboard shortcut. It can contain modifiers
+		 * and key codes, combined by the "+" character.
+		 * @param callback Called when the registered shortcut is pressed by the user.
+		 * @returns {}
+		 */
+		register(accelerator: string, callback: Function): void;
+		/**
+		 * @param accelerator Represents a keyboard shortcut. It can contain modifiers
+		 * and key codes, combined by the "+" character.
+		 * @returns Whether the accelerator is registered.
+		 */
+		isRegistered(accelerator: string): boolean;
+		/**
+		 * Unregisters the global shortcut of keycode.
+		 * @param accelerator Represents a keyboard shortcut. It can contain modifiers
+		 * and key codes, combined by the "+" character.
+		 */
+		unregister(accelerator: string): void;
+		/**
+		 * Unregisters all the global shortcuts.
+		 */
+		unregisterAll(): void;
+	}
+
+	//---- start v0.34.1 ----//
+
+	interface URLRequest {
+		/** The request method (`GET`, `POST` etc.) as an uppercase string. */
+		method: string;
+		url: string;
+		/** The referrer URL for the request. */
+		referrer: string;
+	}
+
+	interface FileProtocolHandlerCallback {
+		(): void;
+		/** @param path The path of the file to send. */
+		(path: string): void;
+		/** @param arg.path The path of the file to send. */
+		(arg: { path: string }): void;
+	}
+
+	interface BufferProtocolHandlerCallback {
+		(): void;
+		(data: Buffer): void;
+		(arg: { mimeType: string; charset: string; data: Buffer }): void;
+	}
+
+	interface StringProtocolHandlerCallback {
+		(): void;
+		(data: string): void;
+		(arg: { mimeType: string; charset: string; data: string }): void;
+	}
+
+	interface HttpProtocolHandlerCallback {
+		(): void;
+		/**
+		 * @param arg.session By default the current session will be reused for the request,
+		 *                    to force the request to have a different session set this to `null`.
+		 */
+		(arg: { url: string; method: string; referrer: string; session?: any }): void;
+	}
+
+	interface Protocol {
+		registerStandardSchemes(schemes: string[]): void;
+		/**
+		 * @param scheme Name to register the new protocol under, e.g. `file`.
+		 * @param handler Invoked to handle a request matching the registered protocol.
+		 * @param handler.callback The handler must call this function with no arguments if the
+		 *                         request should fail, or a single argument if the request should
+		 *                         be allowed to proceed.
+		 * @param completion Invoked when this operation completes (successfully or otherwise).
+		 * @param completion.error `null` if the protocol was registered successfully, otherwise
+		 *                          a `string` that describes the error that occured.
+		 */
+		registerFileProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: FileProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		registerBufferProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: BufferProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		registerStringProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: StringProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		/**
+		 * @param scheme Name to register the new protocol under, e.g. `http`.
+		 * @param handler Invoked to handle a request matching the registered protocol.
+		 * @param handler.callback The handler must call this function with no arguments if the
+		 *                         request should fail, or a single argument if the request should
+		 *                         be allowed to proceed.
+		 * @param completion Invoked when this operation completes (successfully or otherwise).
+		 * @param completion.error `null` if the protocol was registered successfully, otherwise
+		 *                          a `string` that describes the error that occured.
+		 */
+		registerHttpProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: HttpProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		unregisterProtocol(scheme: string, completion?: (error: string) => void): void;
+		isProtocolHandled(scheme: string, callback: (isHandled: boolean) => void): void;
+		interceptFileProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: FileProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		interceptStringProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: StringProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		interceptBufferProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: BufferProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		interceptHttpProtocol(
+			scheme: string,
+			handler: (request: URLRequest, callback: HttpProtocolHandlerCallback) => void,
+			completion?: (error: string) => void
+		): void;
+		uninterceptProtocol(scheme: string, completion?: (error: string) => void): void;
+	}
+
+  //---- end v0.34.1 ----//
+
+	// current as at v0.35.4
+	interface IMainIPCEvent {
+		/** The value to return from `ipcRenderer.sendSync()`. */
+		returnValue: any;
+		/** [[WebContents]] instance that emitted the event. */
+		sender: WebContents;
+	}
+
+	// current as at v0.35.4
+	/**
+	 * Receives asynchronous and synchronous messages sent by a renderer process (web page).
+	 */
+	interface MainIPC extends NodeJS.EventEmitter {
+		/**
+		 * Add a callback to invoke when an event is emitted by a renderer process.
+		 *
+		 * To send an asynchronous reply back to the renderer process that emitted the event use
+		 * `event.sender.send()` in the [[callback]].
+		 *
+		 * To send a synchronous reply back to the render process that emitted the event set
+		 * `event.returnValue` in the [[callback]].
+		 *
+		 * @param channel Event name.
+		 */
+		on(channel: string, callback: (event: IMainIPCEvent, ...args: any[]) => void): this;
+		/** Like [[on]], but the callback is automatically removed after its first invocation. */
+		once(channel: string, callback: (event: IMainIPCEvent, ...args: any[]) => void): this;
+	}
+
+	// current as at v0.35.4
+	/**
+	 * Sends synchronous and asynchronous messages to the main process, and receives replies from it.
+	 */
+	interface RendererIPC extends NodeJS.EventEmitter {
+		/**
+		 * Add a callback to invoke when an event is emitted by the main process.
+		 *
+		 * @channel Event name.
+		 */
+		on(channel: string, callback: (event: any, ...args: any[]) => void): this;
+		/** Like [[on]], but the callback is automatically removed after its first invocation. */
+		once(channel: string, callback: (event: any, ...args: any[]) => void): this;
+		/**
+		 * Asynchronously send an event to the main process.
+		 *
+		 * @param channel Event name.
+		 * @param args Arbitrary list of arguments to send with the event.
+		 */
+		send(channel: string, ...args: any[]): void;
+		/**
+		 * Synchronously send an event to the main process.
+		 *
+		 * @param channel Event name.
+		 * @param args Arbitrary list of arguments to send with the event.
+		 * @return The result from the main process.
+		 */
+		sendSync(channel: string, ...args: any[]): any;
+		/**
+		 * Asynchronously send an event to the <webview> element in the host page.
+		 * @param channel Event name.
+		 * @param args Arbitrary list of arguments to send with the event.
+		 */
+		sendToHost(channel: string, ...args: any[]): void;
+	}
+	
+	// current as at v0.35.4
+	/**
+	 * Provides a simple way to do inter-process communication (IPC) between the renderer process
+	 * (web page) and the main process.
+	 */
+	interface Remote {
+		// These are the modules that run in the main process
+		app: App;
+		autoUpdater: AutoUpdater;
+		BrowserWindow: typeof BrowserWindow;
+		contentTracing: ContentTracing;
+		dialog: Dialog;
+		globalShortcut: GlobalShortcut;
+		ipcMain: NodeJS.EventEmitter;
+		Menu: Menu;
+		MenuItem: MenuItem;
+		powerMonitor: NodeJS.EventEmitter;
+		powerSaveBlocker: any;
+		protocol: Protocol;
+		session: any;
+		webContents: WebContents;
+		Tray: typeof Tray;
+
+		/**
+		 * @returns The object returned by require(module) in the main process.
+		 */
+		require(module: string): any;
+		/**
+		 * @returns The BrowserWindow object which this web page belongs to.
+		 */
+		getCurrentWindow(): BrowserWindow;
+		/** @return The WebContents object of the current web page. */
+		getCurrentWebContents(): WebContents;
+		/**
+		 * @returns The global variable of name (e.g. global[name]) in the main process.
+		 */
+		getGlobal(name: string): any;
+		/**
+		 * Returns the process object in the main process. This is the same as
+		 * remote.getGlobal('process'), but gets cached.
+		 */
+		process: any;
+	}
+
+	interface WebFrame {
+		/**
+		 * Changes the zoom factor to the specified factor, zoom factor is
+		 * zoom percent / 100, so 300% = 3.0.
+		 */
+		setZoomFactor(factor: number): void;
+		/**
+		 * @returns The current zoom factor.
+		 */
+		getZoomFactor(): number;
+		/**
+		 * Changes the zoom level to the specified level, 0 is "original size", and each
+		 * increment above or below represents zooming 20% larger or smaller to default
+		 * limits of 300% and 50% of original size, respectively.
+		 */
+		setZoomLevel(level: number): void;
+		/**
+		 * @returns The current zoom level.
+		 */
+		getZoomLevel(): number;
+		/**
+		 * Sets a provider for spell checking in input fields and text areas.
+		 */
+		setSpellCheckProvider(language: string, autoCorrectWord: boolean, provider: {
+			/**
+			 * @returns Whether the word passed is correctly spelled.
+			 */
+			spellCheck: (text: string) => boolean;
+		}): void;
+		/**
+		 * Sets the scheme as secure scheme. Secure schemes do not trigger mixed content
+		 * warnings. For example, https and data are secure schemes because they cannot be
+		 * corrupted by active network attackers.
+		 */
+		registerUrlSchemeAsSecure(scheme: string): void;
+	}
+
+	interface Electron {
+		clipboard: Clipboard;
+		crashReporter: CrashReporter;
+		nativeImage: typeof NativeImage;
+		screen: Screen;
+		shell: Shell;
+	}
 }
 
-declare module 'clipboard' {
-	var clipboard: GitHubElectron.Clipboard
-	export = clipboard;
-}
-
-declare module 'crash-reporter' {
-	var crashReporter: GitHubElectron.CrashReporter
-	export = crashReporter;
-}
-
-declare module 'native-image' {
-	var nativeImage: typeof GitHubElectron.NativeImage;
-	export = nativeImage;
-}
-
-declare module 'screen' {
-	var screen: GitHubElectron.Screen;
-	export = screen;
-}
-
-declare module 'shell' {
-	var shell: GitHubElectron.Shell;
-	export = shell;
+declare module 'electron' {
+	var electron: GitHubElectron.Electron;
+	export = electron;
 }
 
 interface Window {
@@ -1500,9 +1904,5 @@ interface File {
 }
 
 interface NodeRequireFunction {
-	(id: 'clipboard'): GitHubElectron.Clipboard
-	(id: 'crash-reporter'): GitHubElectron.CrashReporter
-	(id: 'native-image'): typeof GitHubElectron.NativeImage
-	(id: 'screen'): GitHubElectron.Screen
-	(id: 'shell'): GitHubElectron.Shell
+	(id: 'electron'): GitHubElectron.Electron;
 }

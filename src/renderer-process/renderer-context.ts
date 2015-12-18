@@ -2,7 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
-import * as remote from 'remote';
+import * as electron from 'electron';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
 import { IWorkspaceElement } from './elements/workspace/workspace';
@@ -55,7 +55,7 @@ export class RendererContext {
   }
 
   showWindow(): void {
-    remote.getCurrentWindow().show();
+    electron.remote.getCurrentWindow().show();
   }
 
   /**
