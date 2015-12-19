@@ -5,6 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 import { ITree, ITreeItem } from './tree-view';
 import { IDirectoryTreeViewItemElement } from './directory-tree-view-item';
+import TreeViewBehavior from './tree-view';
 
 export interface IDirectoryTreeViewState {
   tree: ITree;
@@ -14,20 +15,20 @@ export interface IDirectoryTreeViewState {
 export type IDirectoryTreeViewElement = DirectoryTreeViewElement;
 
 @pd.is('hydragon-directory-tree-view')
+@pd.behaviors(() => [TreeViewBehavior])
 @pd.hostAttributes({ 'tabindex': '0' })
-export default class DirectoryTreeViewElement extends Polymer.BaseClass() {
-  @pd.property({ type: Object })
-  tree: ITree;
-  /** This should never be set directly, it will be managed by the child TreeViewElement. */
-  @pd.property({ type: Array })
-  items: ITreeItem[];
+export default class DirectoryTreeViewElement extends Polymer.BaseClass<any, TreeViewBehavior>() {
   /** Number of pixels to indent each level of the tree by. */
   @pd.property({ type: Number, value: 0 })
   indent: number;
 
+  ready(): void {
+    this.behavior.rootExcluded = true;
+  }
+
   factoryImpl(state?: IDirectoryTreeViewState): void {
     if (state) {
-      this.tree = state.tree;
+      this.behavior.tree = state.tree;
       this.indent = (state.indent !== undefined) ? state.indent : this.indent;
     }
   }
@@ -36,17 +37,17 @@ export default class DirectoryTreeViewElement extends Polymer.BaseClass() {
   private _onExpandItem(e: CustomEvent): void {
     e.stopPropagation();
     const element = <IDirectoryTreeViewItemElement> Polymer.dom(e).rootTarget;
-    this.tree.expandItem(element.item);
+    this.behavior.tree.expandItem(element.item);
   }
 
   @pd.listener('tree-view-item-collapse')
   private _onCollapseItem(e: CustomEvent): void {
     e.stopPropagation();
     const element = <IDirectoryTreeViewItemElement> Polymer.dom(e).rootTarget;
-    this.tree.collapseItem(element.item);
+    this.behavior.tree.collapseItem(element.item);
   }
 
   computeIndent(level: number, indent: number) {
-    return level * indent;
+    return (this.behavior.rootExcluded ? (level - 1) : level) * indent;
   }
 }

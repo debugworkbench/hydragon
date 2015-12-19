@@ -32,12 +32,11 @@ export interface ITreeItem {
   level: number;
 }
 
-export type ITreeViewElement = TreeViewElement;
-
-// FIXME: This doesn't have a visual representation of any kind, perhaps it's better off being a behavior?
-//        As a behavior there'd be less binding required to get it working.
-@pd.is('hydragon-tree-view')
-export default class TreeViewElement extends Polymer.BaseClass() {
+/**
+ * A behavior that flattens a tree hierarchy into a one dimensional array.
+ * The items in the array can then be rendered by an element in <iron-list>, or a <dom-repeat>.
+ */
+export default class TreeViewBehavior extends Polymer.BaseClass() {
   @pd.property({ type: Object, observer: '_treeChanged' })
   tree: ITree;
   /** Array that will contain the result of flattening the current tree into a list. */

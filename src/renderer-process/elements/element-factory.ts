@@ -13,7 +13,6 @@ import PageElement, { IPageElement, IPageState } from './pages/page';
 import PageSetElement, { IPageSetElement, IPageSetState } from './pages/page-set';
 import PageTreeElement, { IPageTreeElement, IPageTreeState } from './pages/page-tree';
 import PageTreeItemElement, { IPageTreeItemElement } from './pages/page-tree-item';
-import TreeViewElement, { ITreeViewElement } from './tree-view/tree-view';
 import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
 import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 
@@ -62,10 +61,6 @@ export default class ElementFactory {
 
   createPageTreeItem(page: IPageElement): IPageTreeItemElement {
     return this._createElement((<any> PageTreeItemElement.prototype).is, page);
-  }
-
-  createTreeView(): ITreeViewElement {
-    return this._createElement((<any> TreeViewElement.prototype).is);
   }
 
   createDirectoryTreeView(state?: IDirectoryTreeViewState): IDirectoryTreeViewElement {

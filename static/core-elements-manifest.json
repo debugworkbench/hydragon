@@ -56,11 +56,6 @@
           "script": "code-mirror-editor/code-mirror-editor"
         },
         {
-          "tag": "hydragon-tree-view",
-          "template": "tree-view/tree-view.html",
-          "script": "tree-view/tree-view"
-        },
-        {
           "tag": "hydragon-directory-tree-view",
           "template": "tree-view/directory-tree-view.html",
           "script": "tree-view/directory-tree-view"
