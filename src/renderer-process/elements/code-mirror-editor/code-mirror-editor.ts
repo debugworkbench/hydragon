@@ -50,7 +50,3 @@ export default class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBeh
     }
   }
 }
-
-export function register(): typeof CodeMirrorEditorElement {
-  return Polymer<typeof CodeMirrorEditorElement>(CodeMirrorEditorElement.prototype);
-}

@@ -103,7 +103,3 @@ function adjustHeight(element: HTMLElement, delta: number): void {
   }
   element.style.flexBasis = `${newHeight}px`;
 }
-
-export function register(): typeof SplitterElement {
-  return Polymer<typeof SplitterElement>(SplitterElement.prototype);
-}

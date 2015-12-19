@@ -41,7 +41,3 @@ export default class PanelElement extends Polymer.BaseClass() implements ILayout
     // this element doesn't impose any styling on its children
   }
 }
-
-export function register(): typeof PanelElement {
-  return Polymer<typeof PanelElement>(PanelElement.prototype);
-}

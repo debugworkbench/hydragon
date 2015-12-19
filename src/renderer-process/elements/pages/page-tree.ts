@@ -106,7 +106,3 @@ export default class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>(
     this._selectedItem = item;
   }
 }
-
-export function register(): typeof PageTreeElement {
-  return Polymer<typeof PageTreeElement>(PageTreeElement.prototype);
-}

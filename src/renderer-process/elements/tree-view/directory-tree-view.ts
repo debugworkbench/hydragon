@@ -50,7 +50,3 @@ export default class DirectoryTreeViewElement extends Polymer.BaseClass() {
     return level * indent;
   }
 }
-
-export function register(): typeof DirectoryTreeViewElement {
-  return Polymer<typeof DirectoryTreeViewElement>(DirectoryTreeViewElement.prototype);
-}

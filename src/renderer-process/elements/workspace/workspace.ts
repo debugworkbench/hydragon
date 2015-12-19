@@ -78,7 +78,3 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     container.updateStyle();
   }
 }
-
-export function register(): typeof WorkspaceElement {
-  return Polymer<typeof WorkspaceElement>(WorkspaceElement.prototype);
-}

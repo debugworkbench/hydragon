@@ -203,7 +203,3 @@ function getLastSubTreeItem(rootItem: ITreeItem): ITreeItem {
   }
   return lastItem;
 }
-
-export function register(): typeof TreeViewElement {
-  return Polymer<typeof TreeViewElement>(TreeViewElement.prototype);
-}

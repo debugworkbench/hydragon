@@ -170,7 +170,3 @@ export default class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
     page.destroyed();
   }
 }
-
-export function register(): typeof PageSetElement {
-  return Polymer<typeof PageSetElement>(PageSetElement.prototype);
-}

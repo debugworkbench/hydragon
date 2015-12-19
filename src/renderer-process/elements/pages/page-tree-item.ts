@@ -65,7 +65,3 @@ export default class PageTreeItemElement extends Polymer.BaseClass<ILocalDOM>() 
     this._page.close();
   }
 }
-
-export function register(): typeof PageTreeItemElement {
-  return Polymer<typeof PageTreeItemElement>(PageTreeItemElement.prototype);
-}

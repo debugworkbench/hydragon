@@ -48,7 +48,3 @@ export default class HorizontalContainerElement extends Polymer.BaseClass<any, I
     });
   }
 }
-
-export function register(): typeof HorizontalContainerElement {
-  return Polymer<typeof HorizontalContainerElement>(HorizontalContainerElement.prototype);
-}

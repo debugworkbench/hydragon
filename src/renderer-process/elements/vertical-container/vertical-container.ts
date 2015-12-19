@@ -59,7 +59,3 @@ export default class VerticalContainerElement extends Polymer.BaseClass<any, IBe
     });
   }
 }
-
-export function register(): typeof VerticalContainerElement {
-  return Polymer<typeof VerticalContainerElement>(VerticalContainerElement.prototype);
-}

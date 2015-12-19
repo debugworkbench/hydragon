@@ -83,7 +83,3 @@ export default class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors
     this.close();
   }
 }
-
-export function register(): typeof PageElement {
-  return Polymer<typeof PageElement>(PageElement.prototype);
-}

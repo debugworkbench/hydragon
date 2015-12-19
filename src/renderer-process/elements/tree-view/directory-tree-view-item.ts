@@ -49,7 +49,3 @@ export default class DirectoryTreeViewItemElement extends Polymer.BaseClass<ILoc
     this.$.indent.style.flexBasis = `${newIndent}px`;
   }
 }
-
-export function register(): typeof DirectoryTreeViewItemElement {
-  return Polymer<typeof DirectoryTreeViewItemElement>(DirectoryTreeViewItemElement.prototype);
-}
