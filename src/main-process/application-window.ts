@@ -15,12 +15,12 @@ export class ApplicationWindow {
   private _browserWindow: GitHubElectron.BrowserWindow;
 
   open({ windowUrl, config }: IApplicationWindowOpenParams): void {
-    const options = <GitHubElectron.BrowserWindowOptions> {
+    const options: GitHubElectron.BrowserWindowOptions = {
       // the window will be shown later after everything is fully initialized
       show: false,
       title: 'Debug Workbench',
-      'web-preferences': {
-        'direct-write': true
+      webPreferences: {
+        directWrite: true
       }
     };
     this._browserWindow = new electron.BrowserWindow(options);
