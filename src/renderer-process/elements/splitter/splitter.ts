@@ -21,10 +21,12 @@ class MouseEventHandler {
   }
 }
 
+export type SplitterOrientation = 'horizontal' | 'vertical';
+
 @pd.is('debug-workbench-splitter')
 export default class SplitterElement extends Polymer.BaseClass() {
   @pd.property({ type: String, value: 'horizontal', reflectToAttribute: true })
-  orientation: string; // horizontal or vertical
+  orientation: SplitterOrientation;
 
   private _mouseMoveEventHandler: MouseEventHandler;
   private _mouseUpEventHandler: MouseEventHandler;

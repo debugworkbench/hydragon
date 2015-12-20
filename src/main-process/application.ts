@@ -16,7 +16,7 @@ export class Application {
   private _appProtocolHandler: AppProtocolHandler;
 
   run(args: IApplicationArgs): void {
-    const uriPathResolver = new UriPathResolver(args.rootPath)
+    const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._window = new ApplicationWindow();
     const windowUrl = url.format({

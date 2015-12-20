@@ -20,7 +20,7 @@ import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './t
  * Creates new instances of custom elements.
  */
 export default class ElementFactory {
-  constructor(private _elementRegistry: ElementRegistry) {
+  constructor(private elementRegistry: ElementRegistry) {
   }
 
   createWorkspace(): IWorkspaceElement {
@@ -78,7 +78,7 @@ export default class ElementFactory {
    * @return A new custom element instance.
    */
   private _createElement(tagName: string, ...args: any[]): any {
-    const elementConstructor = this._elementRegistry.getElementConstructor(tagName);
+    const elementConstructor = this.elementRegistry.getElementConstructor(tagName);
     if (elementConstructor) {
       // invoke the constructor with the given args
       // TODO: in ES6 this can be simplified to Reflect.construct(elementConstructor, args),

@@ -82,7 +82,7 @@ export default class PageTreeElement extends Polymer.BaseClass<any, IBehaviors>(
   private _onPageSetDidRemovePage(page: IPageElement): void {
     const item = this._pageItemMap.get(page);
     this._itemSubscriptions.get(item).destroy();
-    this._itemSubscriptions.delete(item)
+    this._itemSubscriptions.delete(item);
     this._pageItemMap.delete(page);
     Polymer.dom(this).removeChild(item);
     item.destroyed();

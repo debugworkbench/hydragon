@@ -60,7 +60,7 @@ export class EventEmitter<T> {
       if (handlers) {
         handlers.splice(handlers.indexOf(handler), 1);
       }
-    })
+    });
   }
 
   emit(eventId: T, event: any): void {
