@@ -22,7 +22,7 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
     const rightContainer = elementFactory.createVerticalContainer({ resizable: true });
     const pageTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
-    const dirTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
+    const dirTreePanel = elementFactory.createPanel({ resizable: true });
     const documentPanel = elementFactory.createPanel();
     const pageSet = elementFactory.createPageSet({ height: '100%' });
     const pageTree = elementFactory.createPageTree({ height: '100%' });
