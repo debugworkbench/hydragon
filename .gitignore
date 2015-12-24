@@ -3,3 +3,8 @@ bower_components/**
 /lib/**
 !/lib/jsconfig.json
 !/bower_components/dependencies.html
+intermediate/
+/build/tasks/*.js
+/build/tasks/*.js.map
+/build/grunt-config.js
+/build/grunt-config.js.map

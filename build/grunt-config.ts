@@ -16,7 +16,7 @@ function loadTasks(grunt: IGrunt): void {
 }
 
 export = function(grunt: IGrunt) {
-  grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
@@ -32,45 +32,26 @@ export = function(grunt: IGrunt) {
 
   grunt.initConfig({
     'pkg': packageJson,
-    'babel': {
-      options: {
-        babelrc: false, // undocumented option to prevent babel from looking for .babelrc or in package.json
-        sourceMaps: false,
-        plugins: [
-          'transform-strict-mode',
-          'transform-es2015-parameters',
-          'transform-es2015-destructuring',
-          'transform-es2015-spread',
-          'transform-polymer-base'
-        ]
-      },
-      'common': {
+    'babel-plus': {
+      default: {
         files: [{
           expand: true,
-          cwd: '../lib/',
-          src: ['common/**/*.js'],
-          dest: '../lib/'
-        }]
-      },
-      'main-process': {
-        files: [{
-          expand: true,
-          cwd: '../lib/',
-          src: ['main-process/**/*.js'],
-          dest: '../lib/'
-        }]
-      },
-      'renderer-process': {
-        files: [{
-          expand: true,
-          cwd: '../lib/',
+          cwd: '../intermediate/',
           src: [
-            'renderer-process/**/*.js',
-            '!renderer-process/elements/dependencies_bundle.js'
+            'common/**/*.js',
+            'main-process/**/*.js',
+            'renderer-process/**/*.js'
           ],
           dest: '../lib/'
         }]
       }
+    },
+    'babel-plus-watch': {
+      options: {
+        babelSrcDir: '../intermediate/', //path.join(repoRoot, 'intermediate'),
+        babelOutDir: '../lib/' //path.join(repoRoot, 'lib')
+      },
+      default: {}
     },
     'jshint': {
       files: ['Gruntfile.js'],
@@ -107,14 +88,32 @@ export = function(grunt: IGrunt) {
           project: '../src/common/'
         }
       },
+      'watch-common': {
+        options: {
+          project: '../src/common/',
+          tscOptions: ['--watch']
+        }
+      },
       'main': {
         options: {
           project: '../src/main-process/'
         }
       },
+      'watch-main': {
+        options: {
+          project: '../src/main-process/',
+          tscOptions: ['--watch']
+        }
+      },
       'renderer': {
         options: {
           project: '../src/renderer-process/'
+        }
+      },
+      'watch-renderer': {
+        options: {
+          project: '../src/renderer-process/',
+          tscOptions: ['--watch']
         }
       }
     },
@@ -167,7 +166,7 @@ export = function(grunt: IGrunt) {
           src: [
             'common/fs-promisified.js'
           ],
-          dest: '../lib'
+          dest: '../intermediate'
         }]
       },
       elements: {
@@ -175,7 +174,6 @@ export = function(grunt: IGrunt) {
           cwd: '../src',
           src: [
             'renderer-process/elements/**/*.html',
-            '!renderer-process/elements/**/dependencies.html',
             '!renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
           ],
           dest: '../lib'
@@ -189,10 +187,24 @@ export = function(grunt: IGrunt) {
         src: '../src/renderer-process/elements/code-mirror-editor/code-mirror-styles.html',
         dest: '../lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
       }
+    },
+    'concurrent': {
+      default: {
+        tasks: [
+          'tsc:watch-common',
+          'tsc:watch-main',
+          'tsc:watch-renderer',
+          'babel-plus-watch:default'
+        ],
+        options: {
+          logConcurrentOutput: true
+        }
+      }
     }
   });
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
-  grunt.registerTask('build', ['tsc', 'sync:default', 'babel']);
+  grunt.registerTask('build', ['tsc:common', 'tsc:main', 'tsc:renderer', 'sync:default', 'babel-plus:default']);
+  grunt.registerTask('watch', ['concurrent:default']);
   grunt.registerTask('default', ['lint', 'build']);
 };
