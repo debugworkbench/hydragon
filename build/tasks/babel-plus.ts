@@ -190,7 +190,7 @@ function activatePlugin(grunt: IGrunt) {
       ignored: isPathIgnoredByWatcher,
       ignorePermissionErrors: true
     };
-    const watcher = chokidar.watch(options.babelSrcDir, {  })
+    const watcher = chokidar.watch(options.babelSrcDir, watchOptions)
     .on('ready', () => {
       isWatcherReady = true;
       log(`Watching '${options.babelSrcDir}' ...`);
