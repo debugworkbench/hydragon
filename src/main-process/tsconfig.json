@@ -6,7 +6,7 @@
         "sourceMap": true,
         "declaration": false,
         "noLib": false,
-        "outDir": "../../intermediate",
+        "outDir": "../../lib",
         "rootDir": "../"
     },
     "files": [

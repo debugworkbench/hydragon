@@ -9,13 +9,9 @@
     },
     "files": [
         "node_modules/typescript/lib/lib.es6.d.ts",
-        "typings/babel/babel-core.d.ts",
-        "typings/chokidar/chokidar.d.ts",
         "typings/gruntjs/gruntjs.d.ts",
-        "typings/lodash/lodash.d.ts",
         "typings/glob/glob.d.ts",
         "typings/source-map/source-map.d.ts",
-        "tasks/babel-plus.ts",
         "typings/electron-rebuild/electron-rebuild.d.ts",
         "tasks/rebuild-native-modules.ts",
         "tasks/run-electron.ts",

@@ -18,9 +18,9 @@ function loadTasks(grunt: IGrunt): void {
 export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-ibsforts');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
-  grunt.loadNpmTasks('grunt-tsc');
   grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('grunt-vulcanize');
   // grunt.loadTasks() only loads .js and .coffee files, so gotta load .ts files separately
@@ -30,28 +30,62 @@ export = function(grunt: IGrunt) {
   const repoRoot = path.resolve('..');
   const packageJson = grunt.file.readJSON('../package.json');
 
+  const buildServerPlugins = [{
+    module: 'ibsforts-plugin-babel',
+    transform: 'babelTransform',
+    options: {
+      enableNodeModuleResolution: true,
+      plugins: [
+        'transform-strict-mode',
+        'transform-es2015-parameters',
+        'transform-es2015-destructuring',
+        'transform-es2015-spread',
+        'transform-polymer-base'
+      ]
+    }
+  }];
+
+  const commonProjectBuildTaskOptions = {
+    projectConfigPath: '../src/common/tsconfig.json',
+    plugins: buildServerPlugins
+  };
+  const mainProjectBuildTaskOptions = {
+    projectConfigPath: '../src/main-process/tsconfig.json',
+    plugins: buildServerPlugins
+  };
+  const rendererProjectBuildTaskOptions = {
+    projectConfigPath: '../src/renderer-process/tsconfig.json',
+    plugins: buildServerPlugins
+  };
+
   grunt.initConfig({
     'pkg': packageJson,
-    'babel-plus': {
-      default: {
-        files: [{
-          expand: true,
-          cwd: '../intermediate/',
-          src: [
-            'common/**/*.js',
-            'main-process/**/*.js',
-            'renderer-process/**/*.js'
-          ],
-          dest: '../lib/'
-        }]
-      }
-    },
-    'babel-plus-watch': {
+    'ibsforts': {
       options: {
-        babelSrcDir: '../intermediate/', //path.join(repoRoot, 'intermediate'),
-        babelOutDir: '../lib/' //path.join(repoRoot, 'lib')
+        projects: [
+          commonProjectBuildTaskOptions,
+          mainProjectBuildTaskOptions,
+          rendererProjectBuildTaskOptions
+        ]
       },
-      default: {}
+      'common': {
+        options: commonProjectBuildTaskOptions
+      },
+      'main': {
+        options: mainProjectBuildTaskOptions
+      },
+      'renderer': {
+        options: rendererProjectBuildTaskOptions
+      },
+      'build': {
+        // this target will build all projects specified in `options.projects`
+      },
+      'watch': {
+        // this target will watch and rebuild all projects specified in `options.projects`
+        options: {
+          watch: true
+        }
+      }
     },
     'jshint': {
       files: ['Gruntfile.js'],
@@ -76,44 +110,6 @@ export = function(grunt: IGrunt) {
             '../src/**/*.ts',
             '../test/**/*.ts'
           ]
-        }
-      }
-    },
-    'tsc': {
-      options: {
-        tscPath: path.resolve('node_modules', 'typescript', 'bin', 'tsc')
-      },
-      'common': {
-        options: {
-          project: '../src/common/'
-        }
-      },
-      'watch-common': {
-        options: {
-          project: '../src/common/',
-          tscOptions: ['--watch']
-        }
-      },
-      'main': {
-        options: {
-          project: '../src/main-process/'
-        }
-      },
-      'watch-main': {
-        options: {
-          project: '../src/main-process/',
-          tscOptions: ['--watch']
-        }
-      },
-      'renderer': {
-        options: {
-          project: '../src/renderer-process/'
-        }
-      },
-      'watch-renderer': {
-        options: {
-          project: '../src/renderer-process/',
-          tscOptions: ['--watch']
         }
       }
     },
@@ -166,7 +162,7 @@ export = function(grunt: IGrunt) {
           src: [
             'common/fs-promisified.js'
           ],
-          dest: '../intermediate'
+          dest: '../lib'
         }]
       },
       elements: {
@@ -188,23 +184,23 @@ export = function(grunt: IGrunt) {
         dest: '../lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
       }
     },
+    /*
     'concurrent': {
       default: {
         tasks: [
-          'tsc:watch-common',
-          'tsc:watch-main',
-          'tsc:watch-renderer',
-          'babel-plus-watch:default'
+          'ibsforts:watch'
         ],
         options: {
           logConcurrentOutput: true
         }
       }
     }
+    */
   });
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
-  grunt.registerTask('build', ['tsc:common', 'tsc:main', 'tsc:renderer', 'sync:default', 'babel-plus:default']);
-  grunt.registerTask('watch', ['concurrent:default']);
+  // FIXME: need some sort of dependency resolution for build and watch tasks!
+  grunt.registerTask('build', ['ibsforts:common', 'ibsforts:main', 'ibsforts:renderer', 'sync:default']);
+  grunt.registerTask('watch', ['ibsforts:watch']);
   grunt.registerTask('default', ['lint', 'build']);
 };

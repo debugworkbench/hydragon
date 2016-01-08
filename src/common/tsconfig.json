@@ -4,9 +4,9 @@
         "target": "es6",
         "noImplicitAny": true,
         "sourceMap": true,
-        "declaration": false,
+        "declaration": true,
         "noLib": false,
-        "outDir": "../../intermediate",
+        "outDir": "../../lib",
         "rootDir": "../"
     },
     "files": [
