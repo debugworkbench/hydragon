@@ -21,11 +21,11 @@
   "license": "MIT",
   "devDependencies": {
     "node-inspector": "^0.12.3",
-    "node-pre-gyp": "github:enlight/node-pre-gyp#detect-electron-runtime-in-find",
-    "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
+    "node-pre-gyp": "github:enlight/node-pre-gyp#detect-electron-runtime-in-find"
   },
   "dependencies": {
     "codemirror": "^5.8.0",
-    "thenify": "^3.1.1"
+    "fs-promisified": "github:enlight/node-fs-promisified",
+    "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
   }
 }

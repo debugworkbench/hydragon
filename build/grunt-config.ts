@@ -156,15 +156,6 @@ export = function(grunt: IGrunt) {
       }
     },
     'sync': {
-      default: {
-        files: [{
-          cwd: '../src',
-          src: [
-            'common/fs-promisified.js'
-          ],
-          dest: '../lib'
-        }]
-      },
       elements: {
         files: [{
           cwd: '../src',
@@ -200,7 +191,7 @@ export = function(grunt: IGrunt) {
 
   grunt.registerTask('lint', ['jshint', 'tslint']);
   // FIXME: need some sort of dependency resolution for build and watch tasks!
-  grunt.registerTask('build', ['ibsforts:common', 'ibsforts:main', 'ibsforts:renderer', 'sync:default']);
+  grunt.registerTask('build', ['ibsforts:common', 'ibsforts:main', 'ibsforts:renderer']);
   grunt.registerTask('watch', ['ibsforts:watch']);
   grunt.registerTask('default', ['lint', 'build']);
 };

@@ -1,8 +1,8 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
-import * as fs from '../../common/fs-promisified';
+import * as fs from 'fs-promisified';
 import { importHref } from '../utils';
 import UriPathResolver from '../../common/uri-path-resolver';
 
