@@ -1,13 +1,13 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
 import ElementRegistry from './element-registry';
 import WorkspaceElement, { IWorkspaceElement } from './workspace/workspace';
-import VerticalContainerElement, { IVerticalContainerElement, IVerticalContainerState } from './vertical-container/vertical-container';
-import HorizontalContainerElement, { IHorizontalContainerElement } from './horizontal-container/horizontal-container';
-import PanelElement, { IPanelElement, IPanelState } from './panel/panel';
-import SplitterElement, { ISplitterElement } from './splitter/splitter';
+import VerticalContainerElement, { IVerticalContainerElement, IVerticalContainerState } from './layout/vertical-container/vertical-container';
+import HorizontalContainerElement, { IHorizontalContainerElement } from './layout/horizontal-container/horizontal-container';
+import PanelElement, { IPanelElement, IPanelState } from './layout/panel/panel';
+import SplitterElement, { ISplitterElement } from './layout/splitter/splitter';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
 import PageElement, { IPageElement, IPageState } from './pages/page';
 import PageSetElement, { IPageSetElement, IPageSetState } from './pages/page-set';

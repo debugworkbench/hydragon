@@ -1,9 +1,9 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { IHorizontalContainerElement } from '../horizontal-container/horizontal-container';
+import { IHorizontalContainerElement } from '../layout/horizontal-container/horizontal-container';
 import { DirectoryTree } from '../tree-view/directory-tree';
 import ElementFactory from '../element-factory';
 

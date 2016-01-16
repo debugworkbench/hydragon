@@ -1,11 +1,11 @@
 <!--
 @license
-Copyright (c) 2015 Vadim Macagon
+Copyright (c) 2015-2016 Vadim Macagon
 -->
 <link rel="import" href="../splitter/splitter.html">
 
 <!--
-An element that lays out its children vertically (i.e. in a column) using Flexbox CSS.
+An element that lays out its children horizontaly (i.e. in a row) using Flexbox CSS.
 This element is a flex container, and its children will be flex items (and may also be flex
 containers themselves). Note that this element will automatically insert splitter elements
 between its children to allow the user to drag-resize each child element. With the exception
@@ -13,24 +13,24 @@ of splitter elements all children must implement the ILayoutContainer interface.
 
 Example:
 
-    <debug-workbench-vertical-container>
+    <debug-workbench-horizontal-container>
       <debug-workbench-panel id="panelA"></debug-workbench-panel>
       <debug-workbench-panel id="panelB"></debug-workbench-panel>
-    </debug-workbench-vertical-container>
+    </debug-workbench-horizontal-container>
 
 In the example above a splitter element will be automatically inserted between panelA and panelB
 when the container element is attached to the DOM.
 
 @group Debug Workbench
-@element debug-workbench-vertical-container
+@element debug-workbench-horizontal-container
 -->
-<dom-module id="debug-workbench-vertical-container">
+<dom-module id="debug-workbench-horizontal-container">
   <template>
     <style>
       :host {
         box-sizing: border-box;
         overflow: hidden;
-        @apply(--layout-vertical);
+        @apply(--layout-horizontal);
       }
 
       :host > ::content > * {

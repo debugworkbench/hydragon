@@ -2,13 +2,12 @@
   "bundles":
   [
     {
-      "baseUri": "app:///lib/renderer-process/elements",
-      "elements":
-      [
+      "baseUri": "app:///lib/renderer-process/elements/layout",
+      "elements": [
         {
-          "tag": "debug-workbench-workspace",
-          "template": "workspace/workspace.html",
-          "script": "workspace/workspace"
+          "tag": "debug-workbench-horizontal-container",
+          "template": "horizontal-container/horizontal-container.html",
+          "script": "horizontal-container/horizontal-container"
         },
         {
           "tag": "debug-workbench-panel",
@@ -16,19 +15,25 @@
           "script": "panel/panel"
         },
         {
-          "tag": "debug-workbench-horizontal-container",
-          "template": "horizontal-container/horizontal-container.html",
-          "script": "horizontal-container/horizontal-container"
+          "tag": "debug-workbench-splitter",
+          "template": "splitter/splitter.html",
+          "script": "splitter/splitter"
         },
         {
           "tag": "debug-workbench-vertical-container",
           "template": "vertical-container/vertical-container.html",
           "script": "vertical-container/vertical-container"
-        },
+        }
+      ]
+    },
+    {
+      "baseUri": "app:///lib/renderer-process/elements",
+      "elements":
+      [
         {
-          "tag": "debug-workbench-splitter",
-          "template": "splitter/splitter.html",
-          "script": "splitter/splitter"
+          "tag": "debug-workbench-workspace",
+          "template": "workspace/workspace.html",
+          "script": "workspace/workspace"
         },
         {
           "tag": "debug-workbench-page",

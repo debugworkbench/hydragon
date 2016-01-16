@@ -2,10 +2,10 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
-import { ILayoutContainer } from '../interfaces';
+import { ILayoutContainer } from '../../interfaces';
 import SplitterElement from '../splitter/splitter';
 import { SplittableBehavior } from '../behaviors/splittable';
-import ElementFactory from '../element-factory';
+import ElementFactory from '../../element-factory';
 
 export type IBehaviors = SplittableBehavior & typeof Polymer.IronResizableBehavior;
 export type IHorizontalContainerElement = HorizontalContainerElement & IBehaviors;

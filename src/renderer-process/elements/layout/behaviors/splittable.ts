@@ -1,5 +1,8 @@
+// Copyright (c) 2015-2016 Vadim Macagon
+// MIT License, see LICENSE file for full terms.
+
 import SplitterElement from '../splitter/splitter';
-import ElementFactory from '../element-factory';
+import ElementFactory from '../../element-factory';
 
 /** @return `true` iff at least one of the elements in the given array has the resizable attribute set. */
 function containsResizableElement(elements: HTMLElement[], startIndex: number): boolean {
