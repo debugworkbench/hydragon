@@ -12,6 +12,7 @@
     },
     "files": [
         "../../typings/codemirror/codemirror.d.ts",
+        "../../typings/event-kit/event-kit.d.ts",
         "../../typings/node/node.d.ts",
         "../../typings/github-electron/node.d.ts",
         "../../typings/github-electron/github-electron.d.ts",
@@ -20,6 +21,7 @@
         "../../typings/polymer/polymer-typescript-helpers.d.ts",
         "../../typings/polymer-elements/index.d.ts",
         "elements/code-mirror-editor/code-mirror-editor.ts",
+        "elements/debug-toolbar/debug-toolbar.ts",
         "elements/layout/behaviors/splittable.ts",
         "elements/layout/horizontal-container/horizontal-container.ts",
         "elements/layout/panel/panel.ts",
@@ -36,6 +38,7 @@
         "elements/workspace/workspace.ts",
         "elements/element-factory.ts",
         "elements/interfaces.ts",
+        "debug-config-manager.ts",
         "init-window.ts",
         "renderer-context.ts",
         "utils.ts"

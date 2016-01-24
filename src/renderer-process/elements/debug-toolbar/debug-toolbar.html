@@ -1,0 +1,67 @@
+<!--
+@license
+Copyright (c) 2015-2016 Vadim Macagon
+-->
+
+<!--
+Example:
+
+    <debug-workbench-debug-toolbar></debug-workbench-debug-toolbar>
+
+@group Debug Workbench
+@element debug-workbench-debug-toolbar
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="hydragon-debug-toolbar">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        box-sizing: border-box;
+      }
+
+      paper-toolbar {
+        --paper-toolbar-background: rgb(37, 37, 38);
+        --paper-toolbar-color: rgb(204, 204, 204);
+        --paper-toolbar-height: 48px;
+      }
+
+      /* The start and stop buttons overlap, only one is visible at any one time. */
+      #startStopButtons {
+        display: inline-block;
+        position: relative;
+      }
+
+      #stopButton {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+      }
+
+      .invisible {
+        visibility: hidden;
+      }
+
+    </style>
+
+    <paper-toolbar>
+      <paper-icon-button icon="refresh" alt="Restart Debugging" disabled></paper-icon-button>
+      <div id="startStopButtons">
+        <paper-icon-button id="startButton" icon="av:play-arrow" alt="Start Debugging"></paper-icon-button>
+        <paper-icon-button id="stopButton" icon="av:stop" alt="Stop Debugging" class="invisible"></paper-icon-button>
+      </div>
+      <paper-dropdown-menu id="configs" label="Configuration" no-label-float>
+        <paper-menu class="dropdown-content">
+          <paper-item id="newConfigItem">New...</paper-item>
+          <template is="dom-repeat" items="[[debugConfigs]]">
+            <paper-item>[[item]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <paper-icon-button icon="av:pause" alt="Pause Debugging" disabled></paper-icon-button>
+      <paper-icon-button id="settingsButton" icon="settings" alt="Edit Debug Configurations"></paper-icon-button>
+    </paper-toolbar>
+  </template>
+
+</dom-module>

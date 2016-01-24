@@ -3,9 +3,15 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { IHorizontalContainerElement } from '../layout/horizontal-container/horizontal-container';
+import { IVerticalContainerElement } from '../layout/vertical-container/vertical-container';
 import { DirectoryTree } from '../tree-view/directory-tree';
 import ElementFactory from '../element-factory';
+import DebugConfigManager from '../../debug-config-manager';
+
+export interface IWorkspaceElementOptions {
+  elementFactory: ElementFactory;
+  debugConfigManager: DebugConfigManager;
+}
 
 export type IBehaviors = typeof Polymer.IronResizableBehavior;
 export type IWorkspaceElement = WorkspaceElement & IBehaviors;
@@ -13,16 +19,18 @@ export type IWorkspaceElement = WorkspaceElement & IBehaviors;
 @pd.is('debug-workbench-workspace')
 @pd.behaviors(() => [Polymer.IronResizableBehavior])
 export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>() {
-  private _rootContainer: IHorizontalContainerElement;
+  private _rootContainer: IVerticalContainerElement;
   private _directoryTree: DirectoryTree;
 
   /** Called after ready() with arguments passed to the element constructor function. */
-  factoryImpl(elementFactory: ElementFactory): void {
-    this._rootContainer = elementFactory.createHorizontalContainer();
+  factoryImpl({ elementFactory, debugConfigManager }: IWorkspaceElementOptions): void {
+    this._rootContainer = elementFactory.createVerticalContainer();
+    const centralContainer = elementFactory.createHorizontalContainer();
     const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
     const rightContainer = elementFactory.createVerticalContainer({ resizable: true });
     const pageTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
     const dirTreePanel = elementFactory.createPanel({ resizable: true });
+    const toolbarPanel = elementFactory.createPanel({ height: '48px' });
     const documentPanel = elementFactory.createPanel();
     const pageSet = elementFactory.createPageSet({ height: '100%' });
     const pageTree = elementFactory.createPageTree({ height: '100%' });
@@ -44,6 +52,9 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     this._directoryTree = new DirectoryTree();
     const dirTreeView = elementFactory.createDirectoryTreeView({ tree: this._directoryTree, indent: 25 });
 
+    const debugToolbar = elementFactory.createDebugToolbar(debugConfigManager);
+    toolbarPanel.appendChild(debugToolbar);
+
     Polymer.dom(page1).appendChild(editorElement1);
     Polymer.dom(page2).appendChild(editorElement2);
     pageSet.addPage(page1);
@@ -55,8 +66,10 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     Polymer.dom(leftContainer).appendChild(dirTreePanel);
     Polymer.dom(rightContainer).appendChild(documentPanel);
     Polymer.dom(rightContainer).appendChild(statusPanel);
-    Polymer.dom(this._rootContainer).appendChild(leftContainer);
-    Polymer.dom(this._rootContainer).appendChild(rightContainer);
+    Polymer.dom(centralContainer).appendChild(leftContainer);
+    Polymer.dom(centralContainer).appendChild(rightContainer);
+    Polymer.dom(this._rootContainer).appendChild(toolbarPanel);
+    Polymer.dom(this._rootContainer).appendChild(centralContainer);
     Polymer.dom(<any> this).appendChild(this._rootContainer);
   }
 

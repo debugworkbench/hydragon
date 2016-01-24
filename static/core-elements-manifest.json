@@ -31,6 +31,16 @@
       "elements":
       [
         {
+          "tag": "code-mirror-editor",
+          "template": "code-mirror-editor/code-mirror-editor.html",
+          "script": "code-mirror-editor/code-mirror-editor"
+        },
+        {
+          "tag": "hydragon-debug-toolbar",
+          "template": "debug-toolbar/debug-toolbar.html",
+          "script": "debug-toolbar/debug-toolbar"
+        },
+        {
           "tag": "debug-workbench-workspace",
           "template": "workspace/workspace.html",
           "script": "workspace/workspace"
@@ -54,11 +64,6 @@
           "tag": "debug-workbench-page-tree-item",
           "template": "pages/page-tree-item.html",
           "script": "pages/page-tree-item"
-        },
-        {
-          "tag": "code-mirror-editor",
-          "template": "code-mirror-editor/code-mirror-editor.html",
-          "script": "code-mirror-editor/code-mirror-editor"
         },
         {
           "tag": "hydragon-directory-tree-view",

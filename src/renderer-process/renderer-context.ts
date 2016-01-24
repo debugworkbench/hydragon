@@ -9,6 +9,7 @@ import { IWorkspaceElement } from './elements/workspace/workspace';
 import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
+import DebugConfigManager, { DebugConfigFileLoader } from './debug-config-manager';
 
 export const enum Cursor {
   HorizontalResize,
@@ -50,7 +51,16 @@ export class RendererContext {
     this.elementRegistry = new ElementRegistry(uriPathResolver, elementManifestLoader);
     await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
     this.elementFactory = new ElementFactory(this.elementRegistry);
-    this.workspace = this.elementFactory.createWorkspace();
+
+    const userDataDir = electron.remote.app.getPath('userData');
+    const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
+    const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
+    const debugConfigManager = new DebugConfigManager(debugConfigLoader);
+
+    this.workspace = this.elementFactory.createWorkspace({
+      elementFactory: null, // will be set to the correct instance by the factory itself
+      debugConfigManager
+    });
     document.body.appendChild(this.workspace);
   }
 
