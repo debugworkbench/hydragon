@@ -22,6 +22,7 @@
         "../../typings/polymer-elements/index.d.ts",
         "elements/code-mirror-editor/code-mirror-editor.ts",
         "elements/debug-toolbar/debug-toolbar.ts",
+        "elements/file-input/file-input.ts",
         "elements/layout/behaviors/splittable.ts",
         "elements/layout/horizontal-container/horizontal-container.ts",
         "elements/layout/panel/panel.ts",
