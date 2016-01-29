@@ -5,7 +5,7 @@ import * as pd from 'polymer-ts-decorators';
 import * as electron from 'electron';
 
 @pd.is('file-input')
-export class FileInputElement extends Polymer.BaseClass() {
+export default class FileInputElement extends Polymer.BaseClass() {
   @pd.property({ type: String })
   inputLabel: string;
 
