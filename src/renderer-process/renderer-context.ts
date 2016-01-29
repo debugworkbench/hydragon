@@ -10,6 +10,9 @@ import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
 import DebugConfigManager, { DebugConfigFileLoader } from './debug-config-manager';
+import DebugConfigPresenter from './debug-config-presenter';
+import * as DebugEngineProvider from 'debug-engine';
+import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 
 export const enum Cursor {
   HorizontalResize,
@@ -56,10 +59,14 @@ export class RendererContext {
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
     const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
     const debugConfigManager = new DebugConfigManager(debugConfigLoader);
+    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory);
+    DebugEngineProvider.register(new GdbMiDebugEngineProvider());
+    await debugConfigManager.load();
 
     this.workspace = this.elementFactory.createWorkspace({
       elementFactory: null, // will be set to the correct instance by the factory itself
-      debugConfigManager
+      debugConfigManager,
+      debugConfigPresenter
     });
     document.body.appendChild(this.workspace);
   }

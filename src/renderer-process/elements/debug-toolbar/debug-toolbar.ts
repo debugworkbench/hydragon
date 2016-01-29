@@ -4,6 +4,7 @@
 import * as pd from 'polymer-ts-decorators';
 import { CompositeDisposable, Disposable } from 'event-kit';
 import DebugConfigManager from '../../debug-config-manager';
+import DebugConfigPresenter from '../../debug-config-presenter';
 import {
   IDebugSession, IInferiorDidExitEvent, DebugEngineError, ConnectionError
 } from 'debug-engine';
@@ -38,6 +39,7 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
   private subscriptions: CompositeDisposable;
   private debugSession: IDebugSession;
   private _debugConfigManager: DebugConfigManager;
+  private _debugConfigPresenter: DebugConfigPresenter;
 
   private get debugConfigManager(): DebugConfigManager {
     return this._debugConfigManager;
@@ -45,6 +47,7 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
 
   private set debugConfigManager(manager: DebugConfigManager) {
     this._debugConfigManager = manager;
+    this.set('debugConfigs', this._debugConfigManager.getAll().map(config => config.name));
     // FIXME: remove previous subs?
     this.subscriptions.add(manager.onDidAddConfig(
       addedConfig => this.push('debugConfigs', addedConfig.name)
@@ -74,8 +77,9 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
     this.subscriptions = new CompositeDisposable();
   }
 
-  factoryImpl(debugConfigManager: DebugConfigManager): void {
+  factoryImpl(debugConfigManager: DebugConfigManager, debugConfigPresenter: DebugConfigPresenter): void {
     this.debugConfigManager = debugConfigManager;
+    this._debugConfigPresenter = debugConfigPresenter;
   }
 
   destroy(): void {
@@ -91,7 +95,7 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
     // from here or from a yet to be implemented command terminal window.
     //Promise.resolve().then(() => {
       this._showStartButton(false);
-      //const debugConfig = this.debugConfigManager.get(this.$.configs.selectedItemLabel);
+      const debugConfig = this.debugConfigManager.get(this.$.configs.selectedItemLabel);
       //const debugEngine = debugWorkbench.getDebugEngine(debugConfig.engine);
       //return debugEngine.startDebugSession(debugConfig/*, { console }*/);
     //})
@@ -127,7 +131,7 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
   @pd.listener('settingsButton.tap')
   private openSettings(): void {
     if (this.$.configs.selectedItemLabel) {
-      //debugWorkbench.openDebugConfig(this.$.configs.selectedItemLabel);
+      this._debugConfigPresenter.openDebugConfig(this.$.configs.selectedItemLabel);
     }
   }
 
@@ -140,7 +144,7 @@ export default class DebugToolbarElement extends Polymer.BaseClass<ILocalDOM>() 
       e.preventDefault();
       this.$.configs.close();
       // when the config name is omitted the user will be prompted to create a new config
-      //debugWorkbench.openDebugConfig();
+      this._debugConfigPresenter.openDebugConfig();
     }
   }
 

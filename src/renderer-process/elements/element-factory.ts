@@ -10,6 +10,8 @@ import PanelElement, { IPanelElement, IPanelState } from './layout/panel/panel';
 import SplitterElement, { ISplitterElement } from './layout/splitter/splitter';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
 import DebugToolbarElement, { IDebugToolbarElement } from './debug-toolbar/debug-toolbar';
+import NewDebugConfigDialogElement, { INewDebugConfigDialogElement } from './new-debug-config-dialog/new-debug-config-dialog';
+import GdbMiDebugConfigElement, { IGdbMiDebugConfigElement } from './gdb-mi-debug-config/gdb-mi-debug-config';
 import PageElement, { IPageElement, IPageState } from './pages/page';
 import PageSetElement, { IPageSetElement, IPageSetState } from './pages/page-set';
 import PageTreeElement, { IPageTreeElement, IPageTreeState } from './pages/page-tree';
@@ -17,6 +19,8 @@ import PageTreeItemElement, { IPageTreeItemElement } from './pages/page-tree-ite
 import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
 import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 import DebugConfigManager from '../debug-config-manager';
+import DebugConfigPresenter from '../debug-config-presenter';
+import { IDebugConfig } from 'debug-engine';
 
 /**
  * Creates new instances of custom elements.
@@ -50,8 +54,16 @@ export default class ElementFactory {
     return this._createElement((<any> CodeMirrorEditorElement.prototype).is, config);
   }
 
-  createDebugToolbar(debugConfigManager: DebugConfigManager): IDebugToolbarElement {
-    return this._createElement((<any> DebugToolbarElement.prototype).is, debugConfigManager);
+  createDebugToolbar(debugConfigManager: DebugConfigManager, debugConfigPresenter: DebugConfigPresenter): IDebugToolbarElement {
+    return this._createElement((<any> DebugToolbarElement.prototype).is, debugConfigManager, debugConfigPresenter);
+  }
+
+  createNewDebugConfigDialog(): INewDebugConfigDialogElement {
+    return this._createElement((<any> NewDebugConfigDialogElement.prototype).is);
+  }
+
+  createGdbMiDebugConfig(debugConfigManager: DebugConfigManager, debugConfig: IDebugConfig): IGdbMiDebugConfigElement {
+    return this._createElement((<any> GdbMiDebugConfigElement.prototype).is, debugConfigManager, debugConfig);
   }
 
   createPage(state?: IPageState): IPageElement {

@@ -1,0 +1,55 @@
+<!--
+@license
+Copyright (c) 2015-2016 Vadim Macagon
+-->
+
+<!--
+An element that lets the user edit a debug configuration for the gdb-mi debug engine.
+
+Example:
+
+    <hydragon-gdb-mi-debug-config></hydgraon-gdb-mi-debug-config>
+
+@group Hydragon
+@element hydragon-gdb-mi-debug-config
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="hydragon-gdb-mi-debug-config">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      #dialog {
+        @apply(--hydragon-debug-configuration-dialog);
+      }
+    </style>
+
+    <paper-dialog id="dialog">
+      <h2>Debug Configuration</h2>
+      <div>
+        <paper-dropdown-menu label="Debugger Type">
+          <paper-menu id="debuggerTypes" class="dropdown-content">
+            <paper-item>GDB</paper-item>
+            <paper-item>LLDB</paper-item>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <file-input input-label="Debugger Path" file-path="{{debugConfig.debuggerPath}}"></file-input>
+        <file-input input-label="Executable" file-path="{{debugConfig.executable}}"></file-input>
+        <paper-input label="Arguments" value="{{debugConfig.executableArgs}}"></paper-input>
+        <label for="isRemote">Remote Target</label>
+        <paper-toggle-button id="isRemote" checked="{{debugConfig.targetIsRemote}}"></paper-toggle-button>
+        <paper-input label="Host" value="{{debugConfig.host}}"></paper-input>
+        <paper-input label="Port" value="{{debugConfig.port}}"></paper-input>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+</dom-module>

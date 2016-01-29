@@ -28,6 +28,7 @@
     "debug-engine": "github:debugworkbench/debug-engine",
     "event-kit": "^1.3.0",
     "fs-promisified": "github:enlight/node-fs-promisified",
+    "gdb-mi-debug-engine": "github:debugworkbench/gdb-mi-debug-engine",
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators"
   }
 }

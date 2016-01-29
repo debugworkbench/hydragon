@@ -41,6 +41,21 @@
           "script": "debug-toolbar/debug-toolbar"
         },
         {
+          "tag": "file-input",
+          "template": "file-input/file-input.html",
+          "script": "file-input/file-input"
+        },
+        {
+          "tag": "hydragon-gdb-mi-debug-config",
+          "template": "gdb-mi-debug-config/gdb-mi-debug-config.html",
+          "script": "gdb-mi-debug-config/gdb-mi-debug-config"
+        },
+        {
+          "tag": "hydragon-new-debug-config-dialog",
+          "template": "new-debug-config-dialog/new-debug-config-dialog.html",
+          "script": "new-debug-config-dialog/new-debug-config-dialog"
+        },
+        {
           "tag": "debug-workbench-workspace",
           "template": "workspace/workspace.html",
           "script": "workspace/workspace"

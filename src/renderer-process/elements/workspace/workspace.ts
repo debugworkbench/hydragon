@@ -7,10 +7,12 @@ import { IVerticalContainerElement } from '../layout/vertical-container/vertical
 import { DirectoryTree } from '../tree-view/directory-tree';
 import ElementFactory from '../element-factory';
 import DebugConfigManager from '../../debug-config-manager';
+import DebugConfigPresenter from '../../debug-config-presenter';
 
 export interface IWorkspaceElementOptions {
   elementFactory: ElementFactory;
   debugConfigManager: DebugConfigManager;
+  debugConfigPresenter: DebugConfigPresenter;
 }
 
 export type IBehaviors = typeof Polymer.IronResizableBehavior;
@@ -23,7 +25,7 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
   private _directoryTree: DirectoryTree;
 
   /** Called after ready() with arguments passed to the element constructor function. */
-  factoryImpl({ elementFactory, debugConfigManager }: IWorkspaceElementOptions): void {
+  factoryImpl({ elementFactory, debugConfigManager, debugConfigPresenter }: IWorkspaceElementOptions): void {
     this._rootContainer = elementFactory.createVerticalContainer();
     const centralContainer = elementFactory.createHorizontalContainer();
     const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
@@ -52,7 +54,7 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     this._directoryTree = new DirectoryTree();
     const dirTreeView = elementFactory.createDirectoryTreeView({ tree: this._directoryTree, indent: 25 });
 
-    const debugToolbar = elementFactory.createDebugToolbar(debugConfigManager);
+    const debugToolbar = elementFactory.createDebugToolbar(debugConfigManager, debugConfigPresenter);
     toolbarPanel.appendChild(debugToolbar);
 
     Polymer.dom(page1).appendChild(editorElement1);

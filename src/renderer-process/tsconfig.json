@@ -23,6 +23,8 @@
         "elements/code-mirror-editor/code-mirror-editor.ts",
         "elements/debug-toolbar/debug-toolbar.ts",
         "elements/file-input/file-input.ts",
+        "elements/gdb-mi-debug-config/gdb-mi-debug-config.ts",
+        "elements/new-debug-config-dialog/new-debug-config-dialog.ts",
         "elements/layout/behaviors/splittable.ts",
         "elements/layout/horizontal-container/horizontal-container.ts",
         "elements/layout/panel/panel.ts",
@@ -40,6 +42,7 @@
         "elements/element-factory.ts",
         "elements/interfaces.ts",
         "debug-config-manager.ts",
+        "debug-config-presenter.ts",
         "init-window.ts",
         "renderer-context.ts",
         "utils.ts"

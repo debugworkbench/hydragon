@@ -1,0 +1,48 @@
+<!--
+@license
+Copyright (c) 2015-2016 Vadim Macagon
+-->
+
+<!--
+A simple dialog that lets the user enter the name for a new debug config and select the debug
+engine the new config will be used with.
+
+Example:
+
+    <hydragon-new-debug-config-dialog></hydragon-new-debug-config-dialog>
+
+@group Hydragon
+@element hydragon-new-debug-config-dialog
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="hydragon-new-debug-config-dialog">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      #dialog {
+        @apply(--hydragon-new-debug-config-dialog);
+      }
+    </style>
+
+    <paper-dialog id="dialog" modal>
+      <h2>New Debug Configuration</h2>
+      <div>
+        <paper-input id="configName" label="Name"></paper-input>
+        <paper-dropdown-menu id="engines" label="Engine">
+          <paper-menu class="dropdown-content">
+            <paper-item>gdb-mi</paper-item>
+          </paper-menu>
+        </paper-dropdown-menu>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+</dom-module>
