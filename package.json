@@ -20,8 +20,7 @@
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "node-inspector": "^0.12.3",
-    "node-pre-gyp": "github:enlight/node-pre-gyp#detect-electron-runtime-in-find"
+    "node-inspector": "^0.12.5"
   },
   "dependencies": {
     "codemirror": "^5.8.0",

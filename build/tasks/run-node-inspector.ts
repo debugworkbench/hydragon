@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 'use strict';
@@ -29,7 +29,7 @@ function activatePlugin(grunt: IGrunt) {
 
     const done = task.async();
 
-    const args: string[] = [];
+    const args: string[] = ['--no-preload'];
     const inspector = child_process.fork(scriptPath, args, { cwd, execPath: electronPath, silent: true });
 
     inspector.on('error', (error: Error) => {

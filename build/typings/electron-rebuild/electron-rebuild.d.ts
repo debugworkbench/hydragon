@@ -2,7 +2,7 @@
 // Project: https://github.com/electronjs/electron-rebuild/
 // Definitions by: Vadim Macagon <https://github.com/enlight/>
 
-declare namespace ElectronRebuild {
+declare module "electron-rebuild" {
   /**
    * Determine whether native modules need to be rebuilt (not terribly accurate right now).
    *
@@ -47,6 +47,8 @@ declare namespace ElectronRebuild {
   ): Promise<void>;
 }
 
-declare module "electron-rebuild" {
-  export = ElectronRebuild;
+declare module "electron-rebuild/lib/node-pre-gyp-fix" {
+  export function preGypFixRun(
+    cwd: string, shouldRun: boolean, electronPath: string, explicitNodeVersion?: string
+  ): Promise<void>;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 'use strict';
@@ -6,6 +6,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { installNodeHeaders, rebuildNativeModules } from 'electron-rebuild';
+import { preGypFixRun } from 'electron-rebuild/lib/node-pre-gyp-fix';
 
 interface ITaskOptions {
   /** The `node_modules` directory containing the native NodeJS modules that need to be rebuilt. */
@@ -50,7 +51,8 @@ function activatePlugin(grunt: IGrunt) {
     .then(() => installNodeHeaders(electronVersion, null, null, arch))
     .then(() => {
       grunt.log.writeln(`Rebuilding native modules in ${nodeModulesDir} for Electron ${electronVersion}...`);
-      return rebuildNativeModules(electronVersion, nodeModulesDir, null, null, arch);
+      return rebuildNativeModules(electronVersion, nodeModulesDir, null, null, arch)
+      .then(() => preGypFixRun(nodeModulesDir, true, electronPath));
     })
     .then(() => {
       done();
