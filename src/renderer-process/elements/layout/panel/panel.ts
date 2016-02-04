@@ -10,6 +10,8 @@ export interface IPanelState {
   width?: string;
   height?: string;
   resizable?: boolean;
+  title?: string;
+  showHeader?: boolean;
 }
 
 @pd.is('debug-workbench-panel')
@@ -20,6 +22,10 @@ export default class PanelElement extends Polymer.BaseClass() implements ILayout
   height: string;
   @pd.property({ type: Boolean, value: false, reflectToAttribute: true })
   resizable: boolean;
+  @pd.property({ type: String, value: '' })
+  title: string;
+  @pd.property({ type: Boolean, value: false })
+  showHeader: boolean;
 
   /** Called after ready() with arguments passed to the element constructor function. */
   factoryImpl(state?: IPanelState): void {
@@ -27,6 +33,8 @@ export default class PanelElement extends Polymer.BaseClass() implements ILayout
       this.width = state.width;
       this.height = state.height;
       this.resizable = state.resizable || this.resizable;
+      this.title = state.title || this.title;
+      this.showHeader = state.showHeader || this.showHeader;
 
       if (state.width !== undefined) {
         this.style.width = `${state.width}`;

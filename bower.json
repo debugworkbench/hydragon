@@ -30,6 +30,7 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.2.2",
     "iron-pages": "PolymerElements/iron-pages#~1.0.4",
     "iron-list": "PolymerElements/iron-list#~1.1.6",
+    "paper-header-panel": "PolymerElements/paper-header-panel#~1.1.2",
     "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.1.1"
   },
   "devDependencies": {},

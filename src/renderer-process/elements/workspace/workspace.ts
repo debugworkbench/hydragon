@@ -30,8 +30,8 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     const centralContainer = elementFactory.createHorizontalContainer();
     const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
     const rightContainer = elementFactory.createVerticalContainer({ resizable: true });
-    const pageTreePanel = elementFactory.createPanel({ height: '300px', resizable: true });
-    const dirTreePanel = elementFactory.createPanel({ resizable: true });
+    const pageTreePanel = elementFactory.createPanel({ title: 'Open Pages', height: '300px', resizable: true, showHeader: true });
+    const dirTreePanel = elementFactory.createPanel({ title: 'Explorer', resizable: true, showHeader: true });
     const toolbarPanel = elementFactory.createPanel({ height: '48px' });
     const documentPanel = elementFactory.createPanel();
     const pageSet = elementFactory.createPageSet({ height: '100%' });

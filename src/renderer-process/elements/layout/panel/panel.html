@@ -18,15 +18,39 @@ Example:
         box-sizing: border-box;
         position: relative;
         display: block;
+        background-color: rgb(37, 37, 38);
       }
 
       #content-wrapper {
         @apply(--layout-fit);
       }
+
+      paper-toolbar {
+        --paper-toolbar-background: rgb(56, 56, 56);
+        --paper-toolbar-color: rgb(204, 204, 204);
+        --paper-toolbar-height: 30px;
+        --paper-toolbar-title: {
+          font-size: 14px;
+          font-weight: bold;
+          text-transform: uppercase;
+          margin-left: 0px;
+        }
+      }
     </style>
 
     <div id="content-wrapper">
-      <content></content>
+      <template is="dom-if" if="[[showHeader]]" restamp>
+        <paper-header-panel>
+          <paper-toolbar>
+            <div class="title">[[title]]</div>
+          </paper-toolbar>
+          <content></content>
+        </paper-header-panel>
+      </template>
+
+      <template is="dom-if" if="[[!showHeader]]" restamp>
+        <content></content>
+      </template>
     </div>
   </template>
 </dom-module>
