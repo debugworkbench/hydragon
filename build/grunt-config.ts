@@ -118,7 +118,12 @@ export = function(grunt: IGrunt) {
         options: {
           // extract all inline JavaScript into a separate file to work around Atom's
           // Content Security Policy
-          csp: 'dependencies_bundle.js'
+          csp: 'dependencies_bundle.js',
+          // files matching these patterns will not be bundled
+          stripExcludes: [
+            // it's got nasty shadow DOM piercing combinators in it
+            'iron-shadow-flex-layout.html'
+          ]
         },
         files: {
           // output: input
