@@ -13,6 +13,7 @@ import DebugConfigManager, { DebugConfigFileLoader } from './debug-config-manage
 import DebugConfigPresenter from './debug-config-presenter';
 import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
+import * as DevTools from './dev-tools';
 
 export const enum Cursor {
   HorizontalResize,
@@ -69,6 +70,8 @@ export class RendererContext {
       debugConfigPresenter
     });
     document.body.appendChild(this.workspace);
+
+    DevTools.register();
   }
 
   showWindow(): void {

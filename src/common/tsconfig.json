@@ -12,6 +12,7 @@
     "files": [
         "../../typings/node/node.d.ts",
         "app-window-config.ts",
+        "dev-tools.ts",
         "events.ts",
         "uri-path-resolver.ts"
     ]
