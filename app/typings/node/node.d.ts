@@ -203,6 +203,16 @@ declare module NodeJS {
 
     export interface ReadWriteStream extends ReadableStream, WritableStream {}
 
+    export interface ProcessVersions {
+        http_parser: string;
+        node: string;
+        v8: string;
+        ares: string;
+        uv: string;
+        zlib: string;
+        openssl: string;
+    }
+
     export interface Process extends EventEmitter {
         stdout: WritableStream;
         stderr: WritableStream;
@@ -221,15 +231,7 @@ declare module NodeJS {
         setuid(id: number): void;
         setuid(id: string): void;
         version: string;
-        versions: {
-            http_parser: string;
-            node: string;
-            v8: string;
-            ares: string;
-            uv: string;
-            zlib: string;
-            openssl: string;
-        };
+        versions: ProcessVersions;
         config: {
             target_defaults: {
                 cflags: any[];
@@ -867,11 +869,7 @@ declare module "child_process" {
     export function fork(modulePath: string, args?: string[], options?: {
         cwd?: string;
         env?: any;
-        execPath?: string;
-        execArgv?: string[];
-        silent?: boolean;
-        uid?: number;
-        gid?: number;
+        encoding?: string;
     }): ChildProcess;
     export function spawnSync(command: string, args?: string[], options?: {
         cwd?: string;

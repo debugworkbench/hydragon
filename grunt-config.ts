@@ -27,8 +27,8 @@ export = function(grunt: IGrunt) {
   loadTasks(grunt);
 
 
-  const repoRoot = path.resolve('..');
-  const packageJson = grunt.file.readJSON('../package.json');
+  const repoRoot = __dirname;
+  const packageJson = grunt.file.readJSON('./package.json');
 
   const buildServerPlugins = [{
     module: 'ibsforts-plugin-babel',
@@ -46,15 +46,15 @@ export = function(grunt: IGrunt) {
   }];
 
   const commonProjectBuildTaskOptions = {
-    projectConfigPath: '../src/common/tsconfig.json',
+    projectConfigPath: 'app/src/common/tsconfig.json',
     plugins: buildServerPlugins
   };
   const mainProjectBuildTaskOptions = {
-    projectConfigPath: '../src/main-process/tsconfig.json',
+    projectConfigPath: 'app/src/main-process/tsconfig.json',
     plugins: buildServerPlugins
   };
   const rendererProjectBuildTaskOptions = {
-    projectConfigPath: '../src/renderer-process/tsconfig.json',
+    projectConfigPath: 'app/src/renderer-process/tsconfig.json',
     plugins: buildServerPlugins
   };
 
@@ -102,13 +102,13 @@ export = function(grunt: IGrunt) {
     'tslint': {
       errors: {
         options: {
-          configuration: grunt.file.readJSON('../conf/tslint.json')
+          configuration: grunt.file.readJSON('app/conf/tslint.json')
         },
         files: {
           src: [
             'tasks/*.ts',
-            '../src/**/*.ts',
-            '../test/**/*.ts'
+            'app/src/**/*.ts',
+            'test/**/*.ts'
           ]
         }
       }
@@ -127,28 +127,28 @@ export = function(grunt: IGrunt) {
         },
         files: {
           // output: input
-          '../bower_components/dependencies_bundle.html': '../bower_components/dependencies.html'
+          'app/bower_components/dependencies_bundle.html': 'app/bower_components/dependencies.html'
         }
       }
     },
     'rebuild-native-modules': {
       default: {
         options: {
-          nodeModulesDir: path.join(repoRoot, 'node_modules')
+          nodeModulesDir: path.join(repoRoot, 'app', 'node_modules')
         }
       }
     },
     'run-node-inspector': {
       default: {
         options: {
-          scriptPath: path.join(repoRoot, 'node_modules', 'node-inspector', 'bin', 'inspector.js')
+          scriptPath: path.join(repoRoot, 'node_modules', 'app', 'node-inspector', 'bin', 'inspector.js')
         }
       }
     },
     'run-electron': {
       options: {
         cwd: repoRoot,
-        scriptPath: path.join('.', 'lib', 'main-process', 'main.js'),
+        scriptPath: path.join('app', 'lib', 'main-process', 'main.js'),
       },
       default: {
         // run Electron normally without debugging
@@ -163,12 +163,12 @@ export = function(grunt: IGrunt) {
     'sync': {
       elements: {
         files: [{
-          cwd: '../src',
+          cwd: 'app/src',
           src: [
             'renderer-process/elements/**/*.html',
             '!renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
           ],
-          dest: '../lib'
+          dest: 'app/lib'
         }],
         verbose: true,
         //pretend: true
@@ -176,8 +176,8 @@ export = function(grunt: IGrunt) {
     },
     'preprocess': {
       elements: {
-        src: '../src/renderer-process/elements/code-mirror-editor/code-mirror-styles.html',
-        dest: '../lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
+        src: 'app/src/renderer-process/elements/code-mirror-editor/code-mirror-styles.html',
+        dest: 'app/lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
       }
     },
     /*
