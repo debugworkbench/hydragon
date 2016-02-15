@@ -319,6 +319,18 @@ declare namespace polymer {
     dom: DomApi_Static;
     Base: Base<any>;
   }
+
+  /** Interface of event object passed by Polymer to `tap` event listeners. */
+  interface TapEvent extends CustomEvent {
+    detail: {
+      /** Client X coordinate for event. */
+      x: number;
+      /** Client Y coordinate for event. */
+      y: number;
+      /** The original DOM event that caused the tap action. */
+      sourceEvent: Event;
+    }
+  }
 }
 
 declare var Polymer: polymer.Global;

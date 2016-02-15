@@ -14,6 +14,7 @@ import DebugConfigPresenter from './debug-config-presenter';
 import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import * as DevTools from './dev-tools';
+import { PagePresenter } from './page-presenter';
 
 export const enum Cursor {
   HorizontalResize,
@@ -60,16 +61,32 @@ export class RendererContext {
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
     const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
     const debugConfigManager = new DebugConfigManager(debugConfigLoader);
-    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory);
+    const pagePresenter = new PagePresenter(this.elementFactory);
+    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory, pagePresenter);
     DebugEngineProvider.register(new GdbMiDebugEngineProvider());
     await debugConfigManager.load();
 
     this.workspace = this.elementFactory.createWorkspace({
       elementFactory: null, // will be set to the correct instance by the factory itself
       debugConfigManager,
-      debugConfigPresenter
+      debugConfigPresenter,
+      pagePresenter
     });
+
     document.body.appendChild(this.workspace);
+
+    // TODO: these editor elements are only here for mockup purposes, they should be removed once
+    // source files can be opened from the directory tree element
+    const editorElement1 = this.elementFactory.createCodeMirrorEditor({
+      value: 'int main(int argc, char** argv) {}',
+      mode: 'text/x-c++src'
+    });
+    const editorElement2 = this.elementFactory.createCodeMirrorEditor({
+      value: 'int main(int argc, char** argv) { return 0; }',
+      mode: 'text/x-c++src'
+    });
+    pagePresenter.openPage('test-page', { title: 'Page 1', content: () => editorElement1 });
+    pagePresenter.openPage('test-page2', { title: 'Page 2', content: () => editorElement2 });
 
     DevTools.register();
   }

@@ -8,11 +8,13 @@ import { DirectoryTree } from '../tree-view/directory-tree';
 import ElementFactory from '../element-factory';
 import DebugConfigManager from '../../debug-config-manager';
 import DebugConfigPresenter from '../../debug-config-presenter';
+import { PagePresenter } from '../../page-presenter';
 
 export interface IWorkspaceElementOptions {
   elementFactory: ElementFactory;
   debugConfigManager: DebugConfigManager;
   debugConfigPresenter: DebugConfigPresenter;
+  pagePresenter: PagePresenter;
 }
 
 export type IBehaviors = typeof Polymer.IronResizableBehavior;
@@ -25,7 +27,10 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
   private _directoryTree: DirectoryTree;
 
   /** Called after ready() with arguments passed to the element constructor function. */
-  factoryImpl({ elementFactory, debugConfigManager, debugConfigPresenter }: IWorkspaceElementOptions): void {
+  factoryImpl({
+      elementFactory, debugConfigManager, debugConfigPresenter, pagePresenter
+    }: IWorkspaceElementOptions)
+  : void {
     this._rootContainer = elementFactory.createVerticalContainer();
     const centralContainer = elementFactory.createHorizontalContainer();
     const leftContainer = elementFactory.createVerticalContainer({ width: '300px', resizable: true });
@@ -37,18 +42,11 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     const pageSet = elementFactory.createPageSet({ height: '100%' });
     const pageTree = elementFactory.createPageTree({ height: '100%' });
     pageTree.pageSet = pageSet;
+    pagePresenter.pageSet = pageSet;
     const page1 = elementFactory.createPage({ title: 'Test Page' });
     const page2 = elementFactory.createPage({ title: 'Test Page 2' });
     const statusPanel = elementFactory.createPanel({ height: '20px' });
 
-    const editorElement1 = elementFactory.createCodeMirrorEditor({
-      value: 'int main(int argc, char** argv) {}',
-      mode: 'text/x-c++src'
-    });
-    const editorElement2 = elementFactory.createCodeMirrorEditor({
-      value: 'int main(int argc, char** argv) { return 0; }',
-      mode: 'text/x-c++src'
-    });
     statusPanel.innerText = 'Status';
 
     this._directoryTree = new DirectoryTree();
@@ -57,10 +55,6 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     const debugToolbar = elementFactory.createDebugToolbar(debugConfigManager, debugConfigPresenter);
     toolbarPanel.appendChild(debugToolbar);
 
-    Polymer.dom(page1).appendChild(editorElement1);
-    Polymer.dom(page2).appendChild(editorElement2);
-    pageSet.addPage(page1);
-    pageSet.addPage(page2);
     Polymer.dom(pageTreePanel).appendChild(pageTree);
     Polymer.dom(dirTreePanel).appendChild(dirTreeView);
     Polymer.dom(documentPanel).appendChild(pageSet);

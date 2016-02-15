@@ -1,11 +1,18 @@
+// Copyright (c) 2016 Vadim Macagon
+// MIT License, see LICENSE file for full terms.
+
 import DebugConfigManager from './debug-config-manager';
 import { IDebugConfig } from 'debug-engine';
 import ElementFactory from './elements/element-factory';
 import { CompositeDisposable } from 'event-kit';
+import { PagePresenter } from './page-presenter';
 
 export default class DebugConfigPresenter {
-  constructor(private debugConfigManager: DebugConfigManager, private elementFactory: ElementFactory) {
-  }
+  constructor(
+    private debugConfigManager: DebugConfigManager,
+    private elementFactory: ElementFactory,
+    private pagePresenter: PagePresenter
+  ) {}
 
   /**
    * Display a dialog that lets the user create a new debug configuration.
@@ -48,28 +55,16 @@ export default class DebugConfigPresenter {
    *                   the user will be prompted to create a new configuration that will
    *                   then be displayed for editing.
    */
-  async openDebugConfig(configName?: string): Promise<void> {
-    const debugConfig = await this.getDebugConfig(configName);
-    if (debugConfig) {
-      let dialog = this.elementFactory.createGdbMiDebugConfig(this.debugConfigManager, debugConfig);
-      document.body.appendChild(dialog);
-      const dialogClosed = new Promise((resolve, reject) => {
-        let subscriptions = new CompositeDisposable();
-        subscriptions.add(dialog.onClosed(() => {
-          try {
-            subscriptions.dispose();
-            document.body.removeChild(dialog);
-            dialog.destroy();
-            subscriptions = null;
-            dialog = null;
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        }));
-      });
-      dialog.open();
-      await dialogClosed;
-    }
+  openDebugConfig(configName?: string): Promise<void> {
+    return this.getDebugConfig(configName)
+    .then(debugConfig => {
+      if (debugConfig) {
+        const options = {
+          title: `Debug Config: ${debugConfig.name}`,
+          content: () => this.elementFactory.createGdbMiDebugConfig(this.debugConfigManager, debugConfig)
+        };
+        this.pagePresenter.openPage(`debug-config:${debugConfig.name}`, options);
+      }
+    });
   }
 }
