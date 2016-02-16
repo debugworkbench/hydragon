@@ -78,6 +78,9 @@ export default class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
     }
   }
 
+  /**
+   * Add a page to the set, if the set is empty the page will become the active page.
+   */
   addPage(page: IPageElement): void {
     this._pageSubscriptions.set(page, page.onDidClose(this._boundOnPageDidClose));
     Polymer.dom(this).appendChild(page);
@@ -96,7 +99,7 @@ export default class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
     // case the next page should be activated)
     const pages = this.pages;
     let activePageIndex = <number> this.$.ironPages.selected;
-    let shouldUpdateActivePage = (pages.indexOf(page) === activePageIndex);
+    let shouldUpdateActivePage = (pages.indexOf(page) <= activePageIndex);
     if (shouldUpdateActivePage) {
       if (pages.length === 1) {
         activePageIndex = undefined;
@@ -130,8 +133,10 @@ export default class PageSetElement extends Polymer.BaseClass<ILocalDOM>() {
     this.$.ironPages.selected = pageIndex;
     if (pageIndex !== undefined) {
       const page = this.pages[pageIndex];
-      page.isActive = true;
-      this._emitter.emit(EventId.DidActivatePage, page);
+      if (!page.isActive) {
+        page.isActive = true;
+        this._emitter.emit(EventId.DidActivatePage, page);
+      }
     }
   }
 
