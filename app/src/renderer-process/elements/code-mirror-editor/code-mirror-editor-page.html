@@ -1,0 +1,23 @@
+<!--
+@license
+Copyright (c) 2016 Vadim Macagon
+-->
+<link rel="import" href="../pages/page-styles.html">
+
+<dom-module id="hydragon-code-mirror-editor-page">
+  <template>
+    <style include="hydragon-page-styles">
+      code-mirror-editor {
+        @apply(--layout-fit);
+      }
+    </style>
+
+    <paper-toolbar id="toolbar">
+      <div class="title">[[title]]</div>
+      <paper-icon-button id="closeButton" icon="icons:close" alt="Close Page"></paper-icon-button>
+    </paper-toolbar>
+    <div id="contentWrapper">
+      <code-mirror-editor config=[[editorConfig]]></code-mirror-editor>
+    </div>
+  </template>
+</dom-module>

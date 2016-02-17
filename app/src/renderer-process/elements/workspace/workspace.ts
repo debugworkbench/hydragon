@@ -43,8 +43,6 @@ export default class WorkspaceElement extends Polymer.BaseClass<any, IBehaviors>
     const pageTree = elementFactory.createPageTree({ height: '100%' });
     pageTree.pageSet = pageSet;
     pagePresenter.pageSet = pageSet;
-    const page1 = elementFactory.createPage({ title: 'Test Page' });
-    const page2 = elementFactory.createPage({ title: 'Test Page 2' });
     const statusPanel = elementFactory.createPanel({ height: '20px' });
 
     statusPanel.innerText = 'Status';

@@ -3,7 +3,7 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
-import { IPageElement } from './page';
+import { IPageElement } from './page-behavior';
 import { EventEmitter, EventSubscription } from '../../../common/events';
 
 export interface ILocalDOM {

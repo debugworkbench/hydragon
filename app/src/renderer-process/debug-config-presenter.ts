@@ -59,11 +59,10 @@ export default class DebugConfigPresenter {
     return this.getDebugConfig(configName)
     .then(debugConfig => {
       if (debugConfig) {
-        const options = {
-          title: `Debug Config: ${debugConfig.name}`,
-          content: () => this.elementFactory.createGdbMiDebugConfig(this.debugConfigManager, debugConfig)
-        };
-        this.pagePresenter.openPage(`debug-config:${debugConfig.name}`, options);
+        this.pagePresenter.openPage(
+          `debug-config:${debugConfig.name}`,
+          () => this.elementFactory.createGdbMiDebugConfig(this.debugConfigManager, debugConfig)
+        );
       }
     });
   }

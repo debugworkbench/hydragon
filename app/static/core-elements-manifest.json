@@ -36,6 +36,11 @@
           "script": "code-mirror-editor/code-mirror-editor"
         },
         {
+          "tag": "hydragon-code-mirror-editor-page",
+          "template": "code-mirror-editor/code-mirror-editor-page.html",
+          "script": "code-mirror-editor/code-mirror-editor-page"
+        },
+        {
           "tag": "hydragon-debug-toolbar",
           "template": "debug-toolbar/debug-toolbar.html",
           "script": "debug-toolbar/debug-toolbar"
@@ -59,11 +64,6 @@
           "tag": "debug-workbench-workspace",
           "template": "workspace/workspace.html",
           "script": "workspace/workspace"
-        },
-        {
-          "tag": "debug-workbench-page",
-          "template": "pages/page.html",
-          "script": "pages/page"
         },
         {
           "tag": "debug-workbench-page-set",

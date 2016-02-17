@@ -1,36 +1,22 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as pd from 'polymer-ts-decorators';
-import { ILayoutContainer } from '../interfaces';
 import { EventSubscription, EventEmitter } from '../../../common/events';
-
-export interface ILocalDOM {
-  toolbar: HTMLElement;
-  contentWrapper: HTMLElement;
-  closeButton: PolymerElements.PaperIconButton;
-}
 
 enum EventId {
   DidClose
 }
 
-export type IBehaviors = typeof Polymer.IronResizableBehavior;
-export type IPageElement = PageElement & IBehaviors;
-
-export interface IPageState {
-  title?: string;
-  isActive?: boolean;
-}
-
-@pd.is('debug-workbench-page')
-@pd.behaviors(() => [Polymer.IronResizableBehavior])
-export default class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors>() {
-  @pd.property({ type: String, value: '' })
-  title: string;
-
+/**
+ * Provides base functionality of page elements.
+ */
+export class PageBehaviorImpl extends Polymer.BaseClass<any, typeof Polymer.IronResizableBehavior>() {
   private _emitter: EventEmitter<EventId>;
   private _isActive: boolean;
+
+  @pd.property({ type: String })
+  title: string;
 
   get isActive(): boolean {
     return this._isActive;
@@ -57,12 +43,14 @@ export default class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors
   }
 
   /** Called after ready() with arguments passed to the element constructor function. */
+  /*
   factoryImpl(state?: IPageState): void {
     if (state) {
       this.title = state.title || this.title;
       this.isActive = (state.isActive !== undefined) ? state.isActive : false;
     }
   }
+  */
 
   // override Polymer.IronResizableBehavior
   resizerShouldNotify(element: HTMLElement): boolean {
@@ -79,7 +67,20 @@ export default class PageElement extends Polymer.BaseClass<ILocalDOM, IBehaviors
   }
 
   @pd.listener('closeButton.tap')
-  private _onCloseButtonPressed(): void {
+  private _onDidTapCloseButton(): void {
     this.close();
   }
 }
+
+/**
+ * Provides a more concise way to access methods of the base behavior from element classes that
+ * override those methods.
+ */
+export var PageBehaviorPrototype = PageBehaviorImpl.prototype;
+// When this module is loaded Polymer elements and behaviors may not have been loaded yet,
+// so instead of exporting an array that may contain an undefined Polymer behavior export
+// a function that can be used to retrieve the array after everything has been loaded.
+/** Get an array of behaviors that provide the base functionality of page elements. */
+export var PageBehavior = () => [Polymer.IronResizableBehavior, PageBehaviorImpl.prototype];
+/** Interface that all page element classes must implement. */
+export type IPageElement = typeof Polymer.IronResizableBehavior & PageBehaviorImpl;

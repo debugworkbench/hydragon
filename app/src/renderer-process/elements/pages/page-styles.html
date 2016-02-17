@@ -1,0 +1,56 @@
+<!--
+@license
+Copyright (c) 2016 Vadim Macagon
+-->
+
+<!--
+Styles for hydragon-page elements. The styling rules assume the page elements are structured like
+this:
+
+    <paper-toolbar>
+      ...
+      <paper-icon-button id="closeButton" icon="icons:close"></paper-icon-button>
+    </paper-toolbar>
+    <div id="contentWrapper">
+      ...
+    </div>
+
+@group Hydragon
+@element hydragon-page-styles
+-->
+<dom-module id="hydragon-page-styles">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        position: relative;
+        @apply(--layout-vertical);
+        outline: none;
+      }
+
+      :host > paper-toolbar {
+        --paper-toolbar-background: rgb(30, 30, 30);
+        --paper-toolbar-color: rgb(204, 204, 204);
+        --paper-toolbar-height: 30px;
+        --paper-toolbar-title: {
+          font-size: 14px;
+          margin-left: 10px;
+        };
+        @apply(--layout-flex-none);
+      }
+
+      :host > paper-toolbar #closeButton {
+        --paper-icon-button: {
+          width: 30px;
+          height: 30px;
+          padding: 5px;
+        };
+      }
+
+      #contentWrapper {
+        position: relative;
+        @apply(--layout-flex-auto);
+      }
+    </style>
+  </template>
+</dom-module>

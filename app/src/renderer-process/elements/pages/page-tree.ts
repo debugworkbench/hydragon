@@ -4,7 +4,7 @@
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { IPageSetElement } from './page-set';
-import { IPageElement } from './page';
+import { IPageElement } from './page-behavior';
 import { IPageTreeItemElement } from './page-tree-item';
 import { EventSubscription, EventSubscriptionSet } from '../../../common/events';
 import ElementFactory from '../element-factory';

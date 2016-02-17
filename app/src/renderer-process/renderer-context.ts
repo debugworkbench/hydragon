@@ -61,7 +61,7 @@ export class RendererContext {
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
     const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
     const debugConfigManager = new DebugConfigManager(debugConfigLoader);
-    const pagePresenter = new PagePresenter(this.elementFactory);
+    const pagePresenter = new PagePresenter();
     const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory, pagePresenter);
     DebugEngineProvider.register(new GdbMiDebugEngineProvider());
     await debugConfigManager.load();
@@ -77,16 +77,16 @@ export class RendererContext {
 
     // TODO: these editor elements are only here for mockup purposes, they should be removed once
     // source files can be opened from the directory tree element
-    const editorElement1 = this.elementFactory.createCodeMirrorEditor({
+    const editorElement1 = this.elementFactory.createCodeMirrorEditorPage('Page 1', {
       value: 'int main(int argc, char** argv) {}',
       mode: 'text/x-c++src'
     });
-    const editorElement2 = this.elementFactory.createCodeMirrorEditor({
+    const editorElement2 = this.elementFactory.createCodeMirrorEditorPage('Page 2', {
       value: 'int main(int argc, char** argv) { return 0; }',
       mode: 'text/x-c++src'
     });
-    pagePresenter.openPage('test-page', { title: 'Page 1', content: () => editorElement1 });
-    pagePresenter.openPage('test-page2', { title: 'Page 2', content: () => editorElement2 });
+    pagePresenter.openPage('test-page', () => editorElement1 );
+    pagePresenter.openPage('test-page2', () => editorElement2 );
 
     DevTools.register();
   }

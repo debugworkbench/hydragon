@@ -30,7 +30,6 @@
         "elements/layout/panel/panel.ts",
         "elements/layout/splitter/splitter.ts",
         "elements/layout/vertical-container/vertical-container.ts",
-        "elements/pages/page.ts",
         "elements/pages/page-set.ts",
         "elements/pages/page-tree.ts",
         "elements/pages/page-tree-item.ts",

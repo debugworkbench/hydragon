@@ -9,10 +9,11 @@ import HorizontalContainerElement, { IHorizontalContainerElement } from './layou
 import PanelElement, { IPanelElement, IPanelState } from './layout/panel/panel';
 import SplitterElement, { ISplitterElement } from './layout/splitter/splitter';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
+import CodeMirrorEditorPageElement, { ICodeMirrorEditorPageElement } from './code-mirror-editor/code-mirror-editor-page';
 import DebugToolbarElement, { IDebugToolbarElement } from './debug-toolbar/debug-toolbar';
 import NewDebugConfigDialogElement, { INewDebugConfigDialogElement } from './new-debug-config-dialog/new-debug-config-dialog';
 import GdbMiDebugConfigElement, { IGdbMiDebugConfigElement } from './gdb-mi-debug-config/gdb-mi-debug-config';
-import PageElement, { IPageElement, IPageState } from './pages/page';
+import { IPageElement } from './pages/page-behavior';
 import PageSetElement, { IPageSetElement, IPageSetState } from './pages/page-set';
 import PageTreeElement, { IPageTreeElement, IPageTreeState } from './pages/page-tree';
 import PageTreeItemElement, { IPageTreeItemElement } from './pages/page-tree-item';
@@ -54,6 +55,10 @@ export default class ElementFactory {
     return this._createElement((<any> CodeMirrorEditorElement.prototype).is, config);
   }
 
+  createCodeMirrorEditorPage(title: string, config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorPageElement {
+    return this._createElement((<any> CodeMirrorEditorPageElement.prototype).is, title, config);
+  }
+
   createDebugToolbar(debugConfigManager: DebugConfigManager, debugConfigPresenter: DebugConfigPresenter): IDebugToolbarElement {
     return this._createElement((<any> DebugToolbarElement.prototype).is, debugConfigManager, debugConfigPresenter);
   }
@@ -64,10 +69,6 @@ export default class ElementFactory {
 
   createGdbMiDebugConfig(debugConfigManager: DebugConfigManager, debugConfig: IDebugConfig): IGdbMiDebugConfigElement {
     return this._createElement((<any> GdbMiDebugConfigElement.prototype).is, debugConfigManager, debugConfig);
-  }
-
-  createPage(state?: IPageState): IPageElement {
-    return this._createElement((<any> PageElement.prototype).is, state);
   }
 
   createPageSet(state?: IPageSetState): IPageSetElement {

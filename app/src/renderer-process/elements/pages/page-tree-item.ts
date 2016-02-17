@@ -4,7 +4,7 @@
 import * as pd from 'polymer-ts-decorators';
 import { ILayoutContainer } from '../interfaces';
 import { IPageSetElement } from './page-set';
-import { IPageElement } from './page';
+import { IPageElement } from './page-behavior';
 import { EventSubscription, EventEmitter } from '../../../common/events';
 
 export interface ILocalDOM {

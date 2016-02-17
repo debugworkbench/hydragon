@@ -2,8 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import { IPageSetElement } from './elements/pages/page-set';
-import { IPageElement } from './elements/pages/page';
-import ElementFactory from './elements/element-factory';
+import { IPageElement } from './elements/pages/page-behavior';
 
 /**
  * Creates and activates page elements.
@@ -25,9 +24,6 @@ export class PagePresenter {
     this.lastActivePageSet = pageSet;
   }
 
-  constructor(private elementFactory: ElementFactory) {
-  }
-
   isPageOpen(pageId: string): boolean {
     return !!this.pageIdToElementMap.get(pageId);
   }
@@ -38,22 +34,15 @@ export class PagePresenter {
    *
    * @param pageId Unique identifier for the page, if an existing page with this identifier already
    *               exists then it will be activated.
-   * @param options.title Title of the new page.
-   * @param options.content Callback that returns the content of the new page, this callback is
-   *                        only invoked if a new page is created.
+   * @param createPage Callback that returns the content of the new page, this callback is only
+   *                   invoked when a new page is created.
    */
-  openPage(
-    pageId: string,
-    options: {
-      title: string,
-      content: () => HTMLElement
-    }
-  ): void {
+  openPage(pageId: string, createPage: () => IPageElement): void {
     const entry = this.pageIdToElementMap.get(pageId);
     if (entry) {
       entry.pageSet.activatePage(entry.page);
     } else {
-      const page = this.elementFactory.createPage({ title: options.title });
+      const page = createPage();
       page.onDidClose(pageElement => {
         const pageId = this.pageElementToIdMap.get(pageElement);
         if (pageId) {
@@ -61,7 +50,6 @@ export class PagePresenter {
           this.pageIdToElementMap.delete(pageId);
         }
       });
-      page.appendChild(options.content());
       this.lastActivePageSet.addPage(page);
       this.pageIdToElementMap.set(pageId, { page, pageSet: this.lastActivePageSet });
       this.pageElementToIdMap.set(page, pageId);

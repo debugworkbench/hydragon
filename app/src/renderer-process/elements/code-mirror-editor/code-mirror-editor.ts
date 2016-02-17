@@ -18,21 +18,23 @@ export type ICodeMirrorEditorElement = CodeMirrorEditorElement & IBehaviors;
 @pd.is('code-mirror-editor')
 @pd.behaviors(() => [Polymer.IronResizableBehavior])
 export default class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBehaviors>() {
-  private _editorConfig: CodeMirror.EditorConfiguration;
   private _editor: CodeMirror.Editor;
+
+  @pd.property({ type: Object })
+  config: CodeMirror.EditorConfiguration;
 
   get editor(): CodeMirror.Editor {
     return this._editor;
   }
 
   factoryImpl(config?: CodeMirror.EditorConfiguration): void {
-    this._editorConfig = config;
+    this.config = config;
   }
 
   attached(): void {
     this._editor = CodeMirror(
       (editorElement) => { Polymer.dom(this.root).appendChild(editorElement); },
-      this._editorConfig
+      this.config
     );
   }
 
