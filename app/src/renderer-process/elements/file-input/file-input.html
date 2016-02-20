@@ -25,16 +25,14 @@ Example:
         box-sizing: border-box;
       }
 
-      #container {
-        @apply(--layout-horizontal);
+      paper-input {
+        outline: none;
       }
     </style>
 
-    <!--<div id="container">-->
     <paper-input label="[[inputLabel]]" value="{{filePath}}">
       <paper-button suffix on-tap="openBrowseDialog">Browse</paper-button>
     </paper-input>
-    <!--</div>-->
   </template>
 
 </dom-module>
