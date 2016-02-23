@@ -7,3 +7,6 @@ app/lib/**
 /tasks/*.js.map
 /grunt-config.js
 /grunt-config.js.map
+app/typings/main.d.ts
+app/typings/browser.d.ts
+app/typings/browser/*
