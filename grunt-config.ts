@@ -36,7 +36,6 @@ export = function(grunt: IGrunt) {
     options: {
       enableNodeModuleResolution: true,
       plugins: [
-        'transform-strict-mode',
         'transform-es2015-parameters',
         'transform-es2015-destructuring',
         'transform-es2015-spread',
