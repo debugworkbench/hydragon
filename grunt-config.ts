@@ -38,7 +38,6 @@ export = function(grunt: IGrunt) {
       plugins: [
         'transform-es2015-parameters',
         'transform-es2015-destructuring',
-        'transform-es2015-spread',
         'transform-polymer-base'
       ]
     }

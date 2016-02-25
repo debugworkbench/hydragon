@@ -12,9 +12,8 @@
     "babel-core": "^6.5.2",
     "babel-plugin-transform-es2015-destructuring": "^6.5.0",
     "babel-plugin-transform-es2015-parameters": "^6.5.0",
-    "babel-plugin-transform-es2015-spread": "^6.5.2",
     "babel-plugin-transform-polymer-base": "github:enlight/babel-plugin-transform-polymer-base",
-    "electron-prebuilt": "^0.35.4",
+    "electron-prebuilt": "^0.36.8",
     "electron-rebuild": "^1.0.2",
     "grunt": "^0.4.5",
     "grunt-concurrent": "^2.1.0",
@@ -28,6 +27,6 @@
     "ts-node": "^0.4.0",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.5.1",
-    "typescript": "^1.8.0-dev.20151222"
+    "typescript": "^1.8.2"
   }
 }
