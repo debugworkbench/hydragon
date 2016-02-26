@@ -29,8 +29,13 @@ npm install
 grunt rebuild-native-modules
 ```
 
-To build just run `grunt` from the `build` directory, then you can run the app with `npm start`
-or `grunt run-electron`.
+Note that the first time you rebuild the native modules it may take a few minutes (and there won't
+be any visible indicator that anything is actually happening) because the task is busy downloading
+the headers and libs needed to rebuild the modules. If anything actually goes wrong during this
+process errors will be displayed in the console.
+
+Once the native modules have been rebuilt you can build the app itself by executing `grunt` from
+the root directory, and once built the app can be launched with `npm start` or `grunt run-electron`.
 
 ## Directory Layout
 
