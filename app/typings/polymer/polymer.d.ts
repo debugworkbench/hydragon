@@ -219,6 +219,20 @@ declare namespace polymer {
      * @return New length of the array after the items are added.
      */
     unshift(path: string, ...items: any[]): number;
+    /**
+     * An element's style properties can be directly modified by setting key-value pairs on this
+     * property and then calling [[updateStyles]].
+     */
+    customStyle: { [key: string]: string };
+    /**
+     * Re-evaluates and applies custom CSS properties based on dynamic changes to this element's
+     * scope, such as adding or removing classes in this element's local DOM.
+     *
+     * @param properties Object which is mixed into the element's `customStyle` property. This
+     *                   argument provides a shortcut for setting `customStyle` and then calling
+     *                   [[updateStyles]].
+     */
+    updateStyles(properties?: any): void;
   }
 
   interface ClassList {
