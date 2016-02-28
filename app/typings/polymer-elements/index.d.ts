@@ -6,3 +6,4 @@
 /// <reference path="./paper-input.d.ts" />
 /// <reference path="./paper-item.d.ts" />
 /// <reference path="./paper-menu.d.ts" />
+/// <reference path="./paper-toolbar.d.ts" />
