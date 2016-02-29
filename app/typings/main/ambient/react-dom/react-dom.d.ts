@@ -14,15 +14,18 @@ declare namespace __React {
         function render<P>(
             element: DOMElement<P>,
             container: Element,
-            callback?: (element: Element) => any): Element;
+            callback?: (element: Element) => void
+        ): Element;
         function render<P, S>(
             element: ClassicElement<P>,
             container: Element,
-            callback?: (component: ClassicComponent<P, S>) => any): ClassicComponent<P, S>;
-        function render<P, S>(
+            callback?: (component: ClassicComponent<P, S>) => void
+        ): ClassicComponent<P, S>;
+        function render<P, S, C>(
             element: ReactElement<P>,
             container: Element,
-            callback?: (component: Component<P, S>) => any): Component<P, S>;
+            callback?: (component: Component<P, S, C>) => void
+        ): Component<P, S, C>;
 
         function unmountComponentAtNode(container: Element): boolean;
 
@@ -33,20 +36,20 @@ declare namespace __React {
         function unstable_batchedUpdates(callback: () => any): void;
 
         function unstable_renderSubtreeIntoContainer<P>(
-            parentComponent: Component<any, any>,
+            parentComponent: Component<any, any, any>,
             nextElement: DOMElement<P>,
             container: Element,
             callback?: (element: Element) => any): Element;
         function unstable_renderSubtreeIntoContainer<P, S>(
-            parentComponent: Component<any, any>,
+            parentComponent: Component<any, any, any>,
             nextElement: ClassicElement<P>,
             container: Element,
             callback?: (component: ClassicComponent<P, S>) => any): ClassicComponent<P, S>;
-        function unstable_renderSubtreeIntoContainer<P, S>(
-            parentComponent: Component<any, any>,
+        function unstable_renderSubtreeIntoContainer<P, S, C>(
+            parentComponent: Component<any, any, any>,
             nextElement: ReactElement<P>,
             container: Element,
-            callback?: (component: Component<P, S>) => any): Component<P, S>;
+            callback?: (component: Component<P, S, C>) => any): Component<P, S, C>;
     }
 
     namespace __DOMServer {
