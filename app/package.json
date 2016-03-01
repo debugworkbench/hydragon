@@ -29,6 +29,8 @@
     "fs-promisified": "github:enlight/node-fs-promisified",
     "gdb-mi-debug-engine": "github:debugworkbench/gdb-mi-debug-engine",
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
     "react-free-style": "^2.1.1"
   }
 }

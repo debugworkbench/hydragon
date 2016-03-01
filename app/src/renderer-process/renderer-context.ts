@@ -1,11 +1,11 @@
-// Copyright (c) 2015 Vadim Macagon
+// Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
 import * as electron from 'electron';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
-import { IWorkspaceElement } from './elements/workspace/workspace';
+import WorkspaceComponent from './components/workspace';
 import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
@@ -15,6 +15,9 @@ import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import * as DevTools from './dev-tools';
 import { PagePresenter } from './page-presenter';
+import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactFreeStyle from 'react-free-style';
 
 export const enum Cursor {
   HorizontalResize,
@@ -29,7 +32,6 @@ export class RendererContext {
 
   elementRegistry: ElementRegistry;
   elementFactory: ElementFactory;
-  workspace: IWorkspaceElement;
   rootPath: string;
 
   /** Create the renderer context for the current process. */
@@ -66,17 +68,22 @@ export class RendererContext {
     DebugEngineProvider.register(new GdbMiDebugEngineProvider());
     await debugConfigManager.load();
 
-    this.workspace = this.elementFactory.createWorkspace({
-      elementFactory: null, // will be set to the correct instance by the factory itself
-      debugConfigManager,
-      debugConfigPresenter,
-      pagePresenter
-    });
-
-    document.body.appendChild(this.workspace);
+    const rootContainer = document.createElement('div');
+    rootContainer.className = 'root-container';
+    const styleRegistry = ReactFreeStyle.create();
+    const rootComponent = styleRegistry.component(React.createClass({
+      render: () => React.createElement(
+        'div', null,
+        React.createElement(WorkspaceComponent),
+        React.createElement(styleRegistry.Element)
+      )
+    }));
+    ReactDOM.render(React.createElement(rootComponent), rootContainer);
+    document.body.appendChild(rootContainer);
 
     // TODO: these editor elements are only here for mockup purposes, they should be removed once
     // source files can be opened from the directory tree element
+    /*
     const editorElement1 = this.elementFactory.createCodeMirrorEditorPage('Page 1', {
       value: 'int main(int argc, char** argv) {}',
       mode: 'text/x-c++src'
@@ -87,6 +94,7 @@ export class RendererContext {
     });
     pagePresenter.openPage('test-page', () => editorElement1 );
     pagePresenter.openPage('test-page2', () => editorElement2 );
+    */
 
     DevTools.register();
   }

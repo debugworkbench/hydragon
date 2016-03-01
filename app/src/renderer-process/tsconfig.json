@@ -2,6 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
+        "jsx": "react",
         "noImplicitAny": true,
         "sourceMap": false,
         "declaration": false,
@@ -23,6 +24,7 @@
         "../../typings/polymer/polymer.d.ts",
         "../../typings/polymer/polymer-typescript-helpers.d.ts",
         "../../typings/polymer-elements/index.d.ts",
+        "elements/jsx-extensions.d.ts",
         "elements/code-mirror-editor/code-mirror-editor.ts",
         "elements/debug-toolbar/debug-toolbar.ts",
         "elements/file-input/file-input.ts",
