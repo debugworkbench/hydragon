@@ -19,6 +19,7 @@
         "../../typings/github-electron/github-electron-renderer.d.ts",
         "../../typings/main/ambient/react/react.d.ts",
         "../../typings/main/ambient/react-dom/react-dom.d.ts",
+        "../../typings/main/definitions/react-free-style/react-free-style.d.ts",
         "../../typings/polymer/polymer.d.ts",
         "../../typings/polymer/polymer-typescript-helpers.d.ts",
         "../../typings/polymer-elements/index.d.ts",
