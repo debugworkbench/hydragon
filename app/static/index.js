@@ -1,3 +1,3 @@
 (function () {
-  require('../lib/renderer-process/init-window');
+  require('../lib/renderer/init-window');
 })();

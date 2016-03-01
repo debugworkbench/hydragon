@@ -48,11 +48,11 @@ export = function(grunt: IGrunt) {
     plugins: buildServerPlugins
   };
   const mainProjectBuildTaskOptions = {
-    projectConfigPath: 'app/src/main-process/tsconfig.json',
+    projectConfigPath: 'app/src/main/tsconfig.json',
     plugins: buildServerPlugins
   };
   const rendererProjectBuildTaskOptions = {
-    projectConfigPath: 'app/src/renderer-process/tsconfig.json',
+    projectConfigPath: 'app/src/renderer/tsconfig.json',
     plugins: buildServerPlugins
   };
 
@@ -146,7 +146,7 @@ export = function(grunt: IGrunt) {
     'run-electron': {
       options: {
         cwd: repoRoot,
-        scriptPath: path.join('app', 'lib', 'main-process', 'main.js'),
+        scriptPath: path.join('app', 'lib', 'main', 'main.js'),
       },
       default: {
         // run Electron normally without debugging
@@ -163,8 +163,8 @@ export = function(grunt: IGrunt) {
         files: [{
           cwd: 'app/src',
           src: [
-            'renderer-process/elements/**/*.html',
-            '!renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
+            'renderer/elements/**/*.html',
+            '!renderer/elements/code-mirror-editor/code-mirror-styles.html'
           ],
           dest: 'app/lib'
         }],
@@ -174,8 +174,8 @@ export = function(grunt: IGrunt) {
     },
     'preprocess': {
       elements: {
-        src: 'app/src/renderer-process/elements/code-mirror-editor/code-mirror-styles.html',
-        dest: 'app/lib/renderer-process/elements/code-mirror-editor/code-mirror-styles.html'
+        src: 'app/src/renderer/elements/code-mirror-editor/code-mirror-styles.html',
+        dest: 'app/lib/renderer/elements/code-mirror-editor/code-mirror-styles.html'
       }
     },
     /*

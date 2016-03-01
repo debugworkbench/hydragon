@@ -2,7 +2,7 @@
   "bundles":
   [
     {
-      "baseUri": "app:///lib/renderer-process/elements/layout",
+      "baseUri": "app:///lib/renderer/elements/layout",
       "elements": [
         {
           "tag": "debug-workbench-horizontal-container",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "baseUri": "app:///lib/renderer-process/elements",
+      "baseUri": "app:///lib/renderer/elements",
       "elements":
       [
         {

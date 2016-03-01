@@ -2,9 +2,9 @@
   "name": "hydragon",
   "version": "1.0.0",
   "description": "Extensible Debugging Framework",
-  "main": "lib/main-process/main.js",
+  "main": "lib/main/main.js",
   "scripts": {
-    "start": "electron ./lib/main-process/main.js",
+    "start": "electron ./lib/main/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
