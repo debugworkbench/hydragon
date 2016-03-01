@@ -124,12 +124,12 @@ export class ReactFreeStyle extends FreeStyle.FreeStyle {
      * required for methods on the user component to continue working once
      * wrapped with the style functionality.
      */
-    component(Component: React.ComponentClass<any>): React.ComponentClass<any>;
+    component<P, C>(Component: React.ComponentClass<P, C>): React.ComponentClass<P, C>;
 }
 /**
  * Create the <style /> element.
  */
-export class StyleElement extends React.Component<{}, {}> {
+export class StyleElement extends React.Component<{}, {}, {}> {
     static displayName: string;
     static contextTypes: React.ValidationMap<any>;
     onChange: () => void;
