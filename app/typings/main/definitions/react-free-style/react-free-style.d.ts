@@ -108,7 +108,7 @@ export function create(): FreeStyle;
 
 // Compiled using typings@0.6.8
 // Source: node_modules\react-free-style\dist\react-free-style.d.ts
-declare module 'react-free-style/dist/react-free-style' {
+declare module 'react-free-style/dist/react-free-style2' {
 import React = require('react');
 export import FreeStyle = require('react-free-style~free-style');
 /**
@@ -147,5 +147,5 @@ export class StyleElement extends React.Component<{}, {}> {
 export function create(): ReactFreeStyle;
 }
 declare module 'react-free-style' {
-export * from 'react-free-style/dist/react-free-style';
+export * from 'react-free-style/dist/react-free-style2';
 }
