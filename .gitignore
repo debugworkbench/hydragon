@@ -10,3 +10,5 @@ app/lib/**
 app/typings/main.d.ts
 app/typings/browser.d.ts
 app/typings/browser/*
+/typings/browser.d.ts
+/typings/browser/*

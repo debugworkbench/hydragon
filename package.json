@@ -8,6 +8,9 @@
   },
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "postinstall": "./node_modules/.bin/ts-node npm-post-install.ts"
+  },
   "dependencies": {
     "babel-core": "^6.5.2",
     "babel-plugin-transform-es2015-destructuring": "^6.5.0",
@@ -24,6 +27,7 @@
     "grunt-tslint": "^2.5.0",
     "grunt-vulcanize": "^1.0.0",
     "load-grunt-tasks": "^3.3.0",
+    "shelljs": "^0.6.0",
     "ts-node": "^0.4.0",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.5.1",

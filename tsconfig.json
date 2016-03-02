@@ -1,21 +1,21 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "es6",
         "noImplicitAny": true,
         "sourceMap": true,
-        "declaration": false,
-        "noLib": true
+        "declaration": false
     },
     "files": [
-        "node_modules/typescript/lib/lib.es6.d.ts",
         "typings/gruntjs/gruntjs.d.ts",
+        "typings/main/ambient/shelljs/shelljs.d.ts",
         "typings/glob/glob.d.ts",
         "typings/source-map/source-map.d.ts",
         "typings/electron-rebuild/electron-rebuild.d.ts",
         "tasks/rebuild-native-modules.ts",
         "tasks/run-electron.ts",
         "tasks/run-node-inspector.ts",
-        "grunt-config.ts"
+        "grunt-config.ts",
+        "npm-post-install.ts"
     ]
 }
