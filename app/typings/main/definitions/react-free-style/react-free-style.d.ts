@@ -108,6 +108,9 @@ export function create(): FreeStyle;
 
 // Compiled using typings@0.6.8
 // Source: node_modules\react-free-style\dist\react-free-style.d.ts
+// NOTE: This has been renamed from 'react-free-style/dist/react-free-style' to
+//       'react-free-style/dist/react-free-style2' due to the issue described in
+//       https://github.com/Microsoft/TypeScript/issues/6427
 declare module 'react-free-style/dist/react-free-style2' {
 import React = require('react');
 export import FreeStyle = require('react-free-style~free-style');
