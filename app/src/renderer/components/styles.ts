@@ -31,11 +31,40 @@ export var IronFlexLayout = {
       flex: 'none'
     }
   },
+
+  /* alignment in cross axis */
+
+  start: {
+    'align-items': 'flex-start'
+  },
+  center: {
+    'align-items': 'center'
+  },
+  end: {
+    'align-items': 'flex-end'
+  },
+
   fit: {
     position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0,
     left: 0
+  }
+};
+
+/**
+ * Style mixins based on https://github.com/PolymerElements/paper-styles/
+ */
+export var PaperStyles = {
+  /* Typography */
+  PaperFont: {
+    /* Shared styles */
+    Common: {
+      Base: {
+        'font-family': "'Roboto', 'Noto', sans-serif",
+        '-webkit-font-smoothing': 'antialiased'
+      }
+    }
   }
 };
