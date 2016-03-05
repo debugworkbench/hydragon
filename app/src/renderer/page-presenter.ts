@@ -1,31 +1,29 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { IPageSetElement } from './elements/pages/page-set';
-import { IPageElement } from './elements/pages/page-behavior';
+import { WorkspaceModel, PageSetModel, PageModel } from './models/ui';
+import { autorun, Lambda } from 'mobx';
 
 /**
  * Creates and activates page elements.
  */
 export class PagePresenter {
-  private pageSets: IPageSetElement[] = [];
-  private pageIdToElementMap = new Map</*pageId:*/string, { page: IPageElement, pageSet: IPageSetElement }>();
-  private pageElementToIdMap = new Map<IPageElement, /*pageId:*/string>();
-  private lastActivePageSet: IPageSetElement;
+  private pageIdToModelMap = new Map</*pageId:*/string, { page: PageModel<any>, pageSet: PageSetModel }>();
+  private lastActivePageSet: PageSetModel;
+  private disposeObserver: Lambda;
 
-  // TODO: This pageSet property is just a temporary hack, at some point the presenter should be
-  // able to work with multiple page sets (e.g. side-by-side pages), to do so it will need to
-  // track all existing page sets somehow.
-  get pageSet(): IPageSetElement {
-    return this.lastActivePageSet;
+  // TODO: Need to watch out for page sets being created and destroyed and update
+  //       pageIdToElementMap accordingly.
+  constructor(private workspace: WorkspaceModel) {
+    this.disposeObserver = autorun(() => this.lastActivePageSet = this.workspace.activePageSet);
   }
 
-  set pageSet(pageSet: IPageSetElement) {
-    this.lastActivePageSet = pageSet;
+  dispose(): void {
+    this.disposeObserver();
   }
 
   isPageOpen(pageId: string): boolean {
-    return !!this.pageIdToElementMap.get(pageId);
+    return !!this.pageIdToModelMap.get(pageId);
   }
 
   /**
@@ -37,22 +35,18 @@ export class PagePresenter {
    * @param createPage Callback that returns the content of the new page, this callback is only
    *                   invoked when a new page is created.
    */
-  openPage(pageId: string, createPage: () => IPageElement): void {
-    const entry = this.pageIdToElementMap.get(pageId);
+  openPage(pageId: string, createPage: () => PageModel<any>): void {
+    const entry = this.pageIdToModelMap.get(pageId);
     if (entry) {
       entry.pageSet.activatePage(entry.page);
     } else {
       const page = createPage();
-      page.onDidClose(pageElement => {
-        const pageId = this.pageElementToIdMap.get(pageElement);
-        if (pageId) {
-          this.pageElementToIdMap.delete(pageElement);
-          this.pageIdToElementMap.delete(pageId);
-        }
+      const sub = page.didCloseStream.subscribe(page => {
+        this.pageIdToModelMap.delete(pageId)
+        sub.unsubscribe();
       });
       this.lastActivePageSet.addPage(page);
-      this.pageIdToElementMap.set(pageId, { page, pageSet: this.lastActivePageSet });
-      this.pageElementToIdMap.set(page, pageId);
+      this.pageIdToModelMap.set(pageId, { page, pageSet: this.lastActivePageSet });
       this.lastActivePageSet.activatePage(page);
     }
   }

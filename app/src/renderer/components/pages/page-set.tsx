@@ -2,34 +2,68 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import { IPageSetElement } from '../../elements/pages/page-set';
+import { observer } from 'mobx-react';
+import { Observable } from '@reactivex/rxjs';
+import { FreeStyle } from 'react-free-style';
+import { PageSetModel } from '../../models/ui';
+import { IronFlexLayout } from '../styles';
 
 export interface IProps extends React.Props<PageSetComponent> {
   width?: string;
   height?: string;
+  model: PageSetModel;
+  didResizeStream: Observable<void>;
+}
+
+interface IContext {
+  freeStyle: FreeStyle.FreeStyle;
 }
 
 /**
- * Component that displays only one element at a time from a set of page elements.
- * The child elements must be of type debug-workbench-page.
- *
- * Currently this component is just a simple wrapper for a custom element.
+ * Component that displays only one page at a time from a set of pages.
  */
-export default class PageSetComponent extends React.Component<IProps, {}, {}> {
-  private pageSetElement: IPageSetElement;
+@observer
+export default class PageSetComponent extends React.Component<IProps, {}, IContext> {
+  inlineStyle: {
+    width?: string;
+    height?: string;
+  } = {};
 
-  private onDidSetPageSetRef = (ref: IPageSetElement) => this.pageSetElement = ref;
+  styleId: string;
+  className: string;
 
-  get pageSet(): IPageSetElement {
-    return this.pageSetElement;
+  static contextTypes: React.ValidationMap<IContext> = {
+    freeStyle: React.PropTypes.object.isRequired
+  };
+
+  componentWillMount(): void {
+    this.styleId = this.context.freeStyle.registerStyle({
+      boxSizing: 'border-box',
+      position: 'relative',
+      display: 'block',
+      '> *': IronFlexLayout.fit
+    });
+    this.className = `hydragon-page-set ${this.styleId}`;
+
+    if (this.props.width !== undefined) {
+        this.inlineStyle.width = this.props.width;
+    }
+    if (this.props.height !== undefined) {
+      this.inlineStyle.height = this.props.height;
+    }
   }
 
   render() {
+    const PageComponent = this.props.model.activePage ?
+      this.props.model.activePage.ComponentClass : undefined;
+
     return (
-      <debug-workbench-page-set
-        ref={this.onDidSetPageSetRef}
-        style={{ width: this.props.width, height: this.props.height }}>
-      </debug-workbench-page-set>
+      <div className={this.className} style={this.inlineStyle}>{
+        PageComponent ?
+          <PageComponent model={this.props.model.activePage}
+            didResizeStream={this.props.didResizeStream} />
+        : undefined
+      }</div>
     );
   }
 }

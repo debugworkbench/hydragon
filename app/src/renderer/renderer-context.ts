@@ -18,6 +18,7 @@ import { PagePresenter } from './page-presenter';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
+import { WorkspaceModel, CodeMirrorEditorPageModel } from './models/ui';
 
 export const enum Cursor {
   HorizontalResize,
@@ -63,10 +64,14 @@ export class RendererContext {
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
     const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
     const debugConfigManager = new DebugConfigManager(debugConfigLoader);
-    const pagePresenter = new PagePresenter();
-    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory, pagePresenter);
     DebugEngineProvider.register(new GdbMiDebugEngineProvider());
     await debugConfigManager.load();
+
+    const workspaceModel = new WorkspaceModel();
+    workspaceModel.createDefaultLayout();
+
+    const pagePresenter = new PagePresenter(workspaceModel);
+    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory, pagePresenter);
 
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';
@@ -74,7 +79,7 @@ export class RendererContext {
     const rootComponent = styleRegistry.component(React.createClass({
       render: () => React.createElement(
         'div', null,
-        React.createElement(WorkspaceComponent),
+        React.createElement(WorkspaceComponent, { model: workspaceModel }),
         React.createElement(styleRegistry.Element)
       )
     }));
@@ -83,18 +88,24 @@ export class RendererContext {
 
     // TODO: these editor elements are only here for mockup purposes, they should be removed once
     // source files can be opened from the directory tree element
-    /*
-    const editorElement1 = this.elementFactory.createCodeMirrorEditorPage('Page 1', {
-      value: 'int main(int argc, char** argv) {}',
-      mode: 'text/x-c++src'
+    pagePresenter.openPage('test-page', () => {
+      const page = new CodeMirrorEditorPageModel();
+      page.title = 'Page 1';
+      page.editorConfig = {
+        value: 'int main(int argc, char** argv) { return 0; }',
+        mode: 'text/x-c++src'
+      };
+      return page;
     });
-    const editorElement2 = this.elementFactory.createCodeMirrorEditorPage('Page 2', {
-      value: 'int main(int argc, char** argv) { return 0; }',
-      mode: 'text/x-c++src'
+    pagePresenter.openPage('test-page2', () => {
+      const page = new CodeMirrorEditorPageModel();
+      page.title = 'Page 2';
+      page.editorConfig = {
+        value: 'int main(int argc, char** argv) { return 1; }',
+        mode: 'text/x-c++src'
+      };
+      return page;
     });
-    pagePresenter.openPage('test-page', () => editorElement1 );
-    pagePresenter.openPage('test-page2', () => editorElement2 );
-    */
 
     DevTools.register();
   }

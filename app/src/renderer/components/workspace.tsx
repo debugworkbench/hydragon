@@ -10,6 +10,12 @@ import PageTree from './pages/page-tree';
 import DebugToolbar from './debug-toolbar';
 import { FreeStyle } from 'react-free-style';
 import { IronFlexLayout } from './styles';
+import { WorkspaceModel } from '../models/ui';
+import { Observable, Subscription } from '@reactivex/rxjs';
+
+export interface IProps {
+  model: WorkspaceModel;
+}
 
 export interface IState {
 }
@@ -21,18 +27,16 @@ export interface IContext {
 /**
  * Chief UI wrangler component.
  */
-export default class WorkspaceComponent extends React.Component<{}, IState, IContext> {
+export default class WorkspaceComponent extends React.Component<IProps, IState, IContext> {
   styleId: string;
   className: string;
-  pageSetComponent: PageSet;
-  pageTreeComponent: PageTree;
 
   static contextTypes: React.ValidationMap<IContext> = {
     freeStyle: React.PropTypes.object.isRequired
   };
 
-  private onSetPageSetRef = (ref: PageSet) => this.pageSetComponent = ref;
-  private onSetPageTreeRef = (ref: PageTree) => this.pageTreeComponent = ref;
+  /** Observable hooked up to window.resize event. */
+  private didResizeStream: Observable<void>;
 
   constructor() {
     super();
@@ -52,17 +56,22 @@ export default class WorkspaceComponent extends React.Component<{}, IState, ICon
       }
     ));
     this.className = `hydragon-workspace ${this.styleId}`;
+
+    if (window) {
+      // while it's usually recommended to access the DOM in componentDidMount() this observable
+      // has to be created before any child components are mounted
+      this.didResizeStream = Observable.fromEvent<void>(window, 'resize');
+    }
   }
 
-  componentDidMount(): void {
-    // FIXME: This update is forced in order to pass in the page-set to the page-tree via props,
-    //        it would be better to avoid such manual wrangling. Perhaps the page-set ref should be
-    //        stored in a transient/ui store that the page-tree can subscribe to, then the
-    //        page-tree could force update itself if needed.
-    this.forceUpdate();
+  componentWillUnmount(): void {
+    this.didResizeStream = null;
   }
 
   render() {
+    // TODO: the layout should be governed by WorkspaceModel, so the model hierarchy will need to
+    //       be traversed and a component rendered for each model
+    const { mainPageSet } = this.props.model;
     return (
       <div className={this.className}>
         <VerticalContainer>
@@ -72,7 +81,7 @@ export default class WorkspaceComponent extends React.Component<{}, IState, ICon
           <HorizontalContainer>
             <VerticalContainer width={'300px'} resizable={true}>
               <Panel title={'Open Pages'} height={'300px'} resizable={true} showHeader={true}>
-                <PageTree height={'100%'} pageSetComponent={this.pageSetComponent} ref={this.onSetPageTreeRef} />
+                <PageTree height={'100%'} pageSet={mainPageSet} />
               </Panel>
               <Panel title={'Explorer'} resizable={true} showHeader={true}>
                 {/*<DirTree />*/}
@@ -80,7 +89,7 @@ export default class WorkspaceComponent extends React.Component<{}, IState, ICon
             </VerticalContainer>
             <VerticalContainer resizable={true}>
               <Panel>
-                <PageSet height={'100%'} ref={this.onSetPageSetRef} />
+                <PageSet height={'100%'} model={mainPageSet} didResizeStream={this.didResizeStream} />
               </Panel>
               <Panel height={'20px'}>
                 Status

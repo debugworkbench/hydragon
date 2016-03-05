@@ -5,24 +5,9 @@
       "baseUri": "app:///lib/renderer/elements/layout",
       "elements": [
         {
-          "tag": "debug-workbench-horizontal-container",
-          "template": "horizontal-container/horizontal-container.html",
-          "script": "horizontal-container/horizontal-container"
-        },
-        {
-          "tag": "debug-workbench-panel",
-          "template": "panel/panel.html",
-          "script": "panel/panel"
-        },
-        {
           "tag": "debug-workbench-splitter",
           "template": "splitter/splitter.html",
           "script": "splitter/splitter"
-        },
-        {
-          "tag": "debug-workbench-vertical-container",
-          "template": "vertical-container/vertical-container.html",
-          "script": "vertical-container/vertical-container"
         }
       ]
     },
@@ -36,11 +21,6 @@
           "script": "code-mirror-editor/code-mirror-editor"
         },
         {
-          "tag": "hydragon-code-mirror-editor-page",
-          "template": "code-mirror-editor/code-mirror-editor-page.html",
-          "script": "code-mirror-editor/code-mirror-editor-page"
-        },
-        {
           "tag": "hydragon-debug-toolbar",
           "template": "debug-toolbar/debug-toolbar.html",
           "script": "debug-toolbar/debug-toolbar"
@@ -51,34 +31,9 @@
           "script": "file-input/file-input"
         },
         {
-          "tag": "hydragon-gdb-mi-debug-config",
-          "template": "gdb-mi-debug-config/gdb-mi-debug-config.html",
-          "script": "gdb-mi-debug-config/gdb-mi-debug-config"
-        },
-        {
           "tag": "hydragon-new-debug-config-dialog",
           "template": "new-debug-config-dialog/new-debug-config-dialog.html",
           "script": "new-debug-config-dialog/new-debug-config-dialog"
-        },
-        {
-          "tag": "debug-workbench-workspace",
-          "template": "workspace/workspace.html",
-          "script": "workspace/workspace"
-        },
-        {
-          "tag": "debug-workbench-page-set",
-          "template": "pages/page-set.html",
-          "script": "pages/page-set"
-        },
-        {
-          "tag": "debug-workbench-page-tree",
-          "template": "pages/page-tree.html",
-          "script": "pages/page-tree"
-        },
-        {
-          "tag": "debug-workbench-page-tree-item",
-          "template": "pages/page-tree-item.html",
-          "script": "pages/page-tree-item"
         },
         {
           "tag": "hydragon-directory-tree-view",

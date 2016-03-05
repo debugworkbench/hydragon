@@ -4,8 +4,6 @@
 // Extensions to JSX.IntrinsicElements to allow TypeScript to recognize and type check
 // custom elements in TSX.
 
-//import { IPageSetElement } from './pages/page-set';
-
 declare namespace JSX {
   interface IntrinsicElements {
     'hydragon-debug-toolbar': {};
@@ -13,18 +11,23 @@ declare namespace JSX {
       orientation?: 'horizontal' | 'vertical';
       key?: number | string;
     };
-    'debug-workbench-page-set': {
-      style?: any;
-      ref?: (element: any/*IPageSetElement*/) => void;
-    };
-    'debug-workbench-page-tree': {
-      style?: any;
-      ref?: (element: any/*IPageTreeElement*/) => void;
+    'code-mirror-editor': {
+      ref?: any;
     };
 
     'paper-header-panel': {};
     'paper-toolbar': {
+      class?: string;
       ref?: (element: PolymerElements.PaperToolbar) => void;
     };
+    'paper-icon-button': __React.HTMLProps<HTMLElement> & {
+      class?: string;
+      icon?: string;
+    };
+
+    webview: {
+      src: string;
+      ref?: (element: any) => void;
+    }
   }
 }

@@ -6,6 +6,8 @@ import { IDebugConfig } from 'debug-engine';
 import ElementFactory from './elements/element-factory';
 import { CompositeDisposable } from 'event-kit';
 import { PagePresenter } from './page-presenter';
+import { PageModel } from './models/ui';
+import GdbMiDebugConfigPage from './components/pages/gdb-mi-debug-config-page';
 
 export default class DebugConfigPresenter {
   constructor(
@@ -61,7 +63,12 @@ export default class DebugConfigPresenter {
       if (debugConfig) {
         this.pagePresenter.openPage(
           `debug-config:${debugConfig.name}`,
-          () => this.elementFactory.createGdbMiDebugConfig(this.debugConfigManager, debugConfig)
+          () => {
+            const page = new PageModel();
+            page.title = `Debug Config ${debugConfig.name}`;
+            page.ComponentClass = GdbMiDebugConfigPage;
+            return page;
+          }
         );
       }
     });
