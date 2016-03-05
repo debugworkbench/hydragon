@@ -20,7 +20,7 @@ export type ICodeMirrorEditorElement = CodeMirrorEditorElement & IBehaviors;
 export default class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBehaviors>() {
   private _editor: CodeMirror.Editor;
 
-  @pd.property({ type: Object })
+  @pd.property({ type: Object, observer: '_onConfigChanged' })
   config: CodeMirror.EditorConfiguration;
 
   get editor(): CodeMirror.Editor {
@@ -36,6 +36,23 @@ export default class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBeh
       (editorElement) => { Polymer.dom(this.root).appendChild(editorElement); },
       this.config
     );
+  }
+
+  private _onConfigChanged(newConfig: CodeMirror.EditorConfiguration, oldConfig: CodeMirror.EditorConfiguration) {
+    // TODO: this needs to handle all possible options in EditorConfiguration
+    if (this.editor) {
+      if (newConfig.mode) {
+        this.editor.setOption('mode', newConfig.mode);
+      }
+      const value = newConfig.value;
+      if (value) {
+        if (typeof value === 'string') {
+          this.editor.getDoc().setValue(value);
+        } else {
+          this.editor.swapDoc(value);
+        }
+      }
+    }
   }
 
   @pd.listener('iron-resize')
