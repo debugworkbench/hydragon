@@ -8,8 +8,9 @@ import { FreeStyle } from 'react-free-style';
 import { PageSetModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageTreeItem from './page-tree-item';
+import { makeFocusable, IFocusableState } from '../focusable';
 
-export interface IProps extends React.Props<PageTreeComponent> {
+export interface IProps extends React.Props<PageTreeComponentImpl> {
   width?: string;
   height?: string;
   pageSet?: PageSetModel;
@@ -19,11 +20,14 @@ interface IContext {
   freeStyle: FreeStyle.FreeStyle;
 }
 
+const SELECTED = 'selected';
+const FOCUSED = 'focused';
+
 /**
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
 @observer
-export default class PageTreeComponent extends React.Component<IProps, {}, IContext> {
+export class PageTreeComponentImpl extends React.Component<IProps, IFocusableState, IContext> {
   inlineStyle: {
     width?: string;
     height?: string;
@@ -54,18 +58,16 @@ export default class PageTreeComponent extends React.Component<IProps, {}, ICont
         '> *:hover': {
           backgroundColor: 'rgb(42, 45, 46)'
         },
-        ':not([focused]) > *.selected': {
+        [`&:not(.${FOCUSED}) > *.${SELECTED}`]: {
           backgroundColor: 'rgb(63, 63, 70)'
         },
-        /* class based variant would be written as :host(:not(.focused)) > ::content > *.focused:not(.selected) */
-        ':not([focused]) > *.focused:not(.selected)': {
+        [`&:not(.${FOCUSED}) > *.${FOCUSED}:not(.${SELECTED})`]: {
           backgroundColor: 'rgb(47, 51, 52)'
         },
-        /* class based variant would be written as :host(.focused) > ::content > *.selected */
-        '[focused] > *.focused': {
+        [`&.${FOCUSED} > *.${FOCUSED}`]: {
           backgroundColor: 'rgb(7, 54, 85)'
         },
-        '[focused] > *.selected': {
+        [`&.${FOCUSED} > *.${SELECTED}`]: {
           backgroundColor: 'rgb(9, 71, 113)'
         }
       }
@@ -81,8 +83,12 @@ export default class PageTreeComponent extends React.Component<IProps, {}, ICont
   }
 
   render() {
+    let className = this.className;
+    if (this.state.isFocused) {
+      className += ` ${FOCUSED}`;
+    }
     return (
-      <div className={this.className} style={this.inlineStyle}>{
+      <div className={className} style={this.inlineStyle} tabIndex={0}>{
         this.props.pageSet.pages.map(page =>
           <PageTreeItem key={page.title} model={page} onDidClick={this.onDidClickItem}
             isSelected={this.props.pageSet.activePage === page} />
@@ -91,3 +97,6 @@ export default class PageTreeComponent extends React.Component<IProps, {}, ICont
     );
   }
 }
+
+const PageTreeComponent = makeFocusable(PageTreeComponentImpl);
+export default PageTreeComponent;
