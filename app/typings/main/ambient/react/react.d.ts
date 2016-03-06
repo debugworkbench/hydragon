@@ -11,10 +11,10 @@ declare namespace __React {
     // React Elements
     // ----------------------------------------------------------------------
 
-    type ReactType = string | ComponentClass<any, any> | StatelessComponent<any>;
+    type ReactType = string | ComponentClass<any, any, any> | StatelessComponent<any>;
 
     interface ReactElement<P extends Props<any>> {
-        type: string | ComponentClass<P, any> | StatelessComponent<P>;
+        type: string | ComponentClass<P, any, any> | StatelessComponent<P>;
         props: P;
         key: string | number;
         ref: string | ((component: Component<P, any, any> | Element) => void);
@@ -77,7 +77,7 @@ declare namespace __React {
 
     function createFactory<P>(type: string): DOMFactory<P>;
     function createFactory<P>(type: ClassicComponentClass<P>): ClassicFactory<P>;
-    function createFactory<P>(type: ComponentClass<P, any> | StatelessComponent<P>): Factory<P>;
+    function createFactory<P>(type: ComponentClass<P, any, any> | StatelessComponent<P>): Factory<P>;
 
     function createElement<P>(
         type: string,
@@ -90,7 +90,7 @@ declare namespace __React {
         ...children: ReactNode[]
 	): ClassicElement<P>;
     function createElement<P>(
-        type: ComponentClass<P, any> | StatelessComponent<P>,
+        type: ComponentClass<P, any, any> | StatelessComponent<P>,
         props?: P,
         ...children: ReactNode[]
     ): ReactElement<P>;
@@ -157,15 +157,15 @@ declare namespace __React {
         displayName?: string;
     }
 
-    interface ComponentClass<P, C> {
-        new(props?: P, context?: C): Component<P, any, C>;
+    interface ComponentClass<P, S, C> {
+        new(props?: P, context?: C): Component<P, S, C>;
         propTypes?: ValidationMap<P>;
         contextTypes?: ValidationMap<C>;
         childContextTypes?: ValidationMap<any>;
         defaultProps?: P;
     }
 
-    interface ClassicComponentClass<P> extends ComponentClass<P, any> {
+    interface ClassicComponentClass<P> extends ComponentClass<P, any, any> {
         new(props?: P, context?: any): ClassicComponent<P, any>;
         getDefaultProps?(): P;
         displayName?: string;

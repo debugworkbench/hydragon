@@ -127,7 +127,7 @@ export class ReactFreeStyle extends FreeStyle.FreeStyle {
      * required for methods on the user component to continue working once
      * wrapped with the style functionality.
      */
-    component<P, C>(Component: React.ComponentClass<P, C>): React.ComponentClass<P, C>;
+    component<P, S, C>(Component: React.ComponentClass<P, S, C>): React.ComponentClass<P, S, C>;
 }
 /**
  * Create the <style /> element.

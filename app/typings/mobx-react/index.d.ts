@@ -10,5 +10,5 @@ import React = require('react');
 export function observer<P>(clazz: React.StatelessComponent<P>): React.ClassicComponentClass<P>;
 export function observer<P>(renderFunction: (props: P) => React.ReactElement<any>): React.ClassicComponentClass<P>;
 export function observer<P>(clazz: React.ClassicComponentClass<P>): React.ClassicComponentClass<P>;
-export function observer<P>(clazz: React.ComponentClass<P, any>): React.ComponentClass<P, any>;
-export function observer<TFunction extends React.ComponentClass<any, any>>(target: TFunction): TFunction; // decorator signature
+export function observer<P, S, C>(clazz: React.ComponentClass<P, S, C>): React.ComponentClass<P, S, C>;
+export function observer<TFunction extends React.ComponentClass<any, any, any>>(target: TFunction): TFunction; // decorator signature
