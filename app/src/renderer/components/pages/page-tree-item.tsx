@@ -6,6 +6,7 @@ import { FreeStyle } from 'react-free-style';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout, PaperStyles } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageTreeItemComponent> {
   width?: string;
@@ -15,8 +16,7 @@ export interface IProps extends React.Props<PageTreeItemComponent> {
   onDidClick: (item: PageTreeItemComponent) => void;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 const STYLE_CLASS_SELECTED = 'selected';
@@ -24,6 +24,7 @@ const STYLE_CLASS_SELECTED = 'selected';
 /**
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
+@stylable
 export default class PageTreeItemComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
@@ -32,10 +33,6 @@ export default class PageTreeItemComponent extends React.Component<IProps, {}, I
   onDidClose = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     this.props.model.close();
-  };
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
   };
 
   componentWillMount(): void {

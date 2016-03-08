@@ -7,6 +7,7 @@ import { Observable } from '@reactivex/rxjs';
 import { FreeStyle } from 'react-free-style';
 import { PageSetModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageSetComponent> {
   width?: string;
@@ -23,6 +24,7 @@ interface IContext {
  * Component that displays only one page at a time from a set of pages.
  */
 @observer
+@stylable
 export default class PageSetComponent extends React.Component<IProps, {}, IContext> {
   inlineStyle: {
     width?: string;
@@ -31,10 +33,6 @@ export default class PageSetComponent extends React.Component<IProps, {}, IConte
 
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle({

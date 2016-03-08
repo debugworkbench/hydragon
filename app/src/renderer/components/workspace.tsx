@@ -12,6 +12,7 @@ import { FreeStyle } from 'react-free-style';
 import { IronFlexLayout } from './styles';
 import { WorkspaceModel } from '../models/ui';
 import { Observable, Subscription } from '@reactivex/rxjs';
+import { stylable, IStylableContext } from './stylable';
 
 export interface IProps {
   model: WorkspaceModel;
@@ -20,20 +21,16 @@ export interface IProps {
 export interface IState {
 }
 
-export interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+export interface IContext extends IStylableContext {
 }
 
 /**
  * Chief UI wrangler component.
  */
+@stylable
 export default class WorkspaceComponent extends React.Component<IProps, IState, IContext> {
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   /** Observable hooked up to window.resize event. */
   private didResizeStream: Observable<void>;

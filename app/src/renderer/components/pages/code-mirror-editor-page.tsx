@@ -8,29 +8,26 @@ import { CodeMirrorEditorPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageComponent from './page';
 import { ICodeMirrorEditorElement } from '../../elements/code-mirror-editor/code-mirror-editor';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<CodeMirrorEditorPageComponent> {
   model: CodeMirrorEditorPageModel;
   didResizeStream: Observable<void>;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 /**
  * Page component that contains a Code Mirror editor element.
  */
+@stylable
 export default class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 
   private editorElement: ICodeMirrorEditorElement;
   private didResizeStreamSub: Subscription;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   private onSetCodeMirrorEditorRef = (element: ICodeMirrorEditorElement) => this.editorElement = element;
 

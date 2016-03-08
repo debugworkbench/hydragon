@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
 import { IronFlexLayout } from '../styles';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<VerticalContainerComponent> {
   width?: string;
@@ -16,8 +17,7 @@ export interface IState {
   children: React.ReactElement<any>[];
 }
 
-export interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+export interface IContext extends IStylableContext {
 }
 
 /**
@@ -26,6 +26,7 @@ export interface IContext {
  * The container's children must either be containers or panels, splitter elements will be
  * automatically injected between resizable children.
  */
+@stylable
 export default class VerticalContainerComponent extends React.Component<IProps, IState, IContext> {
   inlineStyle: {
     width?: string;
@@ -38,10 +39,6 @@ export default class VerticalContainerComponent extends React.Component<IProps, 
 
   state: IState = {
     children: []
-  };
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
   };
 
   private createSplitters() {

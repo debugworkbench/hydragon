@@ -5,6 +5,7 @@ import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PanelComponent> {
   width?: string;
@@ -15,10 +16,10 @@ export interface IProps extends React.Props<PanelComponent> {
   showHeader?: boolean;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
+@stylable
 export default class PanelComponent extends React.Component<IProps, {}, IContext> {
   inlineStyle: {
     width?: string;
@@ -28,10 +29,6 @@ export default class PanelComponent extends React.Component<IProps, {}, IContext
 
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle({

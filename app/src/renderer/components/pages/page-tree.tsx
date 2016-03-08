@@ -9,6 +9,7 @@ import { PageSetModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageTreeItem from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageTreeComponentImpl> {
   width?: string;
@@ -16,8 +17,7 @@ export interface IProps extends React.Props<PageTreeComponentImpl> {
   pageSet?: PageSetModel;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 const SELECTED = 'selected';
@@ -27,6 +27,7 @@ const FOCUSED = 'focused';
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
 @observer
+@stylable
 export class PageTreeComponentImpl extends React.Component<IProps, IFocusableState, IContext> {
   inlineStyle: {
     width?: string;
@@ -35,10 +36,6 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
 
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   private onDidClickItem = (item: PageTreeItem) => this.props.pageSet.activatePage(item.props.model);
 

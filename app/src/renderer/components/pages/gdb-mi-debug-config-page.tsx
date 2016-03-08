@@ -6,25 +6,22 @@ import { FreeStyle } from 'react-free-style';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageComponent from './page';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
   model: PageModel<any>;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 /**
  * Page component that displays a debug configuration form.
  */
+@stylable
 export default class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
 

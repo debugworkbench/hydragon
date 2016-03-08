@@ -7,27 +7,24 @@ import { FreeStyle } from 'react-free-style';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
+import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageComponent> {
   model: PageModel<any>;
   className?: string;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 /**
  * Page component that displays some arbitrary content in a PageSet component.
  */
 @observer
+@stylable
 export default class PageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
-
-  static contextTypes: React.ValidationMap<IContext> = {
-    freeStyle: React.PropTypes.object.isRequired
-  };
 
   private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
 
