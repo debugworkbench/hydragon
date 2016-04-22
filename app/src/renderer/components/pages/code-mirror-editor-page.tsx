@@ -43,7 +43,7 @@ export default class CodeMirrorEditorPageComponent extends React.Component<IProp
     // itself correctly. So, any time the container changes size (for example because the browser
     // window was resized) the editor element needs to be notified so it can rerender itself to fit
     // the new container dimensions.
-    this.didResizeStreamSub = this.props.didResizeStream.subscribe(() => {
+    this.didResizeStreamSub = this.props.model.didResizeStream.subscribe(() => {
       if (this.editorElement) {
         this.editorElement.notifyResize();
       }

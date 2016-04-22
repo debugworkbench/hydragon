@@ -2,8 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import VerticalContainer from './layout/vertical-container';
-import HorizontalContainer from './layout/horizontal-container';
+import LayoutContainer from './layout/layout-container';
 import Panel from './layout/panel';
 import PageSet from './pages/page-set';
 import PageTree from './pages/page-tree';
@@ -13,9 +12,16 @@ import { IronFlexLayout } from './styles';
 import { WorkspaceModel } from '../models/ui';
 import { Observable, Subscription } from '@reactivex/rxjs';
 import { stylable, IStylableContext } from './stylable';
+import { Cursor } from '../renderer-context';
+import { LayoutContainerModel } from '../models/ui/layout/layout-container';
+import { ElementFactory } from './element-factory';
 
 export interface IProps {
   model: WorkspaceModel;
+  elementFactory: ElementFactory;
+
+  overrideCursor(cursor: Cursor): void;
+  resetCursor(): void;
 }
 
 export interface IState {
@@ -32,12 +38,12 @@ export default class WorkspaceComponent extends React.Component<IProps, IState, 
   styleId: string;
   className: string;
 
-  /** Observable hooked up to window.resize event. */
-  private didResizeStream: Observable<void>;
+  static childContextTypes = {
+    elementFactory: React.PropTypes.object
+  };
 
-  constructor() {
-    super();
-    this.state = {};
+  getChildContext() {
+    return { elementFactory: this.props.elementFactory };
   }
 
   componentWillMount(): void {
@@ -57,43 +63,20 @@ export default class WorkspaceComponent extends React.Component<IProps, IState, 
     if (window) {
       // while it's usually recommended to access the DOM in componentDidMount() this observable
       // has to be created before any child components are mounted
-      this.didResizeStream = Observable.fromEvent<void>(window, 'resize');
+      this.props.model.windowDidResizeStream = Observable.fromEvent<void>(window, 'resize');
     }
   }
 
   componentWillUnmount(): void {
-    this.didResizeStream = null;
+    this.props.model.windowDidResizeStream = null;
   }
 
   render() {
-    // TODO: the layout should be governed by WorkspaceModel, so the model hierarchy will need to
-    //       be traversed and a component rendered for each model
-    const { mainPageSet } = this.props.model;
     return (
       <div className={this.className}>
-        <VerticalContainer>
-          <Panel height={'48px'}>
-            <DebugToolbar />
-          </Panel>
-          <HorizontalContainer>
-            <VerticalContainer width={'300px'} resizable={true}>
-              <Panel title={'Open Pages'} height={'300px'} resizable={true} showHeader={true}>
-                <PageTree height={'100%'} pageSet={mainPageSet} />
-              </Panel>
-              <Panel title={'Explorer'} resizable={true} showHeader={true}>
-                {/*<DirTree />*/}
-              </Panel>
-            </VerticalContainer>
-            <VerticalContainer resizable={true}>
-              <Panel>
-                <PageSet height={'100%'} model={mainPageSet} didResizeStream={this.didResizeStream} />
-              </Panel>
-              <Panel height={'20px'}>
-                Status
-              </Panel>
-            </VerticalContainer>
-          </HorizontalContainer>
-        </VerticalContainer>
+        <LayoutContainer model={this.props.model.rootLayoutContainer}
+          overrideCursor={this.props.overrideCursor}
+          resetCursor={this.props.resetCursor} />
       </div>
     );
   }

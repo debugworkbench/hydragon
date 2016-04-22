@@ -19,6 +19,10 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
 import { WorkspaceModel, CodeMirrorEditorPageModel } from './models/ui';
+import { ElementFactory as ReactElementFactory } from './components/element-factory';
+import { PageSetModel, PageTreeModel } from './models/ui';
+import PageSetComponent from './components/pages/page-set';
+import PageTreeComponent from './components/pages/page-tree';
 
 export const enum Cursor {
   HorizontalResize,
@@ -33,6 +37,7 @@ export class RendererContext {
 
   elementRegistry: ElementRegistry;
   elementFactory: ElementFactory;
+  reactElementFactory: ReactElementFactory;
   rootPath: string;
 
   /** Create the renderer context for the current process. */
@@ -60,6 +65,14 @@ export class RendererContext {
     await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
     this.elementFactory = new ElementFactory(this.elementRegistry);
 
+    this.reactElementFactory = new ReactElementFactory();
+    this.reactElementFactory.registerElementConstructor(PageSetModel, (model: PageSetModel) => {
+      return React.createElement(PageSetComponent, { model, key: model.id });
+    });
+    this.reactElementFactory.registerElementConstructor(PageTreeModel, (model: PageTreeModel) => {
+      return React.createElement(PageTreeComponent, { model, key: model.id });
+    });
+
     const userDataDir = electron.remote.app.getPath('userData');
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
     const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
@@ -76,10 +89,16 @@ export class RendererContext {
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';
     const styleRegistry = ReactFreeStyle.create();
+    const overrideCursor = this.overrideCursor.bind(this);
+    const resetCursor = this.resetCursor.bind(this);
     const rootComponent = styleRegistry.component(React.createClass({
       render: () => React.createElement(
         'div', null,
-        React.createElement(WorkspaceComponent, { model: workspaceModel }),
+        React.createElement(WorkspaceComponent, {
+          model: workspaceModel,
+          elementFactory: this.reactElementFactory,
+          overrideCursor, resetCursor
+        }),
         React.createElement(styleRegistry.Element)
       )
     }));
@@ -158,7 +177,11 @@ export class RendererContext {
    */
   resetCursor(): void {
     if (this._cursorOverlay) {
-      document.body.removeChild(this._cursorOverlay);
+      if (this._cursorOverlay.parentNode) {
+        document.body.removeChild(this._cursorOverlay);
+      } else {
+        throw new Error('The cursor overlay is not attached to the document!');
+      }
     }
   }
 }

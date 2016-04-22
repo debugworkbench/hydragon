@@ -10,14 +10,10 @@ import { IronFlexLayout } from '../styles';
 import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageSetComponent> {
-  width?: string;
-  height?: string;
   model: PageSetModel;
-  didResizeStream: Observable<void>;
 }
 
-interface IContext {
-  freeStyle: FreeStyle.FreeStyle;
+interface IContext extends IStylableContext {
 }
 
 /**
@@ -43,11 +39,11 @@ export default class PageSetComponent extends React.Component<IProps, {}, IConte
     });
     this.className = `hydragon-page-set ${this.styleId}`;
 
-    if (this.props.width !== undefined) {
-        this.inlineStyle.width = this.props.width;
+    if (this.props.model.width !== undefined) {
+        this.inlineStyle.width = this.props.model.width;
     }
-    if (this.props.height !== undefined) {
-      this.inlineStyle.height = this.props.height;
+    if (this.props.model.height !== undefined) {
+      this.inlineStyle.height = this.props.model.height;
     }
   }
 
@@ -57,10 +53,7 @@ export default class PageSetComponent extends React.Component<IProps, {}, IConte
 
     return (
       <div className={this.className} style={this.inlineStyle}>{
-        PageComponent ?
-          <PageComponent model={this.props.model.activePage}
-            didResizeStream={this.props.didResizeStream} />
-        : undefined
+        PageComponent ? <PageComponent model={this.props.model.activePage} /> : undefined
       }</div>
     );
   }

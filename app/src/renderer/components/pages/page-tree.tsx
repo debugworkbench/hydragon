@@ -5,16 +5,14 @@ import * as React from 'react';
 import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import { FreeStyle } from 'react-free-style';
-import { PageSetModel } from '../../models/ui';
+import { PageTreeModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageTreeItem from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';
 import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageTreeComponentImpl> {
-  width?: string;
-  height?: string;
-  pageSet?: PageSetModel;
+  model: PageTreeModel;
 }
 
 interface IContext extends IStylableContext {
@@ -37,7 +35,7 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
   styleId: string;
   className: string;
 
-  private onDidClickItem = (item: PageTreeItem) => this.props.pageSet.activatePage(item.props.model);
+  private onDidClickItem = (item: PageTreeItem) => this.props.model.activatePage(item.props.model);
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
@@ -71,11 +69,11 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
     ));
     this.className = `hydragon-page-tree ${this.styleId}`;
 
-    if (this.props.width !== undefined) {
-        this.inlineStyle.width = this.props.width;
+    if (this.props.model.width !== undefined) {
+        this.inlineStyle.width = this.props.model.width;
     }
-    if (this.props.height !== undefined) {
-      this.inlineStyle.height = this.props.height;
+    if (this.props.model.height !== undefined) {
+      this.inlineStyle.height = this.props.model.height;
     }
   }
 
@@ -86,9 +84,9 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
     }
     return (
       <div className={className} style={this.inlineStyle} tabIndex={0}>{
-        this.props.pageSet.pages.map(page =>
+        this.props.model.pages.map(page =>
           <PageTreeItem key={page.title} model={page} onDidClick={this.onDidClickItem}
-            isSelected={this.props.pageSet.activePage === page} />
+            isSelected={this.props.model.activePage === page} />
         )
       }</div>
     );

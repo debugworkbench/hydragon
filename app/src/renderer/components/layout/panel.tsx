@@ -2,33 +2,46 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import { FreeStyle } from 'react-free-style';
+import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, IStylableContext } from '../stylable';
+import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
+import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
+import { PanelModel } from '../../models/ui';
 
-export interface IProps extends React.Props<PanelComponent> {
-  width?: string;
-  height?: string;
-  flex?: string;
-  resizable?: boolean;
-  title?: string;
-  showHeader?: boolean;
+export interface IProps extends ILayoutComponentProps<PanelComponent> {
+  model: PanelModel;
 }
 
-interface IContext extends IStylableContext {
+interface IContext extends IStylableContext, IRequiresElementFactoryContext {
 }
 
+/**
+ * Container component that displays its content with an optional header.
+ */
+@observer
 @stylable
-export default class PanelComponent extends React.Component<IProps, {}, IContext> {
-  inlineStyle: {
-    width?: string;
-    height?: string;
-    flex?: string;
-  } = {};
-
+@requiresElementFactory
+export default class PanelComponent extends React.Component<IProps, {}, IContext>
+                                    implements ILayoutComponent {
   styleId: string;
   className: string;
+  element: HTMLDivElement;
+
+  private onSetRef = (ref: HTMLDivElement) => this.element = ref;
+
+  get id(): string {
+    return this.props.model.id;
+  }
+
+  getClientSize(): { width: number; height: number } {
+    if (this.element) {
+      return { width: this.element.clientWidth, height: this.element.clientHeight };
+    } else {
+      throw new Error('Reference to DOM element not set.')
+    }
+  }
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle({
@@ -36,39 +49,35 @@ export default class PanelComponent extends React.Component<IProps, {}, IContext
       position: 'relative',
       display: 'block',
       backgroundColor: 'rgb(37, 37, 38)',
-      '.content-wrapper': IronFlexLayout.fit
+      '> .content-wrapper': IronFlexLayout.fit
     });
     this.className = `hydragon-panel ${this.styleId}`;
-
-    if (this.props.width !== undefined) {
-        this.inlineStyle.width = this.props.width;
-    }
-    if (this.props.height !== undefined) {
-      this.inlineStyle.height = this.props.height;
-    }
-    if (this.props.flex !== undefined) {
-      this.inlineStyle.flex = this.props.flex;
-    }
   }
 
-  renderContent() {
-    if (this.props.showHeader) {
+  renderContent(): JSX.Element | JSX.Element[] {
+    if (this.props.model.showHeader) {
       return (
         <paper-header-panel>
           <paper-toolbar ref={onDidChangePaperToolbarRef}>
-            <div className="title">{this.props.title}</div>
+            <div className="title">{this.props.model.title}</div>
           </paper-toolbar>
-          {this.props.children}
+          {this.props.model.children.map(child => this.context.elementFactory.createElementFrom(child, this))}
         </paper-header-panel>
       );
     } else {
-      return this.props.children;
+      return this.props.model.children.map(child => this.context.elementFactory.createElementFrom(child, this));
     }
   }
 
   render() {
+    const inlineStyle = {
+      width: (this.props.model.width !== undefined) ? this.props.model.width : undefined,
+      height: (this.props.model.height !== undefined) ? this.props.model.height : undefined,
+      flex: (this.props.model.mainAxisSize !== null) ? `0 0 ${this.props.model.mainAxisSize}` : undefined
+    }
+
     return (
-      <div className={this.className} style={this.inlineStyle}>
+      <div className={this.className} style={inlineStyle} ref={this.onSetRef}>
         <div className="content-wrapper">
         {this.renderContent()}
         </div>
