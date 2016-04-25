@@ -9,6 +9,7 @@ import { LayoutItemModel } from './layout-item';
  * Items that are added to a panel must implement this interface.
  */
 export interface IPanelItem {
+  /** Called after the item is added to a panel. */
   onDidAttachToPanel(panel: PanelModel): void;
 }
 
@@ -24,18 +25,21 @@ export interface IPanelParams {
 export class PanelModel extends LayoutItemModel {
   title: string;
   showHeader: boolean;
-  children: IPanelItem[];
+  items: IPanelItem[];
 
-  constructor({ id, title = undefined, width = undefined, height = undefined, resizable = false, showHeader = false }: IPanelParams) {
+  constructor({
+    id, title = undefined, width = undefined, height = undefined, resizable = false,
+    showHeader = false
+  }: IPanelParams) {
     super(id);
-    this.children = [];
+    this.items = [];
     this.width = width;
     this.height = height;
     this.resizable = resizable;
   }
 
-  add(...children: IPanelItem[]): void {
-    this.children.push(...children);
-    children.forEach(child => child.onDidAttachToPanel(this));
+  add(...items: IPanelItem[]): void {
+    this.items.push(...items);
+    items.forEach(item => item.onDidAttachToPanel(this));
   }
 }

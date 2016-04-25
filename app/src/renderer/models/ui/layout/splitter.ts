@@ -11,15 +11,15 @@ export interface ISplitterParams {
   resizee: LayoutItemModel;
 }
 
-export class SplitterModel extends LayoutItemModel {
+export class SplitterModel {
+  /** Unique identifier. */
+  id: string;
   orientation: SplitterOrientation;
   /** The item the splitter will be resizing. */
   resizee: LayoutItemModel;
 
   constructor({ id, orientation, resizee }: ISplitterParams) {
-    super(id);
     this.orientation = orientation;
     this.resizee = resizee;
-    this.resizable = false;
   }
 }

@@ -12,7 +12,7 @@ export class ElementFactory {
   /**
    * Create a new element instance from a model instance.
    */
-  createElementFrom(model: any, parent: React.Component<any, any, any>): JSX.Element {
+  createElementFrom(model: any): JSX.Element {
     const elementConstructor = this.constructors.get(model.constructor);
     return elementConstructor(model);
   }

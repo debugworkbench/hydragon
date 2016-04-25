@@ -6,7 +6,7 @@ import { observable } from 'mobx';
 import { LayoutContainerModel } from './layout-container';
 
 /**
- * Base class for layout item models like containers, panels, and splitters.
+ * Base class for layout container and panel models.
  */
 export abstract class LayoutItemModel {
   /** Unique identifier. */

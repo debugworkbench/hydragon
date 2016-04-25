@@ -21,15 +21,17 @@ export interface ILayoutContainerParams {
 }
 
 export class LayoutContainerModel extends LayoutItemModel {
-  children: LayoutItemModel[];
+  items: Array<LayoutItemModel | SplitterModel>;
   direction: LayoutContainerDirection;
+  private containers: LayoutItemModel[];
 
   constructor({
     id, direction, width = undefined, height = undefined, resizable = false,
     windowDidResizeStream = undefined
   }: ILayoutContainerParams) {
     super(id);
-    this.children = [];
+    this.items = [];
+    this.containers = [];
     this.direction = direction;
     this.width = width;
     this.height = height;
@@ -39,34 +41,43 @@ export class LayoutContainerModel extends LayoutItemModel {
     }
   }
 
-  add(...children: LayoutItemModel[]): void {
-    // FIXME: this is going to explode if called more that once!
+  add(...items: LayoutItemModel[]): void {
+    // when an item is added to a container the main axis size needs to be set so that the item
+    // can be correctly resized along the container's main axis using a splitter (assuming the item
+    // is marked as resizable)
+    items.forEach(item => {
+      if (this.direction === 'vertical') {
+        if (item.height !== undefined) {
+          item.mainAxisSize = item.height;
+        }
+      } else {
+        if (item.width !== undefined) {
+          item.mainAxisSize = item.width;
+        }
+      }
+      this.containers.push(item);
+      item.onDidAttachToContainer(this);
+    });
+
+    // create the splitters necessary to resize items that have been marked as such
     const orientation: SplitterOrientation = (this.direction === 'vertical') ? 'horizontal' : 'vertical';
-    for (let i = 0; i < children.length; ++i) {
-      const curChild = children[i];
+    const allItems: Array<LayoutItemModel | SplitterModel> = [];
+    for (let i = 0; i < this.containers.length; ++i) {
+      const curItem = this.containers[i];
       // A splitter will explicitely resize the previous sibling, and the browser will resize
       // the following siblings using Flexbox. In order for a splitter to actually work the
       // previous sibling must be resizable, and at least one of the following siblings must
       // be resizable, if this is not the case there's no point in creating the splitter.
-      if ((i > 0) && children[i - 1].resizable && containsResizableItem(children, i)) {
-        this.children.push(new SplitterModel({ id: 'blah', orientation, resizee: children[i - 1] }));
+      if ((i > 0) && this.containers[i - 1].resizable && containsResizableItem(this.containers, i)) {
+        allItems.push(new SplitterModel({ id: 'blah', orientation, resizee: this.containers[i - 1] }));
       }
-      this.children.push(curChild);
-      if (this.direction === 'vertical') {
-        if (curChild.height !== undefined) {
-          curChild.mainAxisSize = curChild.height;
-        }
-      } else {
-        if (curChild.width !== undefined) {
-          curChild.mainAxisSize = curChild.width;
-        }
-      }
-      curChild.onDidAttachToContainer(this);
+      allItems.push(curItem);
     }
+    this.items = allItems;
   }
 
-  resizeChild(child: LayoutItemModel, newSize: string): void {
-    child.mainAxisSize = newSize;
+  resizeItem(item: LayoutItemModel, newSize: string): void {
+    item.mainAxisSize = newSize;
     this.didResizeStream.next(null);
   }
 }

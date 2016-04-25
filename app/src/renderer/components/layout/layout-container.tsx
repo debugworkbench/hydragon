@@ -100,9 +100,9 @@ export default class LayoutContainerComponent extends React.Component<IProps, IS
     if (resizeeComponent) {
       const { width, height } = resizeeComponent.getClientSize();
       if (this.props.model.direction === 'horizontal') {
-        this.props.model.resizeChild(splitter.resizee, `${width + delta.width}px`);
+        this.props.model.resizeItem(splitter.resizee, `${width + delta.width}px`);
       } else {
-        this.props.model.resizeChild(splitter.resizee, `${height + delta.height}px`);
+        this.props.model.resizeItem(splitter.resizee, `${height + delta.height}px`);
       }
     }
   }
@@ -122,7 +122,7 @@ export default class LayoutContainerComponent extends React.Component<IProps, IS
     this.className = `hydragon-${this.props.model.direction}-container ${this.styleId}`;
   }
 
-  private renderers = new Map<any, (model: LayoutItemModel) => JSX.Element>([
+  private renderers = new Map<any, (model: LayoutItemModel | SplitterModel) => JSX.Element>([
     [LayoutContainerModel, model => this.renderLayoutContainer(model as LayoutContainerModel)],
     [PanelModel, model => this.renderPanel(model as PanelModel)],
     [SplitterModel, model => this.renderSplitter(model as SplitterModel)]
@@ -165,9 +165,9 @@ export default class LayoutContainerComponent extends React.Component<IProps, IS
 
     return (
       <div className={this.className} style={inlineStyle} ref={this.onSetRef}>{
-        this.props.model.children.map(child => {
-          const renderChild = this.renderers.get(child.constructor);
-          return renderChild(child);
+        this.props.model.items.map(item => {
+          const renderChild = this.renderers.get(item.constructor);
+          return renderChild(item);
         })
       }</div>
     );
