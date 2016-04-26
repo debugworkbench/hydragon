@@ -10,7 +10,7 @@ import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<PageComponent> {
-  model: PageModel<any>;
+  model: PageModel;
   className?: string;
 }
 

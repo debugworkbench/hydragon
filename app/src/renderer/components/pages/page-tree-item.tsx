@@ -11,7 +11,7 @@ import { stylable, IStylableContext } from '../stylable';
 export interface IProps extends React.Props<PageTreeItemComponent> {
   width?: string;
   height?: string;
-  model?: PageModel<any>;
+  model?: PageModel;
   isSelected?: boolean;
   onDidClick: (item: PageTreeItemComponent) => void;
 }

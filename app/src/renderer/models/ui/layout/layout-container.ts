@@ -62,6 +62,7 @@ export class LayoutContainerModel extends LayoutItemModel {
     // create the splitters necessary to resize items that have been marked as such
     const orientation: SplitterOrientation = (this.direction === 'vertical') ? 'horizontal' : 'vertical';
     const allItems: Array<LayoutItemModel | SplitterModel> = [];
+    let nextSplitterId = 0;
     for (let i = 0; i < this.containers.length; ++i) {
       const curItem = this.containers[i];
       // A splitter will explicitely resize the previous sibling, and the browser will resize
@@ -69,7 +70,8 @@ export class LayoutContainerModel extends LayoutItemModel {
       // previous sibling must be resizable, and at least one of the following siblings must
       // be resizable, if this is not the case there's no point in creating the splitter.
       if ((i > 0) && this.containers[i - 1].resizable && containsResizableItem(this.containers, i)) {
-        allItems.push(new SplitterModel({ id: 'blah', orientation, resizee: this.containers[i - 1] }));
+        allItems.push(new SplitterModel({ id: `splitter-${nextSplitterId}`, orientation, resizee: this.containers[i - 1] }));
+        ++nextSplitterId;
       }
       allItems.push(curItem);
     }

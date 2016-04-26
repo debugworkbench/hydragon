@@ -19,15 +19,15 @@ export default class PageSetModel implements IPanelItem {
   didResizeStream = new Subject<void>();
 
   @observable
-  pages: PageModel<any>[] = [];
+  pages: PageModel[] = [];
 
   @observable
-  activePage: PageModel<any> = null;
+  activePage: PageModel = null;
 
   // FIXME: these three subjects aren't actually used by anything right now, consider removing them
-  didAddPageStream = new Subject<PageModel<any>>();
-  didRemovePageStream = new Subject<PageModel<any>>();
-  didActivatePageStream = new Subject<PageModel<any>>();
+  didAddPageStream = new Subject<PageModel>();
+  didRemovePageStream = new Subject<PageModel>();
+  didActivatePageStream = new Subject<PageModel>();
 
   private activePageIndex: number;
   private panelDidResizeStreamSub: Subscription;
@@ -38,7 +38,7 @@ export default class PageSetModel implements IPanelItem {
     this.height = height;
   }
 
-  addPage(page: PageModel<any>): void {
+  addPage(page: PageModel): void {
     this.pages.push(page);
     page.onDidAttachToPageSet(this);
     const sub = page.didCloseStream.subscribe(page => {
@@ -52,7 +52,7 @@ export default class PageSetModel implements IPanelItem {
     }
   }
 
-  removePage(page: PageModel<any>): void {
+  removePage(page: PageModel): void {
     // if the active page is being removed figure out which page should be activated afterwards,
     // generally the previous page should be activated, unless there is no previous page (in which
     // case the next page should be activated)
@@ -76,7 +76,7 @@ export default class PageSetModel implements IPanelItem {
     this.didRemovePageStream.next(page);
   }
 
-  activatePage(page: PageModel<any>): void {
+  activatePage(page: PageModel): void {
     this.activatePageAtIndex(this.pages.indexOf(page));
   }
 

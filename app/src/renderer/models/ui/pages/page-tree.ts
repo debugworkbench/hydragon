@@ -21,10 +21,10 @@ export class PageTreeModel implements IPanelItem {
   pageSet: PageSetModel = null;
 
   @observable
-  pages: PageModel<any>[] = [];
+  pages: PageModel[] = [];
 
   @observable
-  activePage: PageModel<any> = null;
+  activePage: PageModel = null;
 
   constructor({ id, width = undefined, height = undefined }: IPageTreeParams) {
     this.id = id;
@@ -46,7 +46,7 @@ export class PageTreeModel implements IPanelItem {
     });
   }
 
-  activatePage(page: PageModel<any>): void {
+  activatePage(page: PageModel): void {
     this.pageSet.activatePage(page);
   }
 

@@ -9,6 +9,7 @@ import { LayoutItemModel } from './layout-item';
  * Items that are added to a panel must implement this interface.
  */
 export interface IPanelItem {
+  id: string;
   /** Called after the item is added to a panel. */
   onDidAttachToPanel(panel: PanelModel): void;
 }

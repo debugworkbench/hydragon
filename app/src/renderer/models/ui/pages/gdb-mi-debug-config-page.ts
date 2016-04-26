@@ -3,6 +3,5 @@
 
 import PageModel from './page';
 
-export default class CodeMirrorEditorPageModel extends PageModel {
-  editorConfig: CodeMirror.EditorConfiguration;
+export class GdbMiDebugConfigPageModel extends PageModel {
 }

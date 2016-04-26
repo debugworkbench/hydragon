@@ -8,12 +8,13 @@ import { FreeStyle } from 'react-free-style';
 import { PageSetModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { stylable, IStylableContext } from '../stylable';
+import { requiresElementFactory, IRequiresElementFactoryContext } from '../element-factory';
 
 export interface IProps extends React.Props<PageSetComponent> {
   model: PageSetModel;
 }
 
-interface IContext extends IStylableContext {
+interface IContext extends IStylableContext, IRequiresElementFactoryContext {
 }
 
 /**
@@ -21,6 +22,7 @@ interface IContext extends IStylableContext {
  */
 @observer
 @stylable
+@requiresElementFactory
 export default class PageSetComponent extends React.Component<IProps, {}, IContext> {
   inlineStyle: {
     width?: string;
@@ -48,12 +50,11 @@ export default class PageSetComponent extends React.Component<IProps, {}, IConte
   }
 
   render() {
-    const PageComponent = this.props.model.activePage ?
-      this.props.model.activePage.ComponentClass : undefined;
-
     return (
       <div className={this.className} style={this.inlineStyle}>{
-        PageComponent ? <PageComponent model={this.props.model.activePage} /> : undefined
+        this.props.model.activePage
+          ? this.context.elementFactory.createElement({ model: this.props.model.activePage })
+          : undefined
       }</div>
     );
   }

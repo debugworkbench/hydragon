@@ -12,7 +12,6 @@ import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<CodeMirrorEditorPageComponent> {
   model: CodeMirrorEditorPageModel;
-  didResizeStream: Observable<void>;
 }
 
 interface IContext extends IStylableContext {
@@ -29,7 +28,17 @@ export default class CodeMirrorEditorPageComponent extends React.Component<IProp
   private editorElement: ICodeMirrorEditorElement;
   private didResizeStreamSub: Subscription;
 
-  private onSetCodeMirrorEditorRef = (element: ICodeMirrorEditorElement) => this.editorElement = element;
+  private onSetCodeMirrorEditorRef = (element: ICodeMirrorEditorElement) => {
+    this.editorElement = element;
+    // Force the editor element to rerender itself after it's attached to the DOM.
+    // setImmediate() is used here to delay the operation a little bit in order to
+    // allow Polymer to update the state of the element after it's attached to the DOM.
+    setImmediate(() => {
+      if (this.editorElement) {
+        this.editorElement.notifyResize();
+      }
+    });
+  }
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle({
@@ -48,10 +57,6 @@ export default class CodeMirrorEditorPageComponent extends React.Component<IProp
         this.editorElement.notifyResize();
       }
     });
-    // Force the editor element to rerender itself after it's attached to the DOM.
-    // setImmediate() is used here to delay the operation a little bit in order to
-    // allow Polymer to update the state of the element after it's attached to the DOM.
-    setImmediate(() => this.editorElement.notifyResize());
   }
 
   shouldComponentUpdate(nextProps: IProps): boolean {

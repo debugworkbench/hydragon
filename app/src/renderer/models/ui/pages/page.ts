@@ -5,15 +5,22 @@ import { Subject, Subscription } from '@reactivex/rxjs';
 import PageComponent from '../../../components/pages/page';
 import PageSetModel from './page-set';
 
-export default class PageModel<TComponentClass> {
-  ComponentClass: TComponentClass;
+export interface IPageParams {
+  id: string;
+}
 
+export default class PageModel {
+  id: string;
   title: string;
 
-  didCloseStream = new Subject<PageModel<TComponentClass>>();
+  didCloseStream = new Subject<PageModel>();
   didResizeStream = new Subject<void>();
 
   private pageSetDidResizeStreamSub: Subscription;
+
+  constructor({ id }: IPageParams) {
+    this.id = id;
+  }
 
   close(): void {
     if (this.pageSetDidResizeStreamSub) {

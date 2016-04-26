@@ -8,7 +8,7 @@ import { autorun, Lambda } from 'mobx';
  * Creates and activates page elements.
  */
 export class PagePresenter {
-  private pageIdToModelMap = new Map</*pageId:*/string, { page: PageModel<any>, pageSet: PageSetModel }>();
+  private pageIdToModelMap = new Map</*pageId:*/string, { page: PageModel, pageSet: PageSetModel }>();
   private lastActivePageSet: PageSetModel;
   private disposeObserver: Lambda;
 
@@ -35,7 +35,7 @@ export class PagePresenter {
    * @param createPage Callback that returns the content of the new page, this callback is only
    *                   invoked when a new page is created.
    */
-  openPage(pageId: string, createPage: () => PageModel<any>): void {
+  openPage(pageId: string, createPage: () => PageModel): void {
     const entry = this.pageIdToModelMap.get(pageId);
     if (entry) {
       entry.pageSet.activatePage(entry.page);

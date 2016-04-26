@@ -60,12 +60,17 @@ export default class PanelComponent extends React.Component<IProps, {}, IContext
         <paper-header-panel>
           <paper-toolbar ref={onDidChangePaperToolbarRef}>
             <div className="title">{this.props.model.title}</div>
-          </paper-toolbar>
-          {this.props.model.items.map(item => this.context.elementFactory.createElementFrom(item))}
+          </paper-toolbar>{
+            this.props.model.items.map(
+              item => this.context.elementFactory.createElement({ model: item, key: item.id })
+            )
+          }
         </paper-header-panel>
       );
     } else {
-      return this.props.model.items.map(item => this.context.elementFactory.createElementFrom(item));
+      return this.props.model.items.map(
+        item => this.context.elementFactory.createElement({ model: item, key: item.id })
+      );
     }
   }
 

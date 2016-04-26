@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
-import { PageModel } from '../../models/ui';
+import { GdbMiDebugConfigPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import PageComponent from './page';
 import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
-  model: PageModel<any>;
+  model: GdbMiDebugConfigPageModel;
 }
 
 interface IContext extends IStylableContext {

@@ -19,6 +19,7 @@ export class SplitterModel {
   resizee: LayoutItemModel;
 
   constructor({ id, orientation, resizee }: ISplitterParams) {
+    this.id = id;
     this.orientation = orientation;
     this.resizee = resizee;
   }

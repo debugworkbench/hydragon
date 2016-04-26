@@ -18,11 +18,14 @@ import { PagePresenter } from './page-presenter';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
-import { WorkspaceModel, CodeMirrorEditorPageModel } from './models/ui';
+import {
+  WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel
+} from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
-import { PageSetModel, PageTreeModel } from './models/ui';
-import PageSetComponent from './components/pages/page-set';
+import { PageSetComponent } from './components/pages/page-set';
 import PageTreeComponent from './components/pages/page-tree';
+import CodeMirrorEditorPageComponent from './components/pages/code-mirror-editor-page';
+import GdbMiDebugConfigPageComponent from './components/pages/gdb-mi-debug-config-page';
 
 export const enum Cursor {
   HorizontalResize,
@@ -66,12 +69,18 @@ export class RendererContext {
     this.elementFactory = new ElementFactory(this.elementRegistry);
 
     this.reactElementFactory = new ReactElementFactory();
-    this.reactElementFactory.registerElementConstructor(PageSetModel, (model: PageSetModel) => {
-      return React.createElement(PageSetComponent, { model, key: model.id });
-    });
-    this.reactElementFactory.registerElementConstructor(PageTreeModel, (model: PageTreeModel) => {
-      return React.createElement(PageTreeComponent, { model, key: model.id });
-    });
+    this.reactElementFactory.registerElementConstructor(PageSetModel, ({ model, key }) =>
+      React.createElement(PageSetComponent, { model, key })
+    );
+    this.reactElementFactory.registerElementConstructor(PageTreeModel, ({ model, key }) =>
+      React.createElement(PageTreeComponent, { model, key })
+    );
+    this.reactElementFactory.registerElementConstructor(CodeMirrorEditorPageModel, ({ model, key }) =>
+      React.createElement(CodeMirrorEditorPageComponent, { model, key })
+    );
+    this.reactElementFactory.registerElementConstructor(GdbMiDebugConfigPageModel, ({ model, key }) =>
+      React.createElement(GdbMiDebugConfigPageComponent, { model, key })
+    );
 
     const userDataDir = electron.remote.app.getPath('userData');
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
@@ -108,7 +117,7 @@ export class RendererContext {
     // TODO: these editor elements are only here for mockup purposes, they should be removed once
     // source files can be opened from the directory tree element
     pagePresenter.openPage('test-page', () => {
-      const page = new CodeMirrorEditorPageModel();
+      const page = new CodeMirrorEditorPageModel({ id: 'SourceFile1' });
       page.title = 'Page 1';
       page.editorConfig = {
         value: 'int main(int argc, char** argv) { return 0; }',
@@ -117,7 +126,7 @@ export class RendererContext {
       return page;
     });
     pagePresenter.openPage('test-page2', () => {
-      const page = new CodeMirrorEditorPageModel();
+      const page = new CodeMirrorEditorPageModel({ id: 'SourceFile2' });
       page.title = 'Page 2';
       page.editorConfig = {
         value: 'int main(int argc, char** argv) { return 1; }',

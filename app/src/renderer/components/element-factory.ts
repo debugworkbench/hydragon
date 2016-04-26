@@ -3,6 +3,11 @@
 
 import * as React from 'react';
 
+export interface IElementConstructorParams<TModel> {
+  model: TModel;
+  key?: string;
+}
+
 /**
  * Creates React elements from models.
  */
@@ -11,10 +16,15 @@ export class ElementFactory {
 
   /**
    * Create a new element instance from a model instance.
+   *
+   * @param model Model instance to bind to the new element.
+   * @param key Optional key to assign to the element being constructed, this key is passed directly
+   *            to `React.createElement()` so see the React docs for further info on when and why
+   *            this parameter should be used.
    */
-  createElementFrom(model: any): JSX.Element {
+  createElement<TModel>({ model, key = undefined }: IElementConstructorParams<TModel>): JSX.Element {
     const elementConstructor = this.constructors.get(model.constructor);
-    return elementConstructor(model);
+    return elementConstructor({ model, key });
   }
 
   /**
@@ -24,7 +34,10 @@ export class ElementFactory {
    * @param elementConstructor Function that should be invoked to construct a new element instance
    *                           that is bound to a given model instance.
    */
-  registerElementConstructor(modelClass: any, elementConstructor: (model: any) => JSX.Element): void {
+  registerElementConstructor<TModel>(
+    modelClass: { new(...args: any[]): TModel },
+    elementConstructor: (params: IElementConstructorParams<TModel>) => JSX.Element
+  ): void {
     this.constructors.set(modelClass, elementConstructor);
   }
 }
