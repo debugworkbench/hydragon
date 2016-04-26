@@ -5,7 +5,7 @@ import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
 import { GdbMiDebugConfigPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
-import PageComponent from './page';
+import { PageComponent } from './page';
 import { stylable, IStylableContext } from '../stylable';
 
 export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
@@ -19,7 +19,7 @@ interface IContext extends IStylableContext {
  * Page component that displays a debug configuration form.
  */
 @stylable
-export default class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, IContext> {
+export class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 

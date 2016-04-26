@@ -2,18 +2,12 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import LayoutContainer from './layout/layout-container';
-import Panel from './layout/panel';
-import PageSet from './pages/page-set';
-import PageTree from './pages/page-tree';
-import DebugToolbar from './debug-toolbar';
-import { FreeStyle } from 'react-free-style';
+import { LayoutContainerComponent } from './layout/layout-container';
 import { IronFlexLayout } from './styles';
 import { WorkspaceModel } from '../models/ui';
 import { Observable, Subscription } from '@reactivex/rxjs';
 import { stylable, IStylableContext } from './stylable';
 import { Cursor } from '../renderer-context';
-import { LayoutContainerModel } from '../models/ui/layout/layout-container';
 import { ElementFactory } from './element-factory';
 
 export interface IProps {
@@ -34,7 +28,7 @@ export interface IContext extends IStylableContext {
  * Chief UI wrangler component.
  */
 @stylable
-export default class WorkspaceComponent extends React.Component<IProps, IState, IContext> {
+export class WorkspaceComponent extends React.Component<IProps, IState, IContext> {
   styleId: string;
   className: string;
 
@@ -74,7 +68,7 @@ export default class WorkspaceComponent extends React.Component<IProps, IState, 
   render() {
     return (
       <div className={this.className}>
-        <LayoutContainer model={this.props.model.rootLayoutContainer}
+        <LayoutContainerComponent model={this.props.model.rootLayoutContainer}
           overrideCursor={this.props.overrideCursor}
           resetCursor={this.props.resetCursor} />
       </div>

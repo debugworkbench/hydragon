@@ -3,12 +3,12 @@
 
 import { observable } from 'mobx';
 import { Subject, Observable } from '@reactivex/rxjs';
-import PageSetModel from './pages/page-set';
+import { PageSetModel } from './pages/page-set';
 import { PageTreeModel } from './pages/page-tree';
 import { LayoutContainerModel } from './layout/layout-container';
 import { PanelModel } from './layout/panel';
 
-export default class WorkspaceModel {
+export class WorkspaceModel {
   /** Most recently active page-set. */
   @observable
   activePageSet: PageSetModel = null;

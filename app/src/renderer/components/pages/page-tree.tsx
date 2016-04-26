@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 import { FreeStyle } from 'react-free-style';
 import { PageTreeModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
-import PageTreeItem from './page-tree-item';
+import { PageTreeItemComponent } from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';
 import { stylable, IStylableContext } from '../stylable';
 
@@ -35,7 +35,9 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
   styleId: string;
   className: string;
 
-  private onDidClickItem = (item: PageTreeItem) => this.props.model.activatePage(item.props.model);
+  private onDidClickItem = (item: PageTreeItemComponent) => {
+    this.props.model.activatePage(item.props.model);
+  };
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
@@ -85,7 +87,7 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
     return (
       <div className={className} style={this.inlineStyle} tabIndex={0}>{
         this.props.model.pages.map(page =>
-          <PageTreeItem key={page.title} model={page} onDidClick={this.onDidClickItem}
+          <PageTreeItemComponent key={page.title} model={page} onDidClick={this.onDidClickItem}
             isSelected={this.props.model.activePage === page} />
         )
       }</div>
@@ -93,5 +95,4 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
   }
 }
 
-const PageTreeComponent = makeFocusable(PageTreeComponentImpl);
-export default PageTreeComponent;
+export const PageTreeComponent = makeFocusable(PageTreeComponentImpl);

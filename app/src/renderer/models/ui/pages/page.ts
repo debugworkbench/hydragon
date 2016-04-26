@@ -2,14 +2,13 @@
 // MIT License, see LICENSE file for full terms.
 
 import { Subject, Subscription } from '@reactivex/rxjs';
-import PageComponent from '../../../components/pages/page';
-import PageSetModel from './page-set';
+import { PageSetModel } from './page-set';
 
 export interface IPageParams {
   id: string;
 }
 
-export default class PageModel {
+export class PageModel {
   id: string;
   title: string;
 

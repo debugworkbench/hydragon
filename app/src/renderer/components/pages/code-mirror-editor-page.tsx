@@ -6,7 +6,7 @@ import { Observable, Subscription } from '@reactivex/rxjs';
 import { FreeStyle } from 'react-free-style';
 import { CodeMirrorEditorPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
-import PageComponent from './page';
+import { PageComponent } from './page';
 import { ICodeMirrorEditorElement } from '../../elements/code-mirror-editor/code-mirror-editor';
 import { stylable, IStylableContext } from '../stylable';
 
@@ -21,7 +21,7 @@ interface IContext extends IStylableContext {
  * Page component that contains a Code Mirror editor element.
  */
 @stylable
-export default class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, IContext> {
+export class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 

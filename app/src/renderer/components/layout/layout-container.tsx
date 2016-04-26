@@ -5,8 +5,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { stylable, IStylableContext } from '../stylable';
-import SplitterComponent from './splitter';
-import PanelComponent from './panel';
+import { SplitterComponent } from './splitter';
+import { PanelComponent } from './panel';
 import { Cursor } from '../../renderer-context';
 import { LayoutContainerModel, SplitterModel, PanelModel, LayoutItemModel } from '../../models/ui';
 import { requiresElementFactory, IRequiresElementFactoryContext, ElementFactory } from '../element-factory';
@@ -44,8 +44,8 @@ export interface ILayoutComponent {
 @observer
 @stylable
 @requiresElementFactory
-export default class LayoutContainerComponent extends React.Component<IProps, IState, IContext>
-                                              implements ILayoutComponent {
+export class LayoutContainerComponent extends React.Component<IProps, IState, IContext>
+                                      implements ILayoutComponent {
   styleId: string;
   className: string;
   element: HTMLDivElement;

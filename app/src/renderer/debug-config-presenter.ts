@@ -1,14 +1,14 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import DebugConfigManager from './debug-config-manager';
+import { DebugConfigManager } from './debug-config-manager';
 import { IDebugConfig } from 'debug-engine';
 import ElementFactory from './elements/element-factory';
 import { CompositeDisposable } from 'event-kit';
 import { PagePresenter } from './page-presenter';
 import { GdbMiDebugConfigPageModel } from './models/ui';
 
-export default class DebugConfigPresenter {
+export class DebugConfigPresenter {
   constructor(
     private debugConfigManager: DebugConfigManager,
     private elementFactory: ElementFactory,

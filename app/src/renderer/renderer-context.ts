@@ -5,12 +5,12 @@ import * as path from 'path';
 import * as electron from 'electron';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
-import WorkspaceComponent from './components/workspace';
+import { WorkspaceComponent } from './components/workspace';
 import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
-import DebugConfigManager, { DebugConfigFileLoader } from './debug-config-manager';
-import DebugConfigPresenter from './debug-config-presenter';
+import { DebugConfigManager, DebugConfigFileLoader } from './debug-config-manager';
+import { DebugConfigPresenter } from './debug-config-presenter';
 import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import * as DevTools from './dev-tools';
@@ -23,9 +23,9 @@ import {
 } from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
 import { PageSetComponent } from './components/pages/page-set';
-import PageTreeComponent from './components/pages/page-tree';
-import CodeMirrorEditorPageComponent from './components/pages/code-mirror-editor-page';
-import GdbMiDebugConfigPageComponent from './components/pages/gdb-mi-debug-config-page';
+import { PageTreeComponent } from './components/pages/page-tree';
+import { CodeMirrorEditorPageComponent } from './components/pages/code-mirror-editor-page';
+import { GdbMiDebugConfigPageComponent } from './components/pages/gdb-mi-debug-config-page';
 
 export const enum Cursor {
   HorizontalResize,

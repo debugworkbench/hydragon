@@ -2,8 +2,8 @@
 // MIT License, see LICENSE file for full terms.
 
 import { observable, autorun, transaction } from 'mobx';
-import PageSetModel from './page-set';
-import PageModel from './page';
+import { PageSetModel } from './page-set';
+import { PageModel } from './page';
 import { PanelModel, IPanelItem } from '../layout/panel';
 
 export interface IPageTreeParams {

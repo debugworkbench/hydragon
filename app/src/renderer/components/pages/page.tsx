@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { FreeStyle } from 'react-free-style';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
@@ -22,7 +21,7 @@ interface IContext extends IStylableContext {
  */
 @observer
 @stylable
-export default class PageComponent extends React.Component<IProps, {}, IContext> {
+export class PageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 

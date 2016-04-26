@@ -3,7 +3,7 @@
 
 import { observable, autorun, Lambda } from 'mobx';
 import { Subject, Observable, Subscription } from '@reactivex/rxjs';
-import PageModel from './page';
+import { PageModel } from './page';
 import { PanelModel, IPanelItem } from '../layout/panel';
 
 export interface IPageSetParams {
@@ -12,7 +12,7 @@ export interface IPageSetParams {
   height?: string;
 }
 
-export default class PageSetModel implements IPanelItem {
+export class PageSetModel implements IPanelItem {
   id: string;
   width: string;
   height: string;

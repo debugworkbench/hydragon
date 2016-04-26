@@ -23,7 +23,7 @@ interface IContext extends IStylableContext, IRequiresElementFactoryContext {
 @observer
 @stylable
 @requiresElementFactory
-export default class PageSetComponent extends React.Component<IProps, {}, IContext> {
+export class PageSetComponent extends React.Component<IProps, {}, IContext> {
   inlineStyle: {
     width?: string;
     height?: string;

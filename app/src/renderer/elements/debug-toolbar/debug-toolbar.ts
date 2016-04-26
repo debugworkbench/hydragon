@@ -3,8 +3,8 @@
 
 import * as pd from 'polymer-ts-decorators';
 import { CompositeDisposable, Disposable } from 'event-kit';
-import DebugConfigManager from '../../debug-config-manager';
-import DebugConfigPresenter from '../../debug-config-presenter';
+import { DebugConfigManager } from '../../debug-config-manager';
+import { DebugConfigPresenter } from '../../debug-config-presenter';
 import {
   IDebugSession, IInferiorDidExitEvent, DebugEngineError, ConnectionError
 } from 'debug-engine';

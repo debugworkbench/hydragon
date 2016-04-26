@@ -23,8 +23,8 @@ interface IContext extends IStylableContext, IRequiresElementFactoryContext {
 @observer
 @stylable
 @requiresElementFactory
-export default class PanelComponent extends React.Component<IProps, {}, IContext>
-                                    implements ILayoutComponent {
+export class PanelComponent extends React.Component<IProps, {}, IContext>
+                            implements ILayoutComponent {
   styleId: string;
   className: string;
   element: HTMLDivElement;

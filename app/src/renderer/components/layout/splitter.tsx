@@ -19,7 +19,7 @@ export interface IProps extends React.Props<SplitterComponent> {
  * Component that resizes its sibling elements when the user drags it with the primary mouse button.
  */
 @stylable
-export default class SplitterComponent extends React.Component<IProps, void, IStylableContext> {
+export class SplitterComponent extends React.Component<IProps, void, IStylableContext> {
   private styleId: string;
   private className: string;
   private divElement: HTMLDivElement;

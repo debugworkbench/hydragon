@@ -25,7 +25,7 @@ const STYLE_CLASS_SELECTED = 'selected';
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
 @stylable
-export default class PageTreeItemComponent extends React.Component<IProps, {}, IContext> {
+export class PageTreeItemComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 

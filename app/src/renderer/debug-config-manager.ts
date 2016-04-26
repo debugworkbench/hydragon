@@ -74,7 +74,7 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
  * To modify a config, clone an existing one, modify the clone, then save the clone (this will
  * replace the existing config).
  */
-export default class DebugConfigManager {
+export class DebugConfigManager {
   /** Original unmodified configs, should always be kept in sync with what's actually on disk. */
   private debugConfigs: IDebugConfig[];
   /** Copies of original configs, these contain changes that may be saved to disk or discared. */
