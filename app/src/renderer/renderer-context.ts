@@ -23,11 +23,10 @@ import {
   DebugToolbarModel
 } from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
-import { PageSetComponent } from './components/pages/page-set';
-import { PageTreeComponent } from './components/pages/page-tree';
-import { CodeMirrorEditorPageComponent } from './components/pages/code-mirror-editor-page';
-import { GdbMiDebugConfigPageComponent } from './components/pages/gdb-mi-debug-config-page';
-import { DebugToolbarComponent } from './components/debug-toolbar';
+import {
+  PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
+  DebugToolbarComponent
+} from './components';
 
 export const enum Cursor {
   HorizontalResize,
