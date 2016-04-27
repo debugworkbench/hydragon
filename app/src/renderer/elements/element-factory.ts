@@ -3,7 +3,6 @@
 
 import * as path from 'path';
 import ElementRegistry from './element-registry';
-import SplitterElement, { ISplitterElement } from './layout/splitter/splitter';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
 import NewDebugConfigDialogElement, { INewDebugConfigDialogElement } from './new-debug-config-dialog/new-debug-config-dialog';
 import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
@@ -14,10 +13,6 @@ import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './t
  */
 export default class ElementFactory {
   constructor(private elementRegistry: ElementRegistry) {
-  }
-
-  createSplitter(vertical?: boolean): ISplitterElement {
-    return this._createElement((<any> SplitterElement.prototype).is, vertical);
   }
 
   createCodeMirrorEditor(config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorElement {

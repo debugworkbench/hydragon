@@ -2,16 +2,6 @@
   "bundles":
   [
     {
-      "baseUri": "app:///lib/renderer/elements/layout",
-      "elements": [
-        {
-          "tag": "debug-workbench-splitter",
-          "template": "splitter/splitter.html",
-          "script": "splitter/splitter"
-        }
-      ]
-    },
-    {
       "baseUri": "app:///lib/renderer/elements",
       "elements":
       [
