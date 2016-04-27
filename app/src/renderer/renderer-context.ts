@@ -19,13 +19,15 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
 import {
-  WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel
+  WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
+  DebugToolbarModel
 } from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
 import { PageSetComponent } from './components/pages/page-set';
 import { PageTreeComponent } from './components/pages/page-tree';
 import { CodeMirrorEditorPageComponent } from './components/pages/code-mirror-editor-page';
 import { GdbMiDebugConfigPageComponent } from './components/pages/gdb-mi-debug-config-page';
+import { DebugToolbarComponent } from './components/debug-toolbar';
 
 export const enum Cursor {
   HorizontalResize,
@@ -80,6 +82,9 @@ export class RendererContext {
     );
     this.reactElementFactory.registerElementConstructor(GdbMiDebugConfigPageModel, ({ model, key }) =>
       React.createElement(GdbMiDebugConfigPageComponent, { model, key })
+    );
+    this.reactElementFactory.registerElementConstructor(DebugToolbarModel, ({ model, key }) =>
+      React.createElement(DebugToolbarComponent, { model, key })
     );
 
     const userDataDir = electron.remote.app.getPath('userData');

@@ -11,3 +11,4 @@ export { GdbMiDebugConfigPageModel } from './pages/gdb-mi-debug-config-page';
 export { PageSetModel } from './pages/page-set';
 export { PageTreeModel } from './pages/page-tree';
 export { WorkspaceModel } from './workspace';
+export { DebugToolbarModel } from './debug-toolbar';
