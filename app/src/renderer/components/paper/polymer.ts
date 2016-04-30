@@ -24,11 +24,15 @@ export abstract class PolymerComponent<
   private onSetRef = (ref: TPolymerElement) => {
     this.element = ref;
     if (ref) {
-      updatePolymerCSSVars(ref, this.props.cssVars || {});
+      // Sometimes a Polymer element doesn't consider itself attached at this point, which
+      // means it will ignore any attempt to update its style, delaying the operation a little bit
+      // using `setImmediate` seems to work around the issue. Not all Polymer elements behave the
+      // same way, paper-icon-button seems to work without delay, but paper-toolbar doesn't.
+      setImmediate(() => updatePolymerCSSVars(ref, this.props.cssVars || {}));
     }
   }
 
-  protected abstract get eventBindings(): Array<{ event: string; listener: string }>;
+  protected abstract get eventBindings(): PolymerComponent.IEventBinding[];
 
   componentDidMount(): void {
     this.eventBindings.forEach(binding =>
@@ -83,5 +87,10 @@ export namespace PolymerComponent {
      * Example: { '--paper-icon-button': { width: '30px', height: '30px', padding: '5px' }}
      */
     cssVars?: any;
+  }
+
+  export interface IEventBinding {
+    event: string;
+    listener: string;
   }
 }

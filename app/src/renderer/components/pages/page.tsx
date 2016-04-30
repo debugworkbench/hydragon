@@ -7,7 +7,7 @@ import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, IStylableContext } from '../stylable';
-import { PaperIconButtonComponent } from '../paper';
+import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
 
 export interface IProps extends React.Props<PageComponent> {
   model: PageModel;
@@ -39,7 +39,8 @@ export class PageComponent extends React.Component<IProps, {}, IStylableContext>
         '> .contentWrapper': Object.assign(
           { position: 'relative' },
           IronFlexLayout.flex.auto
-        )
+        ),
+        '> .toolbar': IronFlexLayout.flex.none
       }
     ));
     this.className = `${this.props.className} ${this.styleId}`;
@@ -49,45 +50,33 @@ export class PageComponent extends React.Component<IProps, {}, IStylableContext>
     return (
       <div className="hydragon-page">
         <div className={this.className}>
-          <paper-toolbar ref={onDidSetToolbarRef}>
+          <PaperToolbarComponent className="toolbar"
+            cssVars={{
+              '--paper-toolbar-background': 'rgb(30, 30, 30)',
+              '--paper-toolbar-color': 'rgb(204, 204, 204)',
+              '--paper-toolbar-height': '30px',
+              '--paper-toolbar-title': {
+                'font-size': '14px',
+                'margin-left': '10px'
+              }
+            }}>
             <div className="title">{this.props.model.title}</div>
-              <PaperIconButtonComponent
-                icon="icons:close" alt="Close Page"
-                onDidTap={this.onDidTapClose}
-                cssVars={{
-                  '--paper-icon-button': {
-                    width: '30px',
-                    height: '30px',
-                    padding: '5px'
-                  }
-                }}
-              />
-          </paper-toolbar>
+            <PaperIconButtonComponent
+              icon="icons:close" alt="Close Page"
+              onDidTap={this.onDidTapClose}
+              cssVars={{
+                '--paper-icon-button': {
+                  width: '30px',
+                  height: '30px',
+                  padding: '5px'
+                }
+              }}/>
+          </PaperToolbarComponent>
           <div className="contentWrapper">
             {this.props.children}
           </div>
         </div>
       </div>
     );
-  }
-}
-
-function onDidSetToolbarRef(element: PolymerElements.PaperToolbar): void {
-  if (element) {
-    // For some reason the Polymer element doesn't consider itself attached at this point, which
-    // means it will ignore any attempt to update its style, delaying the operation a little bit
-    // using `setImmediate` seems to work around the issue.
-    setImmediate(() => updatePolymerCSSVars(element, Object.assign(
-      {
-        '--paper-toolbar-background': 'rgb(30, 30, 30)',
-        '--paper-toolbar-color': 'rgb(204, 204, 204)',
-        '--paper-toolbar-height': '30px',
-        '--paper-toolbar-title': {
-          'font-size': '14px',
-          'margin-left': '10px'
-        }
-      },
-      IronFlexLayout.flex.none
-    )));
   }
 }
