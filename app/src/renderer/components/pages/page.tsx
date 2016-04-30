@@ -7,13 +7,11 @@ import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, IStylableContext } from '../stylable';
+import { PaperIconButtonComponent } from '../paper';
 
 export interface IProps extends React.Props<PageComponent> {
   model: PageModel;
   className?: string;
-}
-
-interface IContext extends IStylableContext {
 }
 
 /**
@@ -21,11 +19,11 @@ interface IContext extends IStylableContext {
  */
 @observer
 @stylable
-export class PageComponent extends React.Component<IProps, {}, IContext> {
+export class PageComponent extends React.Component<IProps, {}, IStylableContext> {
   styleId: string;
   className: string;
 
-  private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
+  private onDidTapClose = () => this.props.model.close();
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
@@ -53,9 +51,17 @@ export class PageComponent extends React.Component<IProps, {}, IContext> {
         <div className={this.className}>
           <paper-toolbar ref={onDidSetToolbarRef}>
             <div className="title">{this.props.model.title}</div>
-              <paper-icon-button ref={onDidSetCloseButtonRef} icon="icons:close" alt="Close Page"
-                onClick={this.onDidClickClose}>
-              </paper-icon-button>
+              <PaperIconButtonComponent
+                icon="icons:close" alt="Close Page"
+                onDidTap={this.onDidTapClose}
+                cssVars={{
+                  '--paper-icon-button': {
+                    width: '30px',
+                    height: '30px',
+                    padding: '5px'
+                  }
+                }}
+              />
           </paper-toolbar>
           <div className="contentWrapper">
             {this.props.children}
@@ -83,17 +89,5 @@ function onDidSetToolbarRef(element: PolymerElements.PaperToolbar): void {
       },
       IronFlexLayout.flex.none
     )));
-  }
-}
-
-function onDidSetCloseButtonRef(element: PolymerElements.PaperIconButton): void {
-  if (element) {
-    setImmediate(() => updatePolymerCSSVars(element, {
-      '--paper-icon-button': {
-        width: '30px',
-        height: '30px',
-        padding: '5px'
-      }
-    }));
   }
 }

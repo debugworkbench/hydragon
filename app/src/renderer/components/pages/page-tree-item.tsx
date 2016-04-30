@@ -7,6 +7,7 @@ import { PageModel } from '../../models/ui';
 import { IronFlexLayout, PaperStyles } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, IStylableContext } from '../stylable';
+import { PaperIconButtonComponent } from '../paper';
 
 export interface IProps extends React.Props<PageTreeItemComponent> {
   width?: string;
@@ -16,21 +17,18 @@ export interface IProps extends React.Props<PageTreeItemComponent> {
   onDidClick: (item: PageTreeItemComponent) => void;
 }
 
-interface IContext extends IStylableContext {
-}
-
 const STYLE_CLASS_SELECTED = 'selected';
 
 /**
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
 @stylable
-export class PageTreeItemComponent extends React.Component<IProps, {}, IContext> {
+export class PageTreeItemComponent extends React.Component<IProps, {}, IStylableContext> {
   styleId: string;
   className: string;
 
   onDidClick = (e: React.SyntheticEvent) => this.props.onDidClick(this);
-  onDidClose = (e: React.SyntheticEvent) => {
+  onDidTapCloseButton = (e: polymer.TapEvent) => {
     e.stopPropagation();
     this.props.model.close();
   };
@@ -53,7 +51,8 @@ export class PageTreeItemComponent extends React.Component<IProps, {}, IContext>
             textOverflow: 'ellipsis'
           },
           IronFlexLayout.flex.auto
-        )
+        ),
+        '> .closeButton': IronFlexLayout.flex.none
       }
     ));
     this.className = `hydragon-page-tree-item ${this.styleId}`;
@@ -67,25 +66,17 @@ export class PageTreeItemComponent extends React.Component<IProps, {}, IContext>
     return (
       <div className={className} onClick={this.onDidClick}>
         <div className="title">{this.props.model.title}</div>
-        <paper-icon-button ref={onDidSetCloseButtonRef} icon="icons:close" alt="Close Page"
-          onClick={this.onDidClose}>
-        </paper-icon-button>
+        <PaperIconButtonComponent icon="icons:close" alt="Close Page" className="closeButton"
+          onDidTap={this.onDidTapCloseButton}
+          cssVars={{
+            '--paper-icon-button': {
+              width: '30px',
+              height: '30px',
+              padding: '5px'
+            }
+          }}
+        />
       </div>
     );
-  }
-}
-
-function onDidSetCloseButtonRef(element: PolymerElements.PaperIconButton): void {
-  if (element) {
-    setImmediate(() => updatePolymerCSSVars(element, Object.assign(
-      {
-        '--paper-icon-button': {
-          width: '30px',
-          height: '30px',
-          padding: '5px'
-        },
-      },
-      IronFlexLayout.flex.none
-    )));
   }
 }

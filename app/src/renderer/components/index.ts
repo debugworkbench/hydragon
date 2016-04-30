@@ -12,6 +12,8 @@ export { PageSetComponent } from './pages/page-set';
 export { PageTreeComponent } from './pages/page-tree';
 export { PageTreeItemComponent } from './pages/page-tree-item';
 
+export * from './paper';
+
 export { DebugToolbarComponent } from './debug-toolbar';
 
 export { WorkspaceComponent } from './workspace';

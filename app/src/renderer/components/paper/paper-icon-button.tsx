@@ -27,6 +27,6 @@ namespace PaperIconButtonComponent {
   export interface IProps extends PolymerComponent.IProps {
     icon?: string;
     /** Callback to invoke after the user taps on the button. */
-    onDidTap?: () => void;
+    onDidTap?: (e: polymer.TapEvent) => void;
   }
 }
