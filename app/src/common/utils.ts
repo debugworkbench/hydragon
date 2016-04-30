@@ -15,7 +15,7 @@
 export function omitOwnProps(source: any, propsToOmit: string[]): any {
   const result: any = {};
   Object.getOwnPropertyNames(source).forEach(propertyName => {
-    if (!(propertyName in propsToOmit)) {
+    if (propsToOmit.indexOf(propertyName) < 0) {
       result[propertyName] = source[propertyName];
     }
   });
