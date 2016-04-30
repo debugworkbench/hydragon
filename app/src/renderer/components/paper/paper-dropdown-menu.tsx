@@ -2,17 +2,13 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import { omitOwnProps } from '../../../common/utils';
-import { replaceEventListener } from '../../utils';
-
-const IRON_ACTIVATE_EVENT = 'iron-activate';
+import { PolymerComponent } from './polymer';
 
 /**
  * React component that wraps a Polymer paper-dropdown-menu custom element.
  */
-export class PaperDropdownMenuComponent extends React.Component<PaperDropdownMenuComponent.IProps, {}, {}> {
-  private menu: PolymerElements.PaperDropdownMenu;
-  private onSetRef = (ref: PolymerElements.PaperDropdownMenu) => this.menu = ref;
+export class PaperDropdownMenuComponent
+       extends PolymerComponent<PolymerElements.PaperDropdownMenu, PaperDropdownMenuComponent.IProps> {
 
   /**
    * The derived "label" of the currently selected item.
@@ -20,38 +16,29 @@ export class PaperDropdownMenuComponent extends React.Component<PaperDropdownMen
    * of the selected item.
    */
   get selectedItemLabel(): string {
-    return this.menu.selectedItemLabel;
+    return this.element.selectedItemLabel;
   }
 
   /** Hide the dropdown content. */
   close(): void {
-    this.menu.close();
+    this.element.close();
   }
 
-  componentDidMount(): void {
-    replaceEventListener(this.menu, IRON_ACTIVATE_EVENT, null, this.props.onWillSelectItem);
+  protected get eventBindings() {
+    return [
+      { event: 'iron-activate', listener: 'onWillSelectItem' }
+    ];
   }
 
-  componentWillUnmount(): void {
-    replaceEventListener(this.menu, IRON_ACTIVATE_EVENT, this.props.onWillSelectItem, null);
-  }
-
-  componentWillUpdate(nextProps: PaperDropdownMenuComponent.IProps): void {
-    replaceEventListener(
-      this.menu, IRON_ACTIVATE_EVENT, this.props.onWillSelectItem, nextProps.onWillSelectItem
-    );
-  }
-
-  render() {
-    const props = omitOwnProps(this.props, ['onWillSelectItem']);
+  protected renderElement(props: PaperDropdownMenuComponent.IProps) {
     return (
-      <paper-dropdown-menu ref={this.onSetRef} {...props}></paper-dropdown-menu>
+      <paper-dropdown-menu {...props}></paper-dropdown-menu>
     );
   }
 }
 
 namespace PaperDropdownMenuComponent {
-  export interface IProps extends React.HTMLAttributes {
+  export interface IProps extends PolymerComponent.IProps {
     /**
      * Callback to invoke before an item is selected from the menu.
      * Call `e.preventDevault()` in the callback to prevent the item from being selected.
