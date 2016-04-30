@@ -18,8 +18,8 @@ export abstract class PolymerComponent<
 
   /** The underlying Polymer custom element instance. */
   protected element: TPolymerElement;
-  /** Names of all currently bound event listeners. */
-  private listeners: string[] = [];
+  /** Names of all event listeners that can be bound. */
+  private listeners: string[];
 
   private onSetRef = (ref: TPolymerElement) => {
     this.element = ref;
@@ -31,24 +31,18 @@ export abstract class PolymerComponent<
   protected abstract get eventBindings(): Array<{ event: string; listener: string }>;
 
   componentDidMount(): void {
-    this.eventBindings.forEach(binding => {
-      const listener = (<any> this.props)[binding.listener];
-      if (listener) {
-        replaceEventListener(this.element, binding.event, null, listener);
-        this.listeners.push(binding.listener);
-      }
-    });
+    this.eventBindings.forEach(binding =>
+      replaceEventListener(this.element, binding.event, null, (<any> this.props)[binding.listener])
+    );
   }
 
   componentWillUnmount(): void {
     this.eventBindings.forEach(binding =>
       replaceEventListener(this.element, binding.event, (<any> this.props)[binding.listener], null)
     );
-    this.listeners = [];
   }
 
   componentWillUpdate(nextProps: PolymerComponent.IProps): void {
-    this.listeners = [];
     if (this.element) {
       this.eventBindings.forEach(binding => {
         const newListener = (<any> nextProps)[binding.listener];
@@ -56,9 +50,6 @@ export abstract class PolymerComponent<
           this.element, binding.event,
           (<any> this.props)[binding.listener], newListener
         );
-        if (newListener) {
-          this.listeners.push(binding.listener);
-        }
       });
       updatePolymerCSSVars(this.element, this.props.cssVars || {});
     }
@@ -67,6 +58,9 @@ export abstract class PolymerComponent<
   protected abstract renderElement(props: TComponentProps): JSX.Element;
 
   render() {
+    if (!this.listeners) {
+      this.listeners = this.eventBindings.map(binding => binding.listener);
+    }
     return this.renderElement(Object.assign(
       // `cssVars` is handled by this component so there's no need to pass it through,
       // `className` needs to be renamed to `class` before being passed through because React won't
