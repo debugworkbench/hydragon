@@ -13,5 +13,7 @@ export { PageSetModel } from './pages/page-set';
 export { PageTreeModel } from './pages/page-tree';
 
 export { DebugToolbarModel } from './debug-toolbar';
+export { DialogModel } from './dialog';
+export { NewDebugConfigDialogModel } from './new-debug-config-dialog';
 
 export { WorkspaceModel } from './workspace';

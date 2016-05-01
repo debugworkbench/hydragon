@@ -2,6 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { LayoutContainerComponent } from './layout/layout-container';
 import { IronFlexLayout } from './styles';
 import { WorkspaceModel } from '../models/ui';
@@ -10,15 +11,12 @@ import { stylable, IStylableContext } from './stylable';
 import { Cursor } from '../renderer-context';
 import { ElementFactory } from './element-factory';
 
-export interface IProps {
+export interface IProps extends React.Props<WorkspaceComponent> {
   model: WorkspaceModel;
   elementFactory: ElementFactory;
 
   overrideCursor(cursor: Cursor): void;
   resetCursor(): void;
-}
-
-export interface IState {
 }
 
 export interface IContext extends IStylableContext {
@@ -27,8 +25,9 @@ export interface IContext extends IStylableContext {
 /**
  * Chief UI wrangler component.
  */
+@observer
 @stylable
-export class WorkspaceComponent extends React.Component<IProps, IState, IContext> {
+export class WorkspaceComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
 
@@ -66,11 +65,16 @@ export class WorkspaceComponent extends React.Component<IProps, IState, IContext
   }
 
   render() {
+    const model = this.props.model;
+    const modalDialogElement = model.modalDialog ?
+      this.props.elementFactory.createElement({ model: model.modalDialog }) : null;
+
     return (
       <div className={this.className}>
-        <LayoutContainerComponent model={this.props.model.rootLayoutContainer}
+        <LayoutContainerComponent model={model.rootLayoutContainer}
           overrideCursor={this.props.overrideCursor}
           resetCursor={this.props.resetCursor} />
+        { modalDialogElement }
       </div>
     );
   }

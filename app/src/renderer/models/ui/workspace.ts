@@ -8,6 +8,7 @@ import { PageTreeModel } from './pages/page-tree';
 import { LayoutContainerModel } from './layout/layout-container';
 import { PanelModel } from './layout/panel';
 import { DebugToolbarModel } from './debug-toolbar';
+import { DialogModel } from './dialog';
 
 export class WorkspaceModel {
   /** Most recently active page-set. */
@@ -16,6 +17,9 @@ export class WorkspaceModel {
   /** Observable hooked up to window.resize event. */
   @observable
   windowDidResizeStream: Observable<void> = null;
+  /** Currently active modal dialog (if any). */
+  @observable
+  modalDialog: DialogModel = null;
 
   mainPageSet: PageSetModel = null;
   rootLayoutContainer: LayoutContainerModel;

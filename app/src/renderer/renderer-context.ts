@@ -20,12 +20,12 @@ import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
 import {
   WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
-  DebugToolbarModel
+  DebugToolbarModel, NewDebugConfigDialogModel, DialogModel
 } from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
 import {
   PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
-  DebugToolbarComponent
+  DebugToolbarComponent, NewDebugConfigDialogComponent
 } from './components';
 
 export const enum Cursor {
@@ -84,6 +84,9 @@ export class RendererContext {
     );
     this.reactElementFactory.registerElementConstructor(DebugToolbarModel, ({ model, key }) =>
       React.createElement(DebugToolbarComponent, { model, key })
+    );
+    this.reactElementFactory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
+      React.createElement(NewDebugConfigDialogComponent, { model, key })
     );
 
     const userDataDir = electron.remote.app.getPath('userData');
