@@ -3,17 +3,20 @@
 
 import { DebugConfigManager } from './debug-config-manager';
 import { IDebugConfig } from 'debug-engine';
-import ElementFactory from './elements/element-factory';
 import { CompositeDisposable } from 'event-kit';
 import { PagePresenter } from './page-presenter';
-import { GdbMiDebugConfigPageModel } from './models/ui';
+import {
+  DialogModel, PageModel, NewDebugConfigDialogModel, GdbMiDebugConfigPageModel
+} from './models/ui';
 
 export class DebugConfigPresenter {
-  constructor(
-    private debugConfigManager: DebugConfigManager,
-    private elementFactory: ElementFactory,
-    private pagePresenter: PagePresenter
-  ) {}
+  private getExistingDebugConfig: (configName: string) => IDebugConfig;
+  private setActiveDialog: (dialog: DialogModel) => void;
+  private openPage: (pageId: string, createPage: () => PageModel) => void;
+
+  constructor(params: DebugConfigPresenter.IConstructorParams) {
+    Object.assign(this, params)
+  }
 
   /**
    * Display a dialog that lets the user create a new debug configuration.
@@ -23,21 +26,17 @@ export class DebugConfigPresenter {
    */
   private createDebugConfig(): Promise<IDebugConfig> {
     return new Promise((resolve, reject) => {
-      let dialog = this.elementFactory.createNewDebugConfigDialog();
-      document.body.appendChild(dialog);
-      let subscriptions = new CompositeDisposable();
-      subscriptions.add(dialog.onClosed((debugConfig: IDebugConfig) => {
+      let dialog = new NewDebugConfigDialogModel();
+      let sub = dialog.onDidClose(() => {
         try {
-          subscriptions.dispose();
-          document.body.removeChild(dialog);
-          dialog.destroy();
-          subscriptions = null;
-          dialog = null;
-          resolve(debugConfig);
+          sub.unsubscribe();
+          this.setActiveDialog(null);
+          resolve(dialog.debugConfig);
         } catch (error) {
           reject(error);
         }
-      }));
+      });
+      this.setActiveDialog(dialog);
       dialog.open();
     });
   }
@@ -45,12 +44,12 @@ export class DebugConfigPresenter {
   private getDebugConfig(configName?: string): Promise<IDebugConfig> {
     return Promise.resolve()
     .then(() => {
-      return configName ? this.debugConfigManager.get(configName) : this.createDebugConfig();
+      return configName ? this.getExistingDebugConfig(configName) : this.createDebugConfig();
     });
   }
 
   /**
-   * Open a dialog that lets the user edit a debug configuration.
+   * Open a page that lets the user edit a debug configuration.
    *
    * @param configName Name of the debug configuration to edit, if this argument is omitted
    *                   the user will be prompted to create a new configuration that will
@@ -60,7 +59,7 @@ export class DebugConfigPresenter {
     return this.getDebugConfig(configName)
     .then(debugConfig => {
       if (debugConfig) {
-        this.pagePresenter.openPage(
+        this.openPage(
           `debug-config:${debugConfig.name}`,
           () => {
             const page = new GdbMiDebugConfigPageModel({ id: `debug-config:${debugConfig.name}` });
@@ -70,5 +69,13 @@ export class DebugConfigPresenter {
         );
       }
     });
+  }
+}
+
+namespace DebugConfigPresenter {
+  export interface IConstructorParams {
+    getExistingDebugConfig: (configName: string) => IDebugConfig;
+    setActiveDialog: (dialog: DialogModel) => void;
+    openPage: (pageId: string, createPage: () => PageModel) => void;
   }
 }

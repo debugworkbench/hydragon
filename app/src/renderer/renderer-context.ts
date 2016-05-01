@@ -97,10 +97,20 @@ export class RendererContext {
     await debugConfigManager.load();
 
     const workspaceModel = new WorkspaceModel();
-    workspaceModel.createDefaultLayout();
-
     const pagePresenter = new PagePresenter(workspaceModel);
-    const debugConfigPresenter = new DebugConfigPresenter(debugConfigManager, this.elementFactory, pagePresenter);
+    const debugConfigPresenter = new DebugConfigPresenter({
+      getExistingDebugConfig: debugConfigManager.get.bind(debugConfigManager),
+      setActiveDialog: (dialog: DialogModel) => {
+        workspaceModel.modalDialog = dialog;
+      },
+      openPage: pagePresenter.openPage.bind(pagePresenter)
+    });
+
+    const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
+    const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
+    const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar', debugConfigManager, debugConfigPresenter });
+
+    workspaceModel.createDefaultLayout({ mainPageSet, pageTree, debugToolbar });
 
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';

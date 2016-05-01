@@ -9,6 +9,8 @@ import { LayoutContainerModel } from './layout/layout-container';
 import { PanelModel } from './layout/panel';
 import { DebugToolbarModel } from './debug-toolbar';
 import { DialogModel } from './dialog';
+import { DebugConfigManager } from '../../debug-config-manager';
+import { DebugConfigPresenter } from '../../debug-config-presenter';
 
 export class WorkspaceModel {
   /** Most recently active page-set. */
@@ -24,7 +26,7 @@ export class WorkspaceModel {
   mainPageSet: PageSetModel = null;
   rootLayoutContainer: LayoutContainerModel;
 
-  createDefaultLayout(): void {
+  createDefaultLayout({ mainPageSet, pageTree, debugToolbar }: WorkspaceModel.IDefaultLayoutParams): void {
     this.rootLayoutContainer = new LayoutContainerModel({
       id: 'root-layout', direction: 'vertical', windowDidResizeStream: this.windowDidResizeStream
     });
@@ -48,9 +50,8 @@ export class WorkspaceModel {
     );
 
     const pageSetPanel = new PanelModel({ id: 'page-set-panel' });
-    this.mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
+    this.mainPageSet = mainPageSet;
     pageSetPanel.add(this.mainPageSet);
-    const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
     pageTree.pageSet = this.mainPageSet;
     openPagesPanel.add(pageTree);
 
@@ -60,7 +61,6 @@ export class WorkspaceModel {
     );
 
     const toolbarPanel = new PanelModel({ id: 'toolbar-panel', height: '48px' });
-    const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar' });
     toolbarPanel.add(debugToolbar);
 
     this.rootLayoutContainer.add(
@@ -69,5 +69,13 @@ export class WorkspaceModel {
     );
 
     this.activePageSet = this.mainPageSet;
+  }
+}
+
+namespace WorkspaceModel {
+  export interface IDefaultLayoutParams {
+    mainPageSet: PageSetModel;
+    pageTree: PageTreeModel;
+    debugToolbar: DebugToolbarModel;
   }
 }
