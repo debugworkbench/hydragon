@@ -8,7 +8,8 @@ import { NewDebugConfigDialogModel } from '../models/ui';
 import { PaperDropdownMenuComponent } from './paper/paper-dropdown-menu';
 
 /**
- * Currently this component is just a simple wrapper for a custom element.
+ * A simple dialog component that lets the user enter the name for a new debug config and select
+ * the debug engine the new config will be used with.
  */
 @observer
 export class NewDebugConfigDialogComponent extends React.Component<NewDebugConfigDialogComponent.IProps, {}, {}> {
