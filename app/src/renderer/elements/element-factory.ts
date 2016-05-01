@@ -4,7 +4,6 @@
 import * as path from 'path';
 import ElementRegistry from './element-registry';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
-import NewDebugConfigDialogElement, { INewDebugConfigDialogElement } from './new-debug-config-dialog/new-debug-config-dialog';
 import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
 import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 
@@ -17,10 +16,6 @@ export default class ElementFactory {
 
   createCodeMirrorEditor(config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorElement {
     return this._createElement((<any> CodeMirrorEditorElement.prototype).is, config);
-  }
-
-  createNewDebugConfigDialog(): INewDebugConfigDialogElement {
-    return this._createElement((<any> NewDebugConfigDialogElement.prototype).is);
   }
 
   createDirectoryTreeView(state?: IDirectoryTreeViewState): IDirectoryTreeViewElement {

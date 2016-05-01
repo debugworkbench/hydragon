@@ -11,19 +11,9 @@
           "script": "code-mirror-editor/code-mirror-editor"
         },
         {
-          "tag": "hydragon-debug-toolbar",
-          "template": "debug-toolbar/debug-toolbar.html",
-          "script": "debug-toolbar/debug-toolbar"
-        },
-        {
           "tag": "file-input",
           "template": "file-input/file-input.html",
           "script": "file-input/file-input"
-        },
-        {
-          "tag": "hydragon-new-debug-config-dialog",
-          "template": "new-debug-config-dialog/new-debug-config-dialog.html",
-          "script": "new-debug-config-dialog/new-debug-config-dialog"
         },
         {
           "tag": "hydragon-directory-tree-view",
