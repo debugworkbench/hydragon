@@ -5,7 +5,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { autorun, Lambda } from 'mobx';
 import { NewDebugConfigDialogModel } from '../models/ui';
-import { PaperDropdownMenuComponent } from './paper/paper-dropdown-menu';
+import { PaperDropdownMenuComponent, PaperMenuComponent } from './paper';
 
 /**
  * A simple dialog component that lets the user enter the name for a new debug config and select
@@ -61,9 +61,9 @@ export class NewDebugConfigDialogComponent extends React.Component<NewDebugConfi
         <div>
           <paper-input id="configName" label="Name" ref={this.onSetConfigNameInputRef}></paper-input>
           <PaperDropdownMenuComponent ref={this.onSetEngineDropdownRef} id="engines" label="Engine">
-            <paper-menu class="dropdown-content">
+            <PaperMenuComponent className="dropdown-content">
               <paper-item>gdb-mi</paper-item>
-            </paper-menu>
+            </PaperMenuComponent>
           </PaperDropdownMenuComponent>
         </div>
         <div className="buttons">
