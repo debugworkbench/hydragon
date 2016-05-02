@@ -5,7 +5,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DebugToolbarModel } from '../models/ui';
 import {
-  PaperDropdownMenuComponent, PaperIconButtonComponent, PaperToolbarComponent
+  PaperDropdownMenuComponent, PaperIconButtonComponent, PaperToolbarComponent, PaperMenuComponent
 } from './paper';
 import { stylable, IStylableContext } from './stylable';
 import { updatePolymerCSSVars } from '../elements/utils';
@@ -84,15 +84,23 @@ export class DebugToolbarComponent
         </div>
         <PaperDropdownMenuComponent ref={this.onSetDebugConfigDropdownRef}
           id="configs" label="Configuration" no-label-float
-          onWillSelectItem={this.onWillSelectDebugConfig}>
-          <paper-menu class="dropdown-content" selected={selectedDebugConfigIdx}>
+          onWillSelectItem={this.onWillSelectDebugConfig}
+          cssVars={{
+            '--paper-input-container-input-color': 'rgb(204, 204, 204)'
+          }}>
+          <PaperMenuComponent className="dropdown-content"
+            selected={selectedDebugConfigIdx}
+            cssVars={{
+              '--paper-menu-background-color': 'rgb(37, 37, 38)',
+              '--paper-menu-color': 'rgb(204, 204, 204)'
+            }}>
             <paper-item ref={this.onSetNewDebugConfigDropdownItemRef}>New...</paper-item>
             {
               model.debugConfigs.map(configName =>
                 <paper-item key={configName}>{configName}</paper-item>
               )
             }
-          </paper-menu>
+          </PaperMenuComponent>
         </PaperDropdownMenuComponent>
         <PaperIconButtonComponent icon="av:pause" alt="Pause Debugging" disabled />
         <PaperIconButtonComponent
