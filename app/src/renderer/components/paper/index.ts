@@ -3,4 +3,5 @@
 
 export { PaperDropdownMenuComponent } from './paper-dropdown-menu';
 export { PaperIconButtonComponent } from './paper-icon-button';
+export { PaperMenuComponent } from './paper-menu';
 export { PaperToolbarComponent } from './paper-toolbar';

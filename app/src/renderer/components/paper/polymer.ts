@@ -80,7 +80,14 @@ export abstract class PolymerComponent<
 }
 
 export namespace PolymerComponent {
-  export interface IProps extends React.HTMLAttributes {
+  export interface IProps {
+    // Standard HTML Attributes
+    alt?: string;
+    className?: string;
+    disabled?: boolean;
+    id?: string;
+    label?: string;
+
     /**
      * Object containing properties that represent custom CSS variables that should be passed
      * through to the underlying custom element.
