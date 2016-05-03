@@ -8,20 +8,15 @@ import { CodeMirrorEditorPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
 import { ICodeMirrorEditorElement } from '../../elements/code-mirror-editor/code-mirror-editor';
-import { stylable, IStylableContext } from '../stylable';
-
-export interface IProps extends React.Props<CodeMirrorEditorPageComponent> {
-  model: CodeMirrorEditorPageModel;
-}
-
-interface IContext extends IStylableContext {
-}
+import { stylable } from '../decorators';
 
 /**
  * Page component that contains a Code Mirror editor element.
  */
 @stylable
-export class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, IContext> {
+export class CodeMirrorEditorPageComponent
+       extends React.Component<CodeMirrorEditorPageComponent.IProps, {}, CodeMirrorEditorPageComponent.IContext> {
+
   styleId: string;
   className: string;
 
@@ -59,11 +54,11 @@ export class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, I
     });
   }
 
-  shouldComponentUpdate(nextProps: IProps): boolean {
+  shouldComponentUpdate(nextProps: CodeMirrorEditorPageComponent.IProps): boolean {
     return nextProps.model !== this.props.model;
   }
 
-  componentDidUpdate(prevProps: IProps): void {
+  componentDidUpdate(prevProps: CodeMirrorEditorPageComponent.IProps): void {
     this.editorElement.config = this.props.model.editorConfig;
   }
 
@@ -78,5 +73,14 @@ export class CodeMirrorEditorPageComponent extends React.Component<IProps, {}, I
         </code-mirror-editor>
       </PageComponent>
     );
+  }
+}
+
+namespace CodeMirrorEditorPageComponent {
+  export interface IProps extends React.Props<CodeMirrorEditorPageComponent> {
+    model: CodeMirrorEditorPageModel;
+  }
+
+  export interface IContext extends stylable.IContext {
   }
 }

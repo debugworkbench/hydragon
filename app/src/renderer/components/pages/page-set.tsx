@@ -7,14 +7,14 @@ import { Observable } from '@reactivex/rxjs';
 import { FreeStyle } from 'react-free-style';
 import { PageSetModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable } from '../decorators';
 import { requiresElementFactory, IRequiresElementFactoryContext } from '../element-factory';
 
 export interface IProps extends React.Props<PageSetComponent> {
   model: PageSetModel;
 }
 
-interface IContext extends IStylableContext, IRequiresElementFactoryContext {
+interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
 }
 
 /**

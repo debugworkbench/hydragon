@@ -6,16 +6,8 @@ import { FreeStyle } from 'react-free-style';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout, PaperStyles } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable } from '../decorators';
 import { PaperIconButtonComponent } from '../paper';
-
-export interface IProps extends React.Props<PageTreeItemComponent> {
-  width?: string;
-  height?: string;
-  model?: PageModel;
-  isSelected?: boolean;
-  onDidClick: (item: PageTreeItemComponent) => void;
-}
 
 const STYLE_CLASS_SELECTED = 'selected';
 
@@ -23,7 +15,9 @@ const STYLE_CLASS_SELECTED = 'selected';
  * Component that displays the titles of the pages from a page-set in a tree view.
  */
 @stylable
-export class PageTreeItemComponent extends React.Component<IProps, {}, IStylableContext> {
+export class PageTreeItemComponent
+       extends React.Component<PageTreeItemComponent.IProps, {}, PageTreeItemComponent.IContext> {
+
   styleId: string;
   className: string;
 
@@ -78,5 +72,16 @@ export class PageTreeItemComponent extends React.Component<IProps, {}, IStylable
         />
       </div>
     );
+  }
+}
+
+export namespace PageTreeItemComponent {
+  export interface IProps extends React.Props<PageTreeItemComponent> {
+    model?: PageModel;
+    isSelected?: boolean;
+    onDidClick: (item: PageTreeItemComponent) => void;
+  }
+
+  export interface IContext extends stylable.IContext {
   }
 }

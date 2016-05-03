@@ -4,22 +4,16 @@
 import * as React from 'react';
 import { Observable, Subscription } from '@reactivex/rxjs';
 import { IronFlexLayout } from '../styles';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable } from '../decorators';
 import { SplitterModel } from '../../models/ui';
-
-export interface IProps extends React.Props<SplitterComponent> {
-  model: SplitterModel;
-
-  adjustSiblingSize(splitter: SplitterModel, delta: { width?: number; height?: number }): void;
-  onBeginSplitterResize(): void;
-  onEndSplitterResize(): void;
-}
 
 /**
  * Component that resizes its sibling elements when the user drags it with the primary mouse button.
  */
 @stylable
-export class SplitterComponent extends React.Component<IProps, void, IStylableContext> {
+export class SplitterComponent
+       extends React.Component<SplitterComponent.IProps, void, SplitterComponent.IContext> {
+
   private styleId: string;
   private className: string;
   private divElement: HTMLDivElement;
@@ -107,5 +101,18 @@ export class SplitterComponent extends React.Component<IProps, void, IStylableCo
 
   render() {
     return <div className={this.className} ref={this.onSetElementRef} />;
+  }
+}
+
+export namespace SplitterComponent {
+  export interface IProps extends React.Props<SplitterComponent> {
+    model: SplitterModel;
+
+    adjustSiblingSize(splitter: SplitterModel, delta: { width?: number; height?: number }): void;
+    onBeginSplitterResize(): void;
+    onEndSplitterResize(): void;
+  }
+
+  export interface IContext extends stylable.IContext {
   }
 }

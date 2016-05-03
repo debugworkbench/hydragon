@@ -6,19 +6,20 @@ import { FreeStyle } from 'react-free-style';
 import { GdbMiDebugConfigPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable, themable } from '../decorators';
 
 export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
   model: GdbMiDebugConfigPageModel;
 }
 
-interface IContext extends IStylableContext {
+interface IContext extends stylable.IContext, themable.IContext {
 }
 
 /**
  * Page component that displays a debug configuration form.
  */
 @stylable
+@themable
 export class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, IContext> {
   styleId: string;
   className: string;
@@ -26,6 +27,7 @@ export class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, I
   private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
 
   componentWillMount(): void {
+    const theme = this.context.theme;
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
       {
         boxSizing: 'border-box',
@@ -37,7 +39,7 @@ export class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, I
         '> paper-toolbar': Object.assign(
           {
             '--paper-toolbar-background': 'rgb(30, 30, 30)',
-            '--paper-toolbar-color': 'rgb(204, 204, 204)',
+            '--paper-toolbar-color': theme.primaryTextColor,
             '--paper-toolbar-height': '30px',
             '--paper-toolbar-title': {
               'font-size': '14px',

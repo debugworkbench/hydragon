@@ -6,20 +6,16 @@ import { observer } from 'mobx-react';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable, themable } from '../decorators';
 import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
-
-export interface IProps extends React.Props<PageComponent> {
-  model: PageModel;
-  className?: string;
-}
 
 /**
  * Page component that displays some arbitrary content in a PageSet component.
  */
 @observer
 @stylable
-export class PageComponent extends React.Component<IProps, {}, IStylableContext> {
+@themable
+export class PageComponent extends React.Component<PageComponent.IProps, {}, PageComponent.IContext> {
   styleId: string;
   className: string;
 
@@ -47,13 +43,14 @@ export class PageComponent extends React.Component<IProps, {}, IStylableContext>
   }
 
   render() {
+    const theme = this.context.theme;
     return (
       <div className="hydragon-page">
         <div className={this.className}>
           <PaperToolbarComponent className="toolbar"
             cssVars={{
               '--paper-toolbar-background': 'rgb(30, 30, 30)',
-              '--paper-toolbar-color': 'rgb(204, 204, 204)',
+              '--paper-toolbar-color': theme.primaryTextColor,
               '--paper-toolbar-height': '30px',
               '--paper-toolbar-title': {
                 'font-size': '14px',
@@ -78,5 +75,15 @@ export class PageComponent extends React.Component<IProps, {}, IStylableContext>
         </div>
       </div>
     );
+  }
+}
+
+export namespace PageComponent {
+  export interface IProps extends React.Props<PageComponent> {
+    model: PageModel;
+    className?: string;
+  }
+
+  export interface IContext extends stylable.IContext, themable.IContext {
   }
 }

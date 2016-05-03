@@ -5,17 +5,10 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable } from '../decorators';
 import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
 import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
 import { PanelModel } from '../../models/ui';
-
-export interface IProps extends ILayoutComponentProps<PanelComponent> {
-  model: PanelModel;
-}
-
-interface IContext extends IStylableContext, IRequiresElementFactoryContext {
-}
 
 /**
  * Container component that displays its content with an optional header.
@@ -23,7 +16,7 @@ interface IContext extends IStylableContext, IRequiresElementFactoryContext {
 @observer
 @stylable
 @requiresElementFactory
-export class PanelComponent extends React.Component<IProps, {}, IContext>
+export class PanelComponent extends React.Component<PanelComponent.IProps, {}, PanelComponent.IContext>
                             implements ILayoutComponent {
   styleId: string;
   className: string;
@@ -107,5 +100,14 @@ function onDidChangePaperToolbarRef(element: PolymerElements.PaperToolbar): void
         'margin-left': '0'
       }
     }));
+  }
+}
+
+export namespace PanelComponent {
+  export interface IProps extends ILayoutComponentProps<PanelComponent> {
+    model: PanelModel;
+  }
+
+  export interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
   }
 }

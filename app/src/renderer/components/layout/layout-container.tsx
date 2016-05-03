@@ -4,26 +4,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable } from '../decorators';
 import { SplitterComponent } from './splitter';
 import { PanelComponent } from './panel';
 import { Cursor } from '../../renderer-context';
-import { LayoutContainerModel, SplitterModel, PanelModel, LayoutItemModel } from '../../models/ui';
-import { requiresElementFactory, IRequiresElementFactoryContext, ElementFactory } from '../element-factory';
-
-export interface IState {
-}
-
-export interface IProps extends ILayoutComponentProps<LayoutContainerComponent> {
-  model: LayoutContainerModel;
-
-  // callbacks passed through to splitter components
-  overrideCursor?: (cursor: Cursor) => void;
-  resetCursor?: () => void;
-}
-
-export interface IContext extends IStylableContext, IRequiresElementFactoryContext {
-}
+import {
+  LayoutContainerModel, SplitterModel, PanelModel, LayoutItemModel
+} from '../../models/ui';
+import {
+  requiresElementFactory, IRequiresElementFactoryContext, ElementFactory
+} from '../element-factory';
 
 export interface ILayoutComponentProps<T> extends React.Props<T> {
   resizable?: boolean;
@@ -44,13 +34,15 @@ export interface ILayoutComponent {
 @observer
 @stylable
 @requiresElementFactory
-export class LayoutContainerComponent extends React.Component<IProps, IState, IContext>
-                                      implements ILayoutComponent {
-  styleId: string;
-  className: string;
-  element: HTMLDivElement;
+export class LayoutContainerComponent
+       extends React.Component<LayoutContainerComponent.IProps, {}, LayoutContainerComponent.IContext>
+       implements ILayoutComponent {
+
+  private styleId: string;
+  private className: string;
+  private element: HTMLDivElement;
   /** All child components that aren't splitters. */
-  childComponents = new Map</*id:*/string, ILayoutComponent>();
+  private childComponents = new Map</*id:*/string, ILayoutComponent>();
 
   private onSetRef = (ref: HTMLDivElement) => {
     this.element = ref;
@@ -67,7 +59,7 @@ export class LayoutContainerComponent extends React.Component<IProps, IState, IC
     }
   }
 
-  constructor(props: IProps, context: IContext) {
+  constructor(props: LayoutContainerComponent.IProps, context: LayoutContainerComponent.IContext) {
     super(props, context);
   }
 
@@ -171,5 +163,18 @@ export class LayoutContainerComponent extends React.Component<IProps, IState, IC
         })
       }</div>
     );
+  }
+}
+
+export namespace LayoutContainerComponent {
+  export interface IProps extends ILayoutComponentProps<LayoutContainerComponent> {
+    model: LayoutContainerModel;
+
+    // callbacks passed through to splitter components
+    overrideCursor?: (cursor: Cursor) => void;
+    resetCursor?: () => void;
+  }
+
+  export interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
   }
 }

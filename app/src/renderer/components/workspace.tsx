@@ -7,36 +7,32 @@ import { LayoutContainerComponent } from './layout/layout-container';
 import { IronFlexLayout } from './styles';
 import { WorkspaceModel } from '../models/ui';
 import { Observable, Subscription } from '@reactivex/rxjs';
-import { stylable, IStylableContext } from './stylable';
+import { stylable } from './decorators';
 import { Cursor } from '../renderer-context';
 import { ElementFactory } from './element-factory';
-
-export interface IProps extends React.Props<WorkspaceComponent> {
-  model: WorkspaceModel;
-  elementFactory: ElementFactory;
-
-  overrideCursor(cursor: Cursor): void;
-  resetCursor(): void;
-}
-
-export interface IContext extends IStylableContext {
-}
+import { darkWorkspaceTheme } from './workspace-theme';
 
 /**
  * Chief UI wrangler component.
  */
 @observer
 @stylable
-export class WorkspaceComponent extends React.Component<IProps, {}, IContext> {
-  styleId: string;
-  className: string;
+export class WorkspaceComponent
+       extends React.Component<WorkspaceComponent.IProps, {}, WorkspaceComponent.IContext> {
+
+  private styleId: string;
+  private className: string;
 
   static childContextTypes = {
-    elementFactory: React.PropTypes.object
+    elementFactory: React.PropTypes.object,
+    theme: React.PropTypes.object
   };
 
   getChildContext() {
-    return { elementFactory: this.props.elementFactory };
+    return {
+      elementFactory: this.props.elementFactory,
+      theme: darkWorkspaceTheme
+    };
   }
 
   componentWillMount(): void {
@@ -77,5 +73,18 @@ export class WorkspaceComponent extends React.Component<IProps, {}, IContext> {
         { modalDialogElement }
       </div>
     );
+  }
+}
+
+export namespace WorkspaceComponent {
+  export interface IProps extends React.Props<WorkspaceComponent> {
+    model: WorkspaceModel;
+    elementFactory: ElementFactory;
+
+    overrideCursor(cursor: Cursor): void;
+    resetCursor(): void;
+  }
+
+  export interface IContext extends stylable.IContext {
   }
 }

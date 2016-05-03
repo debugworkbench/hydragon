@@ -9,13 +9,13 @@ import { PageTreeModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { PageTreeItemComponent } from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';
-import { stylable, IStylableContext } from '../stylable';
+import { stylable, themable } from '../decorators';
 
 export interface IProps extends React.Props<PageTreeComponentImpl> {
   model: PageTreeModel;
 }
 
-interface IContext extends IStylableContext {
+interface IContext extends stylable.IContext, themable.IContext {
 }
 
 const SELECTED = 'selected';
@@ -26,6 +26,7 @@ const FOCUSED = 'focused';
  */
 @observer
 @stylable
+@themable
 export class PageTreeComponentImpl extends React.Component<IProps, IFocusableState, IContext> {
   inlineStyle: {
     width?: string;
@@ -40,12 +41,13 @@ export class PageTreeComponentImpl extends React.Component<IProps, IFocusableSta
   };
 
   componentWillMount(): void {
+    const theme = this.context.theme;
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
       {
         boxSizing: 'border-box',
         position: 'relative',
-        backgroundColor: 'rgb(37, 37, 38)',
-        color: 'rgb(204, 204, 204)',
+        backgroundColor: theme.primaryBackgroundColor,
+        color: theme.primaryTextColor,
         cursor: 'pointer',
         '-webkit-user-select': 'none',
         outline: 'none'
