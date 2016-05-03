@@ -5,22 +5,24 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable } from '../decorators';
+import { stylable, themable } from '../decorators';
 import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
 import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
 import { PanelModel } from '../../models/ui';
+import { PaperToolbarComponent } from '../paper';
 
 /**
  * Container component that displays its content with an optional header.
  */
 @observer
 @stylable
+@themable
 @requiresElementFactory
 export class PanelComponent extends React.Component<PanelComponent.IProps, {}, PanelComponent.IContext>
                             implements ILayoutComponent {
-  styleId: string;
-  className: string;
-  element: HTMLDivElement;
+  private styleId: string;
+  private className: string;
+  private element: HTMLDivElement;
 
   private onSetRef = (ref: HTMLDivElement) => this.element = ref;
 
@@ -48,12 +50,25 @@ export class PanelComponent extends React.Component<PanelComponent.IProps, {}, P
   }
 
   renderContent(): JSX.Element | JSX.Element[] {
+    const theme = this.context.theme;
     if (this.props.model.showHeader) {
       return (
         <paper-header-panel>
-          <paper-toolbar ref={onDidChangePaperToolbarRef}>
+          <PaperToolbarComponent
+            cssVars={{
+              '--paper-toolbar-background': 'rgb(56, 56, 56)',
+              '--paper-toolbar-color': theme.primaryTextColor,
+              '--paper-toolbar-height': '30px',
+              '--paper-toolbar-title': {
+                'font-size': '14px',
+                'font-weight': 'bold',
+                'text-transform': 'uppercase',
+                'margin-left': '0'
+              }
+            }}>
             <div className="title">{this.props.model.title}</div>
-          </paper-toolbar>{
+          </PaperToolbarComponent>
+          {
             this.props.model.items.map(
               item => this.context.elementFactory.createElement({ model: item, key: item.id })
             )
@@ -84,30 +99,12 @@ export class PanelComponent extends React.Component<PanelComponent.IProps, {}, P
   }
 }
 
-function onDidChangePaperToolbarRef(element: PolymerElements.PaperToolbar): void {
-  if (element) {
-    // For some reason the Polymer element doesn't consider itself attached at this point, which
-    // means it will ignore any attempt to update its style, delaying the operation a little bit
-    // using `setImmediate` seems to work around the issue.
-    setImmediate(() => updatePolymerCSSVars(element, {
-      '--paper-toolbar-background': 'rgb(56, 56, 56)',
-      '--paper-toolbar-color': 'rgb(204, 204, 204)',
-      '--paper-toolbar-height': '30px',
-      '--paper-toolbar-title': {
-        'font-size': '14px',
-        'font-weight': 'bold',
-        'text-transform': 'uppercase',
-        'margin-left': '0'
-      }
-    }));
-  }
-}
-
 export namespace PanelComponent {
   export interface IProps extends ILayoutComponentProps<PanelComponent> {
     model: PanelModel;
   }
 
-  export interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
+  export interface IContext
+         extends stylable.IContext, themable.IContext, IRequiresElementFactoryContext {
   }
 }
