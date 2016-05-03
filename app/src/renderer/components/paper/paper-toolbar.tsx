@@ -8,7 +8,7 @@ import { PolymerComponent } from './polymer';
  * React component that wraps a Polymer paper-toolbar custom element.
  */
 export class PaperToolbarComponent
-       extends PolymerComponent<PolymerElements.PaperToolbar, PaperToolbarComponent.IProps> {
+       extends PolymerComponent<PolymerElements.PaperToolbar, PaperToolbarComponent.IProps, {}> {
 
   protected get eventBindings(): PolymerComponent.IEventBinding[] {
     return [];

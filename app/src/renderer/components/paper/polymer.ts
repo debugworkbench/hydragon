@@ -13,8 +13,9 @@ import { updatePolymerCSSVars } from '../../elements/utils';
  */
 export abstract class PolymerComponent<
                         TPolymerElement extends polymer.Base<any>,
-                        TComponentProps extends PolymerComponent.IProps>
-                extends React.Component<TComponentProps, {}, {}> {
+                        TComponentProps extends PolymerComponent.IProps,
+                        TComponentContext>
+                extends React.Component<TComponentProps, {}, TComponentContext> {
 
   /** The underlying Polymer custom element instance. */
   protected element: TPolymerElement;
@@ -28,10 +29,34 @@ export abstract class PolymerComponent<
       // means it will ignore any attempt to update its style, delaying the operation a little bit
       // using `setImmediate` seems to work around the issue. Not all Polymer elements behave the
       // same way, paper-icon-button seems to work without delay, but paper-toolbar doesn't.
-      setImmediate(() => updatePolymerCSSVars(ref, this.props.cssVars || {}));
+      setImmediate(() =>
+        updatePolymerCSSVars(ref, Object.assign({}, this.props.cssVars, this.cssVars))
+      );
     }
+    this.elementRefDidChange(ref);
   }
 
+  /**
+   * Subclasses can override this getter to return additional custom CSS vars that will be merged
+   * with the ones passed via props.
+   */
+  protected get cssVars(): any {
+    return undefined;
+  }
+
+  /**
+   * Subclasses can override this method to perform additional processing when the reference to
+   * the underlying custom element changes.
+   *
+   * @param ref The new custom element reference, may be `null`.
+   */
+  protected elementRefDidChange(ref: TPolymerElement): void {
+  }
+
+  /**
+   * Subclasses must implement this method to return the event bindings for the underlying
+   * custom element.
+   */
   protected abstract get eventBindings(): PolymerComponent.IEventBinding[];
 
   componentDidMount(): void {
@@ -55,10 +80,14 @@ export abstract class PolymerComponent<
           (<any> this.props)[binding.listener], newListener
         );
       });
-      updatePolymerCSSVars(this.element, this.props.cssVars || {});
+      updatePolymerCSSVars(this.element, Object.assign({}, this.props.cssVars, this.cssVars));
     }
   }
 
+  /**
+   * Subclasses must implement this method to return a React element representing the underlying
+   * custom element.
+   */
   protected abstract renderElement(props: TComponentProps): JSX.Element;
 
   render() {

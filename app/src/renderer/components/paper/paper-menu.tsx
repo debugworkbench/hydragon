@@ -8,7 +8,7 @@ import { PolymerComponent } from './polymer';
  * React component that wraps a Polymer paper-menu custom element.
  */
 export class PaperMenuComponent
-       extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps> {
+       extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps, {}> {
 
   protected get eventBindings(): PolymerComponent.IEventBinding[] {
     return [];

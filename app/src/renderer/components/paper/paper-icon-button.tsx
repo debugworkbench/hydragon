@@ -8,7 +8,8 @@ import { PolymerComponent } from './polymer';
  * React component that wraps a Polymer paper-icon-button custom element.
  */
 export class PaperIconButtonComponent
-       extends PolymerComponent<PolymerElements.PaperIconButton, PaperIconButtonComponent.IProps> {
+       extends PolymerComponent<
+                 PolymerElements.PaperIconButton, PaperIconButtonComponent.IProps, {}> {
 
   protected get eventBindings() {
     return [

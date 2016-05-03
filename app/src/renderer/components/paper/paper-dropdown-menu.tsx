@@ -8,7 +8,8 @@ import { PolymerComponent } from './polymer';
  * React component that wraps a Polymer paper-dropdown-menu custom element.
  */
 export class PaperDropdownMenuComponent
-       extends PolymerComponent<PolymerElements.PaperDropdownMenu, PaperDropdownMenuComponent.IProps> {
+       extends PolymerComponent<
+                 PolymerElements.PaperDropdownMenu, PaperDropdownMenuComponent.IProps, {}> {
 
   /**
    * The derived "label" of the currently selected item.

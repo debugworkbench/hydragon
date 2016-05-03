@@ -7,8 +7,9 @@ export interface IWorkspaceTheme {
   /*
   secondaryTextColor: string;
   disabledTextColor: string;
-
+  */
   primaryColor: string;
+  /*
   lightPrimaryColor: string;
   darkPrimaryColor: string;
 
@@ -20,5 +21,6 @@ export interface IWorkspaceTheme {
 
 export const darkWorkspaceTheme: IWorkspaceTheme = {
   primaryTextColor: 'rgb(204, 204, 204)',
-  primaryBackgroundColor: 'rgb(37, 37, 38)'
+  primaryBackgroundColor: 'rgb(37, 37, 38)',
+  primaryColor: '#3f51b5' //--paper-indigo-500
 };
