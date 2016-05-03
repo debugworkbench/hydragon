@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable, themable } from '../decorators';
+import { stylable } from '../decorators';
 import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
 
 /**
@@ -14,7 +14,6 @@ import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
  */
 @observer
 @stylable
-@themable
 export class PageComponent extends React.Component<PageComponent.IProps, {}, PageComponent.IContext> {
   styleId: string;
   className: string;
@@ -43,16 +42,14 @@ export class PageComponent extends React.Component<PageComponent.IProps, {}, Pag
   }
 
   render() {
-    const theme = this.context.theme;
     return (
       <div className="hydragon-page">
         <div className={this.className}>
           <PaperToolbarComponent className="toolbar"
-            cssVars={{
-              '--paper-toolbar-background': 'rgb(30, 30, 30)',
-              '--paper-toolbar-color': theme.primaryTextColor,
-              '--paper-toolbar-height': '30px',
-              '--paper-toolbar-title': {
+            styles={{
+              backgroundColor: 'rgb(30, 30, 30)',
+              height: '30px',
+              title: {
                 'font-size': '14px',
                 'margin-left': '10px'
               }
@@ -84,6 +81,6 @@ export namespace PageComponent {
     className?: string;
   }
 
-  export interface IContext extends stylable.IContext, themable.IContext {
+  export interface IContext extends stylable.IContext {
   }
 }

@@ -6,16 +6,14 @@ import { observer } from 'mobx-react';
 import { autorun, Lambda } from 'mobx';
 import { NewDebugConfigDialogModel } from '../models/ui';
 import { PaperDropdownMenuComponent, PaperMenuComponent, PaperDialogComponent } from './paper';
-import { themable } from './decorators';
 
 /**
  * A simple dialog component that lets the user enter the name for a new debug config and select
  * the debug engine the new config will be used with.
  */
 @observer
-@themable
 export class NewDebugConfigDialogComponent
-       extends React.Component<NewDebugConfigDialogComponent.IProps, {}, NewDebugConfigDialogComponent.IContext> {
+       extends React.Component<NewDebugConfigDialogComponent.IProps, {}, {}> {
 
   private configNameInput: PolymerElements.PaperInput;
   private engineDropdown: PaperDropdownMenuComponent;
@@ -35,7 +33,6 @@ export class NewDebugConfigDialogComponent
   }
 
   render() {
-    const theme = this.context.theme;
     return (
       <PaperDialogComponent modal isOpen={this.props.model.isOpen}>
         <h2>New Debug Configuration</h2>
@@ -59,8 +56,5 @@ export class NewDebugConfigDialogComponent
 namespace NewDebugConfigDialogComponent {
   export interface IProps extends React.Props<NewDebugConfigDialogComponent> {
     model: NewDebugConfigDialogModel;
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }

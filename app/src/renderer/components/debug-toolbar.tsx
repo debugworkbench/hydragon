@@ -7,7 +7,7 @@ import { DebugToolbarModel } from '../models/ui';
 import {
   PaperDropdownMenuComponent, PaperIconButtonComponent, PaperToolbarComponent, PaperMenuComponent
 } from './paper';
-import { stylable, themable } from './decorators';
+import { stylable } from './decorators';
 import { updatePolymerCSSVars } from '../elements/utils';
 
 /**
@@ -15,7 +15,6 @@ import { updatePolymerCSSVars } from '../elements/utils';
  */
 @observer
 @stylable
-@themable
 export class DebugToolbarComponent
        extends React.Component<DebugToolbarComponent.IProps, {}, DebugToolbarComponent.IContext> {
 
@@ -58,7 +57,6 @@ export class DebugToolbarComponent
   }
 
   render() {
-    const theme = this.context.theme;
     const model = this.props.model;
     let selectedDebugConfigIdx = model.debugConfigs.indexOf(model.selectedDebugConfig);
     selectedDebugConfigIdx = (selectedDebugConfigIdx !== -1) ? (selectedDebugConfigIdx + 1) : null;
@@ -69,12 +67,7 @@ export class DebugToolbarComponent
     ].join(' ');
 
     return (
-      <PaperToolbarComponent className={this.className}
-        cssVars={{
-          '--paper-toolbar-background': theme.primaryBackgroundColor,
-          '--paper-toolbar-color': theme.primaryTextColor,
-          '--paper-toolbar-height': '48px'
-        }}>
+      <PaperToolbarComponent className={this.className} styles={{ height: '48px' }}>
         <PaperIconButtonComponent icon="refresh" alt="Restart Debugging" disabled />
         <div className="startStopButtons">
           <PaperIconButtonComponent className={startButtonClass}
@@ -86,16 +79,8 @@ export class DebugToolbarComponent
         </div>
         <PaperDropdownMenuComponent ref={this.onSetDebugConfigDropdownRef}
           label="Configuration" no-label-float
-          onWillSelectItem={this.onWillSelectDebugConfig}
-          cssVars={{
-            '--paper-input-container-input-color': theme.primaryTextColor
-          }}>
-          <PaperMenuComponent className="dropdown-content"
-            selected={selectedDebugConfigIdx}
-            cssVars={{
-              '--paper-menu-background-color': theme.primaryBackgroundColor,
-              '--paper-menu-color': theme.primaryTextColor
-            }}>
+          onWillSelectItem={this.onWillSelectDebugConfig}>
+          <PaperMenuComponent className="dropdown-content" selected={selectedDebugConfigIdx}>
             <paper-item ref={this.onSetNewDebugConfigDropdownItemRef}>New...</paper-item>
             {
               model.debugConfigs.map(configName =>
@@ -119,7 +104,7 @@ namespace DebugToolbarComponent {
     model: DebugToolbarModel;
   }
 
-  export interface IContext extends stylable.IContext, themable.IContext {
+  export interface IContext extends stylable.IContext {
   }
 }
 
