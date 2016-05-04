@@ -11,6 +11,7 @@ declare namespace JSX {
     };
 
     'paper-button': __React.HTMLProps<HTMLElement>;
+    'paper-checkbox': __React.HTMLProps<HTMLElement>;
 
     'paper-dialog': __React.HTMLProps<HTMLElement> & {
       id?: string;
