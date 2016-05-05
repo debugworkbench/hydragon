@@ -139,7 +139,7 @@ export = function(grunt: IGrunt) {
     'run-node-inspector': {
       default: {
         options: {
-          scriptPath: path.join(repoRoot, 'node_modules', 'app', 'node-inspector', 'bin', 'inspector.js')
+          scriptPath: path.join(repoRoot, 'app', 'node_modules', 'node-inspector', 'bin', 'inspector.js')
         }
       }
     },
