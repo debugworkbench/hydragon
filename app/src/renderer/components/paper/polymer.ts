@@ -118,6 +118,16 @@ export namespace PolymerComponent {
     label?: string;
 
     /**
+     * Set to `true` to indicate that the component should serve as the prefix of a `paper-input`
+     * element.
+     */
+    prefix?: boolean;
+    /**
+     * Set to `true` to indicate that the component should serve as the suffix of a `paper-input`
+     * element.
+     */
+    suffix?: boolean;
+    /**
      * Object containing properties that represent custom CSS variables that should be passed
      * through to the underlying custom element.
      * Example: { '--paper-icon-button': { width: '30px', height: '30px', padding: '5px' }}

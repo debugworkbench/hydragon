@@ -10,26 +10,11 @@ declare namespace JSX {
       ref?: any;
     };
 
-    'paper-button': __React.HTMLProps<HTMLElement>;
-    'paper-checkbox': __React.HTMLProps<HTMLElement>;
-
-    'paper-dialog': __React.HTMLProps<HTMLElement> & {
-      id?: string;
-      modal?: boolean;
-      ref?: (element: PolymerElements.PaperDialog) => void;
-    };
-
-    'paper-dropdown-menu': __React.HTMLProps<HTMLElement> & {
-      id?: string;
-      label?: string;
-      ref?: (element: PolymerElements.PaperDropdownMenu) => void;
-    };
-
-    'paper-input': __React.HTMLProps<HTMLElement> & {
-      id?: string;
-      label?: string;
-      ref?: (element: PolymerElements.PaperInput) => void;
-    };
+    'paper-button': any;
+    'paper-checkbox': any;
+    'paper-dialog': any;
+    'paper-dropdown-menu': any;
+    'paper-input': any;
 
     'paper-header-panel': __React.HTMLProps<HTMLElement>;
 
@@ -39,8 +24,8 @@ declare namespace JSX {
     };
 
     'paper-item': __React.HTMLProps<HTMLElement>;
-    'paper-toolbar': __React.HTMLProps<HTMLElement>;
-    'paper-icon-button': __React.HTMLProps<HTMLElement>;
+    'paper-toolbar': any;
+    'paper-icon-button': any;
 
     webview: __React.HTMLProps<HTMLElement> & {
       src: string;

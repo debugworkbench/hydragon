@@ -6,5 +6,6 @@ export { PaperCheckboxComponent } from './paper-checkbox';
 export { PaperDialogComponent } from './paper-dialog';
 export { PaperDropdownMenuComponent } from './paper-dropdown-menu';
 export { PaperIconButtonComponent } from './paper-icon-button';
+export { PaperInputComponent } from './paper-input';
 export { PaperMenuComponent } from './paper-menu';
 export { PaperToolbarComponent } from './paper-toolbar';
