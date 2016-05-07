@@ -6,86 +6,66 @@ import { FreeStyle } from 'react-free-style';
 import { GdbMiDebugConfigPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
-import { stylable, themable } from '../decorators';
-
-export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
-  model: GdbMiDebugConfigPageModel;
-}
-
-interface IContext extends stylable.IContext, themable.IContext {
-}
+import {
+  PaperDropdownMenuComponent, PaperMenuComponent, PaperCheckboxComponent, PaperInputComponent,
+  PaperButtonComponent
+} from '../paper';
+import { FileInputComponent } from '../file-input';
+import { stylable } from '../decorators';
 
 /**
  * Page component that displays a debug configuration form.
  */
 @stylable
-@themable
-export class GdbMiDebugConfigPageComponent extends React.Component<IProps, {}, IContext> {
-  styleId: string;
-  className: string;
+export class GdbMiDebugConfigPageComponent
+       extends React.Component<
+                 GdbMiDebugConfigPageComponent.IProps, {}, GdbMiDebugConfigPageComponent.IContext> {
+
+  private styleId: string;
+  private className: string;
 
   private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
 
   componentWillMount(): void {
-    const theme = this.context.theme;
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
       {
         boxSizing: 'border-box',
         position: 'relative',
         outline: 'none',
       },
-      IronFlexLayout.vertical,
-      {
-        '> paper-toolbar': Object.assign(
-          {
-            '--paper-toolbar-background': 'rgb(30, 30, 30)',
-            '--paper-toolbar-color': theme.primaryTextColor,
-            '--paper-toolbar-height': '30px',
-            '--paper-toolbar-title': {
-              'font-size': '14px',
-              'margin-left': '10px'
-            }
-          },
-          IronFlexLayout.flex.none
-        ),
-        '> paper-toolbar > .closeButton': {
-          '--paper-icon-button': {
-            width: '30px',
-            height: '30px',
-            padding: '5px'
-          }
-        },
-        '> .contentWrapper': Object.assign(
-          { position: 'relative' },
-          IronFlexLayout.flex.auto
-        )
-      }
+      IronFlexLayout.vertical
     ));
     this.className = `hydragon-gdb-mi-debug-config-page ${this.styleId}`;
   }
 
   render() {
+    const model = this.props.model;
     return (
-      <PageComponent model={this.props.model} className={this.className}>
-      {/*
-        <paper-dropdown-menu label="Debugger Type">
-          <paper-menu id="debuggerTypes" class="dropdown-content">
+      <PageComponent model={model} className={this.className}>
+        <PaperDropdownMenuComponent label="Debugger Type">
+          <PaperMenuComponent className="dropdown-content">
             <paper-item>GDB</paper-item>
             <paper-item>LLDB</paper-item>
-          </paper-menu>
-        </paper-dropdown-menu>
-        <file-input input-label="Debugger Path" file-path="{{debugConfig.debuggerPath}}"></file-input>
-        <file-input input-label="Executable" file-path="{{debugConfig.executable}}"></file-input>
-        <paper-input label="Arguments" value="{{debugConfig.executableArgs}}"></paper-input>
-        */}
-        <label htmlFor="isRemote">Remote Target</label>
-        {/*
-        <paper-toggle-button id="isRemote" checked="{{debugConfig.targetIsRemote}}"></paper-toggle-button>
-        <paper-input label="Host" value="{{debugConfig.host}}"></paper-input>
-        <paper-input label="Port" value="{{debugConfig.port}}"></paper-input>
-        <paper-button id="saveButton">Save</paper-button>
-        */}
+          </PaperMenuComponent>
+        </PaperDropdownMenuComponent>
+        <FileInputComponent label="Debugger Path" model={model.debuggerPath} />
+        <FileInputComponent label="Executable" model={model.executable} />
+        <PaperInputComponent label="Arguments" value={model.executableArgs} />
+
+        <PaperCheckboxComponent checked={model.targetIsRemote}>Remote Target</PaperCheckboxComponent>
+        <PaperInputComponent label="Host" value={model.host} />
+        <PaperInputComponent label="Port" value={model.port} />
+        <PaperButtonComponent>Save</PaperButtonComponent>
       </PageComponent>
     );
+  }
+}
+
+namespace GdbMiDebugConfigPageComponent {
+  export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
+    model: GdbMiDebugConfigPageModel;
+  }
+
+  export interface IContext extends stylable.IContext {
   }
 }

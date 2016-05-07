@@ -4,10 +4,6 @@
 import { Subject, Subscription } from '@reactivex/rxjs';
 import { PageSetModel } from './page-set';
 
-export interface IPageParams {
-  id: string;
-}
-
 export class PageModel {
   id: string;
   title: string;
@@ -17,7 +13,7 @@ export class PageModel {
 
   private pageSetDidResizeStreamSub: Subscription;
 
-  constructor({ id }: IPageParams) {
+  constructor({ id }: PageModel.IConstructorParams) {
     this.id = id;
   }
 
@@ -34,5 +30,11 @@ export class PageModel {
 
   onDidDetachFromPageSet(): void {
     this.pageSetDidResizeStreamSub.unsubscribe();
+  }
+}
+
+export namespace PageModel {
+  export interface IConstructorParams {
+    id: string;
   }
 }

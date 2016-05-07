@@ -8,8 +8,10 @@ import { PagePresenter } from './page-presenter';
 import {
   DialogModel, PageModel, NewDebugConfigDialogModel, GdbMiDebugConfigPageModel
 } from './models/ui';
+import { PathPickerProxy } from './platform/path-picker-proxy';
 
 export class DebugConfigPresenter {
+  private pathPicker: PathPickerProxy;
   private getExistingDebugConfig: (configName: string) => IDebugConfig;
   private setActiveDialog: (dialog: DialogModel) => void;
   private openPage: (pageId: string, createPage: () => PageModel) => void;
@@ -62,7 +64,10 @@ export class DebugConfigPresenter {
         this.openPage(
           `debug-config:${debugConfig.name}`,
           () => {
-            const page = new GdbMiDebugConfigPageModel({ id: `debug-config:${debugConfig.name}` });
+            const page = new GdbMiDebugConfigPageModel({
+              id: `debug-config:${debugConfig.name}`,
+              pathPicker: this.pathPicker
+            });
             page.title = `Debug Config ${debugConfig.name}`;
             return page;
           }
@@ -74,6 +79,7 @@ export class DebugConfigPresenter {
 
 namespace DebugConfigPresenter {
   export interface IConstructorParams {
+    pathPicker: PathPickerProxy;
     getExistingDebugConfig: (configName: string) => IDebugConfig;
     setActiveDialog: (dialog: DialogModel) => void;
     openPage: (pageId: string, createPage: () => PageModel) => void;

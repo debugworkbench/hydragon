@@ -27,6 +27,7 @@ import {
   PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
   DebugToolbarComponent, NewDebugConfigDialogComponent
 } from './components';
+import { PathPickerProxy } from './platform/path-picker-proxy';
 
 export const enum Cursor {
   HorizontalResize,
@@ -98,7 +99,9 @@ export class RendererContext {
 
     const workspaceModel = new WorkspaceModel();
     const pagePresenter = new PagePresenter(workspaceModel);
+    const pathPicker = new PathPickerProxy();
     const debugConfigPresenter = new DebugConfigPresenter({
+      pathPicker,
       getExistingDebugConfig: debugConfigManager.get.bind(debugConfigManager),
       setActiveDialog: (dialog: DialogModel) => {
         workspaceModel.modalDialog = dialog;
