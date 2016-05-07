@@ -14,6 +14,7 @@ export { PageTreeModel } from './pages/page-tree';
 
 export { DebugToolbarModel } from './debug-toolbar';
 export { DialogModel } from './dialog';
+export { FileInputModel } from './file-input';
 export { NewDebugConfigDialogModel } from './new-debug-config-dialog';
 
 export { WorkspaceModel } from './workspace';

@@ -37,6 +37,10 @@ export class PathPicker {
     });
   };
 
+  /**
+   * @return A promise that will be resolved with the file/dir path selected by the user,
+   *         or `null` if the user dismissed the file prompt without making a selection.
+   */
   promptForPath({
     parentWindow, title = 'Open File', defaultPath, pathKind = 'file'
   }: PathPicker.IPathPromptOptions): Promise<string> {

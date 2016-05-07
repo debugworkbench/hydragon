@@ -29,6 +29,10 @@ export class PathPickerProxy {
     this.pendingRequests.get(response.requestId)(response.filePaths);
   }
 
+  /**
+   * @return A promise that will be resolved with the file/dir path selected by the user,
+   *         or `null` if the user dismissed the file prompt without making a selection.
+   */
   promptForPath(options: PathPickerProxy.IPathPromptOptions): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const request: PathPickerIpc.IPickPathRequest = {
