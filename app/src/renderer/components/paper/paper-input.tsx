@@ -32,16 +32,19 @@ export class PaperInputComponent
   }
 
   protected renderElement(props: PaperInputComponent.IProps) {
-    console.log(`Render: ${this.props.label}: ${this.props.value}`);
     return (
       <paper-input {...props}></paper-input>
     );
+  }
+
+  get value(): string {
+    return (this.element ? this.element.value : this.props.value) || '';
   }
 }
 
 namespace PaperInputComponent {
   export interface IProps extends PolymerComponent.IProps {
-    /** The text currently displayed in the input field. */
+    /** Text that should be displayed in the input field. */
     value?: string;
     /**
      * Callback to invoke after the input field changes due to user interaction.

@@ -5,7 +5,10 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { autorun, Lambda } from 'mobx';
 import { NewDebugConfigDialogModel } from '../models/ui';
-import { PaperDropdownMenuComponent, PaperMenuComponent, PaperDialogComponent } from './paper';
+import {
+  PaperDropdownMenuComponent, PaperMenuComponent, PaperDialogComponent, PaperInputComponent,
+  PaperButtonComponent
+} from './paper';
 
 /**
  * A simple dialog component that lets the user enter the name for a new debug config and select
@@ -15,10 +18,10 @@ import { PaperDropdownMenuComponent, PaperMenuComponent, PaperDialogComponent } 
 export class NewDebugConfigDialogComponent
        extends React.Component<NewDebugConfigDialogComponent.IProps, {}, {}> {
 
-  private configNameInput: PolymerElements.PaperInput;
+  private configNameInput: PaperInputComponent;
   private engineDropdown: PaperDropdownMenuComponent;
 
-  private onSetConfigNameInputRef = (ref: PolymerElements.PaperInput) => this.configNameInput = ref;
+  private onSetConfigNameInputRef = (ref: PaperInputComponent) => this.configNameInput = ref;
   private onSetEngineDropdownRef = (ref: PaperDropdownMenuComponent) => this.engineDropdown = ref;
 
   private onDidConfirm = (): void => {
@@ -37,7 +40,7 @@ export class NewDebugConfigDialogComponent
       <PaperDialogComponent modal isOpen={this.props.model.isOpen}>
         <h2>New Debug Configuration</h2>
         <div>
-          <paper-input label="Name" ref={this.onSetConfigNameInputRef}></paper-input>
+          <PaperInputComponent label="Name" ref={this.onSetConfigNameInputRef} />
           <PaperDropdownMenuComponent ref={this.onSetEngineDropdownRef} label="Engine">
             <PaperMenuComponent className="dropdown-content">
               <paper-item>gdb-mi</paper-item>
@@ -45,8 +48,12 @@ export class NewDebugConfigDialogComponent
           </PaperDropdownMenuComponent>
         </div>
         <div className="buttons">
-          <paper-button dialog-dismiss onClick={this.onDidCancel}>Cancel</paper-button>
-          <paper-button dialog-confirm onClick={this.onDidConfirm}>OK</paper-button>
+          <PaperButtonComponent dialog-dismiss onDidTap={this.onDidCancel}>
+            Cancel
+          </PaperButtonComponent>
+          <PaperButtonComponent dialog-confirm onDidTap={this.onDidConfirm}>
+            OK
+          </PaperButtonComponent>
         </div>
       </PaperDialogComponent>
     );
