@@ -1757,6 +1757,10 @@ declare module GitHubElectron {
 		once(channel: string, callback: (event: IMainIPCEvent, ...args: any[]) => void): this;
 	}
 
+	interface IRendererIPCEvent {
+		sender: RendererIPC;
+	}
+
 	// current as at v0.35.4
 	/**
 	 * Sends synchronous and asynchronous messages to the main process, and receives replies from it.
@@ -1767,9 +1771,9 @@ declare module GitHubElectron {
 		 *
 		 * @channel Event name.
 		 */
-		on(channel: string, callback: (event: any, ...args: any[]) => void): this;
+		on(channel: string, callback: (event: IRendererIPCEvent, ...args: any[]) => void): this;
 		/** Like [[on]], but the callback is automatically removed after its first invocation. */
-		once(channel: string, callback: (event: any, ...args: any[]) => void): this;
+		once(channel: string, callback: (event: IRendererIPCEvent, ...args: any[]) => void): this;
 		/**
 		 * Asynchronously send an event to the main process.
 		 *
@@ -1792,7 +1796,7 @@ declare module GitHubElectron {
 		 */
 		sendToHost(channel: string, ...args: any[]): void;
 	}
-	
+
 	// current as at v0.35.4
 	/**
 	 * Provides a simple way to do inter-process communication (IPC) between the renderer process
