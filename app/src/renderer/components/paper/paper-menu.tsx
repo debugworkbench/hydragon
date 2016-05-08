@@ -3,25 +3,27 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-menu custom element.
  */
-@themable
 export class PaperMenuComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperMenu,
-                 PaperMenuComponent.IProps,
-                 PaperMenuComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps, {}> {
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-menu-background-color': styles.backgroundColor || theme.primaryBackgroundColor,
-      '--paper-menu-color': styles.textColor || theme.primaryTextColor
-    };
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.backgroundColor) {
+        vars['--paper-menu-background-color'] = styles.backgroundColor;
+      }
+      if (styles.textColor) {
+        vars['--paper-menu-color'] = styles.textColor;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings(): PolymerComponent.IEventBinding[] {
@@ -29,8 +31,9 @@ export class PaperMenuComponent
   }
 
   protected renderElement(props: PaperMenuComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-menu {...props}></paper-menu>
+      <paper-menu {...elementProps}></paper-menu>
     );
   }
 }
@@ -43,8 +46,5 @@ namespace PaperMenuComponent {
       backgroundColor?: string;
       textColor?: string;
     };
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }

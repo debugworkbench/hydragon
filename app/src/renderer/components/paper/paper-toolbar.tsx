@@ -3,27 +3,33 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-toolbar custom element.
  */
-@themable
 export class PaperToolbarComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperToolbar,
-                 PaperToolbarComponent.IProps,
-                 PaperToolbarComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperToolbar, PaperToolbarComponent.IProps, {}> {
 
-  protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-toolbar-title': styles.title || undefined,
-      '--paper-toolbar-background': styles.backgroundColor || theme.primaryBackgroundColor,
-      '--paper-toolbar-color': styles.textColor || theme.primaryTextColor,
-      '--paper-toolbar-height': styles.height || undefined
-    };
+  protected get cssVars(): any {
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.title) {
+        vars['--paper-toolbar-title'] = styles.title;
+      }
+      if (styles.backgroundColor) {
+        vars['--paper-toolbar-background'] = styles.backgroundColor;
+      }
+      if (styles.textColor) {
+        vars['--paper-toolbar-color'] = styles.textColor;
+      }
+      if (styles.height) {
+        vars['--paper-toolbar-height'] = styles.height;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings(): PolymerComponent.IEventBinding[] {
@@ -31,8 +37,9 @@ export class PaperToolbarComponent
   }
 
   protected renderElement(props: PaperToolbarComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-toolbar {...props}></paper-toolbar>
+      <paper-toolbar {...elementProps}></paper-toolbar>
     );
   }
 }
@@ -47,8 +54,5 @@ namespace PaperToolbarComponent {
       /** Height of the toolbar, defaults to `64px`. */
       height?: string;
     };
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }

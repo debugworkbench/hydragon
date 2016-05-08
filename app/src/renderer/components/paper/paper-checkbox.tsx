@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-checkbox custom element.
@@ -13,27 +13,43 @@ import { themable } from '../decorators';
  *
  * Example: <PaperCheckboxComponent checked>Label</PaperCheckboxComponent>
  */
-@themable
 export class PaperCheckboxComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperCheckbox,
-                 PaperCheckboxComponent.IProps,
-                 PaperCheckboxComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperCheckbox, PaperCheckboxComponent.IProps, {}> {
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-checkbox-unchecked-background-color': styles.uncheckedBackgroundColor || undefined,
-      '--paper-checkbox-unchecked-color': styles.uncheckedBorderColor || theme.primaryTextColor,
-      '--paper-checkbox-unchecked-ink-color': styles.uncheckedInkColor || theme.primaryTextColor,
-      '--paper-checkbox-checked-color': styles.checkedColor || theme.primaryColor,
-      '--paper-checkbox-checked-ink-color': styles.checkedInkColor || theme.primaryColor,
-      '--paper-checkbox-checkmark-color': styles.checkmarkColor || undefined,
-      '--paper-checkbox-label-color': styles.labelColor || theme.primaryTextColor,
-      '--paper-checkbox-label-spacing': styles.labelSpacing || undefined,
-      '--paper-checkbox-size': styles.size || undefined
-    };
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.uncheckedBackgroundColor) {
+        vars['--paper-checkbox-unchecked-background-color'] = styles.uncheckedBackgroundColor;
+      }
+      if (styles.uncheckedBorderColor) {
+        vars['--paper-checkbox-unchecked-color'] = styles.uncheckedBorderColor;
+      }
+      if (styles.uncheckedInkColor) {
+        vars['--paper-checkbox-unchecked-ink-color'] = styles.uncheckedInkColor;
+      }
+      if (styles.checkedColor) {
+        vars['--paper-checkbox-checked-color'] = styles.checkedColor;
+      }
+      if (styles.checkedInkColor) {
+        vars['--paper-checkbox-checked-ink-color'] = styles.checkedInkColor;
+      }
+      if (styles.checkmarkColor) {
+        vars['--paper-checkbox-checkmark-color'] = styles.checkmarkColor;
+      }
+      if (styles.labelColor) {
+        vars['--paper-checkbox-label-color'] = styles.labelColor;
+      }
+      if (styles.labelSpacing) {
+        vars['--paper-checkbox-label-spacing'] = styles.labelSpacing;
+      }
+      if (styles.size) {
+        vars['--paper-checkbox-size'] = styles.size;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings(): PolymerComponent.IEventBinding[] {
@@ -41,8 +57,9 @@ export class PaperCheckboxComponent
   }
 
   protected renderElement(props: PaperCheckboxComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-checkbox {...props}></paper-checkbox>
+      <paper-checkbox {...elementProps}></paper-checkbox>
     );
   }
 }
@@ -76,8 +93,5 @@ namespace PaperCheckboxComponent {
       /** Size of the checkbox, defaults to 18px. */
       size?: string;
     }
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }

@@ -3,26 +3,30 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-input custom element.
  */
-@themable
 export class PaperInputComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperInput,
-                 PaperInputComponent.IProps,
-                 PaperInputComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperInput, PaperInputComponent.IProps, {}> {
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-input-container-color': styles.unfocusedLabelColor || theme.secondaryTextColor,
-      '--paper-input-container-focus-color': styles.focusedLabelColor || theme.primaryColor,
-      '--paper-input-container-input-color': styles.textColor || theme.primaryTextColor
-    };
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.unfocusedLabelColor) {
+        vars['--paper-input-container-color'] = styles.unfocusedLabelColor;
+      }
+      if (styles.focusedLabelColor) {
+        vars['--paper-input-container-focus-color'] = styles.focusedLabelColor;
+      }
+      if (styles.textColor) {
+        vars['--paper-input-container-input-color'] = styles.textColor;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings() {
@@ -32,8 +36,9 @@ export class PaperInputComponent
   }
 
   protected renderElement(props: PaperInputComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-input {...props}></paper-input>
+      <paper-input {...elementProps}></paper-input>
     );
   }
 
@@ -60,7 +65,5 @@ namespace PaperInputComponent {
       /** Color of the text in the input field. */
       textColor?: string;
     }
-  }
-  export interface IContext extends themable.IContext {
   }
 }

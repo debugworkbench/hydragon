@@ -3,26 +3,27 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-button custom element.
  */
-@themable
 export class PaperButtonComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperButton,
-                 PaperButtonComponent.IProps,
-                 PaperButtonComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperButton, PaperButtonComponent.IProps, {}> {
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    return {
-      '--paper-button': {
-        'background-color': theme.primaryBackgroundColor,
-        'color': theme.primaryTextColor
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.backgroundColor) {
+        vars['--paper-button-background-color'] = styles.backgroundColor;
       }
-    };
+      if (styles.textColor) {
+        vars['--paper-button-color'] = styles.textColor;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings() {
@@ -32,8 +33,9 @@ export class PaperButtonComponent
   }
 
   protected renderElement(props: PaperButtonComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-button {...props}></paper-button>
+      <paper-button {...elementProps}></paper-button>
     );
   }
 }
@@ -42,7 +44,9 @@ namespace PaperButtonComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Callback to invoke after the user taps on the button. */
     onDidTap?: (e: polymer.TapEvent) => void;
-  }
-  export interface IContext extends themable.IContext {
+    styles?: {
+      backgroundColor?: string;
+      textColor?: string;
+    }
   }
 }

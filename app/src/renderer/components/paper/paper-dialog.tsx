@@ -3,30 +3,34 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-dialog custom element.
  */
-@themable
 export class PaperDialogComponent
-       extends PolymerComponent<
-                 PolymerElements.PaperDialog,
-                 PaperDialogComponent.IProps,
-                 PaperDialogComponent.IContext> {
+       extends PolymerComponent<PolymerElements.PaperDialog, PaperDialogComponent.IProps, {}> {
 
   protected elementRefDidChange(ref: PolymerElements.PaperDialog): void {
     this.syncState();
   }
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-dialog-background-color': styles.backgroundColor || theme.primaryBackgroundColor,
-      '--paper-dialog-color': styles.textColor || theme.primaryTextColor,
-      '--paper-dialog-button-color': styles.buttonColor || theme.primaryColor
-    };
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.backgroundColor) {
+        vars['--paper-dialog-background-color'] = styles.backgroundColor;
+      }
+      if (styles.textColor) {
+        vars['--paper-dialog-color'] = styles.textColor;
+      }
+      if (styles.buttonColor) {
+        vars['--paper-dialog-button-color'] = styles.buttonColor;
+      }
+    }
+    return vars;
   }
 
   /** Push state changes from the component to the custom element. */
@@ -41,8 +45,9 @@ export class PaperDialogComponent
   }
 
   protected renderElement(props: PaperDialogComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-dialog {...props}></paper-dialog>
+      <paper-dialog {...elementProps}></paper-dialog>
     );
   }
 
@@ -61,8 +66,5 @@ namespace PaperDialogComponent {
       textColor?: string;
       buttonColor?: string;
     };
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }

@@ -3,17 +3,16 @@
 
 import * as React from 'react';
 import { PolymerComponent } from './polymer';
-import { themable } from '../decorators';
+import { omitOwnProps } from '../../../common/utils';
 
 /**
  * React component that wraps a Polymer paper-dropdown-menu custom element.
  */
-@themable
 export class PaperDropdownMenuComponent
        extends PolymerComponent<
                  PolymerElements.PaperDropdownMenu,
                  PaperDropdownMenuComponent.IProps,
-                 PaperDropdownMenuComponent.IContext> {
+                 {}> {
 
   /**
    * The derived "label" of the currently selected item.
@@ -30,11 +29,15 @@ export class PaperDropdownMenuComponent
   }
 
   protected get cssVars() {
-    const theme = this.context.theme;
-    const styles = this.props.styles || {};
-    return {
-      '--paper-input-container-input-color': styles.textColor || theme.primaryTextColor
-    };
+    const styles = this.props.styles;
+    const vars: any = {};
+
+    if (styles) {
+      if (styles.textColor) {
+        vars['--paper-input-container-input-color'] = styles.textColor;
+      }
+    }
+    return vars;
   }
 
   protected get eventBindings() {
@@ -44,8 +47,9 @@ export class PaperDropdownMenuComponent
   }
 
   protected renderElement(props: PaperDropdownMenuComponent.IProps) {
+    const elementProps = omitOwnProps(props, ['styles']);
     return (
-      <paper-dropdown-menu {...props}></paper-dropdown-menu>
+      <paper-dropdown-menu {...elementProps}></paper-dropdown-menu>
     );
   }
 }
@@ -60,8 +64,5 @@ namespace PaperDropdownMenuComponent {
      * Call `e.preventDevault()` in the callback to prevent the item from being selected.
      */
     onWillSelectItem?: (e: PolymerElements.IronActivateEvent) => void;
-  }
-
-  export interface IContext extends themable.IContext {
   }
 }
