@@ -16,11 +16,12 @@ export class PaperButtonComponent
     const vars: any = {};
 
     if (styles) {
+      vars['--paper-button'] = {};
       if (styles.backgroundColor) {
-        vars['--paper-button-background-color'] = styles.backgroundColor;
+        vars['--paper-button']['background-color'] = styles.backgroundColor;
       }
       if (styles.textColor) {
-        vars['--paper-button-color'] = styles.textColor;
+        vars['--paper-button']['color'] = styles.textColor;
       }
     }
     return vars;
