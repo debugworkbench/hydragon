@@ -11,11 +11,6 @@
           "script": "code-mirror-editor/code-mirror-editor"
         },
         {
-          "tag": "file-input",
-          "template": "file-input/file-input.html",
-          "script": "file-input/file-input"
-        },
-        {
           "tag": "hydragon-directory-tree-view",
           "template": "tree-view/directory-tree-view.html",
           "script": "tree-view/directory-tree-view"
