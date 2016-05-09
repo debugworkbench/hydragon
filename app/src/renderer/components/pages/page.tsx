@@ -32,9 +32,16 @@ export class PageComponent extends React.Component<PageComponent.IProps, {}, Pag
       IronFlexLayout.vertical,
       {
         '> .contentWrapper': Object.assign(
-          { position: 'relative' },
+          {
+            position: 'relative',
+            padding: '10px',
+            overflow: 'hidden'
+          },
           IronFlexLayout.flex.auto
         ),
+        '> .contentWrapper:hover': {
+          overflowY: 'overlay'
+        },
         '> .toolbar': IronFlexLayout.flex.none
       }
     ));
