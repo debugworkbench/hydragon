@@ -5,7 +5,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { updatePolymerCSSVars } from '../../elements/utils';
-import { stylable } from '../decorators';
+import { stylable, themable } from '../decorators';
 import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
 import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
 import { PanelModel } from '../../models/ui';
@@ -16,6 +16,7 @@ import { PaperToolbarComponent } from '../paper';
  */
 @observer
 @stylable
+@themable
 @requiresElementFactory
 export class PanelComponent
        extends React.Component<PanelComponent.IProps, {}, PanelComponent.IContext>
@@ -44,7 +45,7 @@ export class PanelComponent
       boxSizing: 'border-box',
       position: 'relative',
       display: 'block',
-      backgroundColor: 'rgb(37, 37, 38)',
+      backgroundColor: this.context.theme.primaryBackgroundColor,
       '> .content-wrapper': IronFlexLayout.fit
     });
     this.className = `hydragon-panel ${this.styleId}`;
@@ -104,6 +105,6 @@ export namespace PanelComponent {
   }
 
   export interface IContext
-         extends stylable.IContext, IRequiresElementFactoryContext {
+         extends stylable.IContext, themable.IContext, IRequiresElementFactoryContext {
   }
 }
