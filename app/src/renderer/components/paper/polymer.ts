@@ -60,25 +60,36 @@ export abstract class PolymerComponent<
   protected abstract get eventBindings(): PolymerComponent.IEventBinding[];
 
   componentDidMount(): void {
-    this.eventBindings.forEach(binding =>
-      replaceEventListener(this.element, binding.event, null, (<any> this.props)[binding.listener])
-    );
+    this.eventBindings.forEach(binding => {
+      const listener = (typeof binding.listener === 'string')
+        ? (<any> this.props)[binding.listener]
+        : binding.listener;
+
+      replaceEventListener(this.element, binding.event, null, listener);
+    });
   }
 
   componentWillUnmount(): void {
-    this.eventBindings.forEach(binding =>
-      replaceEventListener(this.element, binding.event, (<any> this.props)[binding.listener], null)
-    );
+    this.eventBindings.forEach(binding => {
+      const listener = (typeof binding.listener === 'string')
+        ? (<any> this.props)[binding.listener]
+        : binding.listener;
+
+      replaceEventListener(this.element, binding.event, listener, null);
+    });
   }
 
   componentWillUpdate(nextProps: PolymerComponent.IProps): void {
     if (this.element) {
       this.eventBindings.forEach(binding => {
-        const newListener = (<any> nextProps)[binding.listener];
-        replaceEventListener(
-          this.element, binding.event,
-          (<any> this.props)[binding.listener], newListener
-        );
+        const oldListener = (typeof binding.listener === 'string')
+          ? (<any> this.props)[binding.listener]
+          : binding.listener;
+        const newListener = (typeof binding.listener === 'string')
+          ? (<any> nextProps)[binding.listener]
+          : binding.listener;
+
+        replaceEventListener(this.element, binding.event, oldListener, newListener);
       });
       updatePolymerCSSVars(this.element, Object.assign({}, this.props.cssVars, this.cssVars));
     }
@@ -92,7 +103,12 @@ export abstract class PolymerComponent<
 
   render() {
     if (!this.listeners) {
-      this.listeners = this.eventBindings.map(binding => binding.listener);
+      this.listeners = [];
+      this.eventBindings.forEach(binding => {
+        if (typeof binding.listener === 'string') {
+          this.listeners.push(binding.listener);
+        }
+      });
     }
     return this.renderElement(Object.assign(
       // `cssVars` is handled by this component so there's no need to pass it through,
@@ -137,6 +153,10 @@ export namespace PolymerComponent {
 
   export interface IEventBinding {
     event: string;
-    listener: string;
+    /**
+     * Either the name of a listener function passed to the React component via props, or an actual
+     * function that will be directly bound to an element.
+     */
+    listener: string | Function;
   }
 }

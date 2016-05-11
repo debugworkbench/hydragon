@@ -29,9 +29,11 @@ export class PaperInputComponent
     return vars;
   }
 
+  private onDidChange = (e: CustomEvent) => this.props.onDidChange(this.element.value);
+
   protected get eventBindings() {
     return [
-      { event: 'change', listener: 'onDidChange' }
+      { event: 'change', listener: this.onDidChange }
     ];
   }
 
@@ -56,7 +58,7 @@ namespace PaperInputComponent {
      * This callback will only be invoked after the focus leaves the input field,
      * so it won't be called for each and every character entered by the user.
      */
-    onDidChange?: (e: CustomEvent) => void;
+    onDidChange?: (newValue: string) => void;
     styles?: {
       /** Label and underline color when the input field is not focused. */
       unfocusedLabelColor?: string;

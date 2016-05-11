@@ -20,10 +20,7 @@ export class FileInputComponent
 
   private styleId: string;
 
-  private onDidChangeInput = (e: CustomEvent) => {
-    this.props.model.path = (Polymer.dom(e).rootTarget as PolymerElements.PaperInput).value;
-  }
-
+  private onDidChangeInput = (newValue: string) => this.props.model.path = newValue;
   private onDidTapBrowseButton = () => this.props.model.promptForFile();
 
   componentWillMount(): void {
