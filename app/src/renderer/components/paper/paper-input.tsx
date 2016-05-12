@@ -29,7 +29,11 @@ export class PaperInputComponent
     return vars;
   }
 
-  private onDidChange = (e: CustomEvent) => this.props.onDidChange(this.element.value);
+  private onDidChange = (e: CustomEvent) => {
+    if (this.props.onDidChange) {
+      this.props.onDidChange(this.element.value);
+    }
+  }
 
   protected get eventBindings() {
     return [
@@ -53,6 +57,27 @@ namespace PaperInputComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Text that should be displayed in the input field. */
     value?: string;
+    /** Type of control to display, defaults to `text`. */
+    type?: 'text' | 'number' | 'password';
+    /**
+     * Minimum (numeric or date-time) value, which must not be greater than [[max]].
+     * Note that this minimum is not strictly enforced, it will be enforced only when the value is
+     * decremented by the control itself, but the user is still free to type in any value they wish.
+     */
+    min?: string | number;
+    /**
+     * Maximum (numeric or date-time) value, which must not be less than [[min]].
+     * Note that this maximum is not strictly enforced, it will be enforced only when the value is
+     * incremented by the control itself, but the user is still free to type in any value they wish.
+     */
+    max?: string | number;
+    /**
+     * Works with [[min]] and [[max]] to limit the increments at which a numeric or
+     * date-time value can be set. It can be the string any or a positive floating point number.
+     * If this is not set the control accepts only values at multiples of the step value greater
+     * than [[minimum]].
+     */
+    step?: string | number;
     /**
      * Callback to invoke after the input field changes due to user interaction.
      * This callback will only be invoked after the focus leaves the input field,
