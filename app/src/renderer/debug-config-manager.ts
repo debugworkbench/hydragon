@@ -5,9 +5,11 @@ import { IDebugConfig } from 'debug-engine';
 import * as engineProvider from 'debug-engine';
 import * as fs from 'fs';
 import { Disposable, Emitter } from 'event-kit';
+import * as ajv from 'ajv';
 
 const DID_ADD_CONFIG_EVENT = 'add';
 const DID_REMOVE_CONFIG_EVENT = 'remove';
+// FIXME: This event is no longer emitted, figure out if it should be!
 const DID_RENAME_CONFIG_EVENT = 'rename';
 
 export interface IDebugConfigRenameInfo {
@@ -24,11 +26,59 @@ export interface IDebugConfigLoader {
   write(configs: IDebugConfig[]): Promise<void>;
 }
 
+// JSON schema for debug configurations created for the gdb-mi debug engine
+// FIXME: This doesn't belong here, should probably move it to the gdb-mi-debug-engine package
+const gdbMiDebugConfigSchema = {
+  '$schema': 'http://json-schema.org/draft-04/schema#',
+  title: 'Debug Config',
+  description: 'Debug configuration for the gdb-mi debug engine',
+  type: 'object',
+  properties: {
+    debuggerType: {
+      description: 'Debugger type',
+      enum: [0, 1]
+    },
+    debuggerPath: {
+      description: 'Local file path to the debugger executable',
+      type: 'string'
+    },
+    executable: {
+      description: 'Local file path to the target executable',
+      type: 'string'
+    },
+    executableArgs: {
+      description: 'Arguments to pass to the target executable',
+      type: 'string'
+    },
+    targetIsRemote: {
+      description: 'Indicates whether or not the target executable is actually on a remote machine',
+      type: 'boolean'
+    },
+    host: {
+      description: 'Host to connect to for remote debugging',
+      type: 'string'
+    },
+    port: {
+      description: 'Port to connect to for remote debugging',
+      type: 'number'
+    }
+  }
+};
+
 /**
  * Saves and loads debug configs from a file.
  */
 export class DebugConfigFileLoader implements IDebugConfigLoader {
+  private jsonSchemaValidator: ajv.Ajv;
+  private validateDebugConfig: ajv.ValidateFunction;
+
   constructor(private configPath: string) {
+    const jsonSchemaValidatorOptions: ajv.Options = {
+      // convert strings that represent numbers and booleans to the approriate JS primitive type
+      coerceTypes: true
+    };
+    this.jsonSchemaValidator = ajv(jsonSchemaValidatorOptions);
+    this.validateDebugConfig = this.jsonSchemaValidator.compile(gdbMiDebugConfigSchema);
   }
 
   canRead(): Promise<boolean> {
@@ -39,8 +89,8 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
     });
   }
 
-  read(): Promise<Array<IDebugConfig>> {
-    return new Promise<string>((resolve, reject) => {
+  async read(): Promise<Array<IDebugConfig>> {
+    const data = await new Promise<string>((resolve, reject) => {
       fs.readFile(this.configPath, 'utf8', (err, data) => {
         if (err) {
           reject(err);
@@ -49,9 +99,15 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
         }
       });
     })
-    .then((data) => {
-      return JSON.parse(data);
-    });
+    const configs: IDebugConfig[] = JSON.parse(data);
+    const validConfigs: IDebugConfig[] = [];
+    configs.forEach(config => {
+      if (this.validateDebugConfig(config)) {
+        validConfigs.push(config);
+      }
+      // TODO: report validation errors
+    })
+    return validConfigs;
   }
 
   write(configs: IDebugConfig[]): Promise<void> {
@@ -69,21 +125,14 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
 
 /**
  * Manages access to debug configs.
- *
- * Debug configs are saved to a single file stored at the path passed to the constructor.
- * To modify a config, clone an existing one, modify the clone, then save the clone (this will
- * replace the existing config).
  */
 export class DebugConfigManager {
   /** Original unmodified configs, should always be kept in sync with what's actually on disk. */
   private debugConfigs: IDebugConfig[];
-  /** Copies of original configs, these contain changes that may be saved to disk or discared. */
-  private pendingChanges: Map</*copy:*/IDebugConfig, /*original:*/IDebugConfig>;
   private emitter: Emitter;
 
   constructor(private loader: IDebugConfigLoader) {
     this.debugConfigs = [];
-    this.pendingChanges = new Map<IDebugConfig, IDebugConfig>();
     this.emitter = new Emitter();
   }
 
@@ -105,7 +154,6 @@ export class DebugConfigManager {
   /**
    * Get a saved debug config with the given name.
    *
-   * The returned config should be considered read-only, to modify a config call [[modify]].
    * @return A matching IDebugConfig, or null.
    */
   get(configName: string): IDebugConfig {
@@ -119,90 +167,33 @@ export class DebugConfigManager {
 
   /**
    * Get all saved debug configs.
-   * The returned configs should be considered read-only, to modify a config call [[modify]].
    */
   getAll(): IDebugConfig[] {
     return this.debugConfigs;
   }
 
   /**
-   * Make a copy of a config for modification.
-   *
-   * Once the returned config has been modified the changes can be saved to disk
-   * by calling [[save]], or discarded by calling [[discardChanges]].
-   * @return A copy of the given config.
-   */
-  modify(debugConfig: IDebugConfig): IDebugConfig {
-    if (this.debugConfigs.indexOf(debugConfig) !== -1) {
-      // prevent concurrent modification of the same config
-      this.pendingChanges.forEach((originalConfig) => {
-        if (debugConfig === originalConfig) {
-          throw new Error(`Debug config "${originalConfig.name}" is already being modified.`);
-        }
-      });
-
-      const copy = engineProvider.getEngine(debugConfig.engine).cloneConfig(debugConfig);
-      this.pendingChanges.set(copy, debugConfig);
-      return copy;
-    } else {
-      // this is a new config so there's no need to clone it
-      return debugConfig;
-    }
-  }
-
-  /**
-   * Discard any modifications made to a config.
-   *
-   * @param debugConfig An unsaved config returned by [[modify]].
-   */
-  discardChanges(debugConfig: IDebugConfig): void {
-    this.pendingChanges.delete(debugConfig);
-  }
-
-  /**
    * Save a new or modified config.
    *
-   * @param debugConfig A newly created config or one returned by [[modify]].
+   * @param debugConfig A config to save to disk.
    * @return A promise that will be resolved once the change has been written to disk.
    */
-  save(debugConfig: IDebugConfig): Promise<void> {
-    let originalConfig: IDebugConfig;
-    return Promise.resolve().then(() => {
-      // keep the original this.debugConfigs untouched until the updated configs are successfully
-      // written to disk
-      const configs = this.debugConfigs.slice(); // make a shallow copy
-      originalConfig = this.pendingChanges.get(debugConfig);
-      if (originalConfig) {
-        const idx = configs.indexOf(originalConfig);
-        if (idx > -1) {
-          configs[idx] = debugConfig;
-        } else {
-          throw new Error(`Original config "${originalConfig.name}" not found.`);
-        }
-      } else { // new config
-        if (configs.indexOf(debugConfig) !== -1) {
-          throw new Error(`Config "${debugConfig.name}" has already been saved.`);
-        }
-        configs.push(debugConfig);
-      }
-      return configs;
-    })
-    .then((configs) => {
-      return this.loader.write(configs)
-      .then(() => {
-        this.debugConfigs = configs;
-        this.discardChanges(debugConfig);
-        if (originalConfig) {
-          if (originalConfig.name !== debugConfig.name) {
-            this.emitter.emit(DID_RENAME_CONFIG_EVENT, <IDebugConfigRenameInfo> {
-              newName: debugConfig.name, oldName: originalConfig.name
-            });
-          }
-        } else {
-          this.emitter.emit(DID_ADD_CONFIG_EVENT, debugConfig);
-        }
-      });
-    });
+  async save(debugConfig: IDebugConfig): Promise<void> {
+    // keep the original this.debugConfigs untouched until the updated configs are successfully
+    // written to disk
+    const configs = this.debugConfigs.slice(); // make a shallow copy
+    const idx = this.debugConfigs.findIndex(config => config.name === debugConfig.name);
+    const isNewConfig = idx === -1;
+    if (isNewConfig) {
+      configs.push(debugConfig);
+    } else {
+      configs[idx] = debugConfig;
+    }
+    await this.loader.write(configs);
+    this.debugConfigs = configs;
+    if (isNewConfig) {
+      this.emitter.emit(DID_ADD_CONFIG_EVENT, debugConfig);
+    }
   }
 
   /**
@@ -210,26 +201,17 @@ export class DebugConfigManager {
    *
    * @return A promise that will be resolved once the change has been written to disk.
    */
-  remove(debugConfig: IDebugConfig): Promise<void> {
-    return Promise.resolve().then(() => {
-      let originalConfig = this.pendingChanges.get(debugConfig);
-      if (!originalConfig) {
-        originalConfig = debugConfig;
-      }
-
-      const configs = this.debugConfigs.slice(); // make a shallow copy
-      const idx = configs.indexOf(originalConfig);
-      if (idx > -1) {
-        configs.splice(idx, 1); // remove the config
-      }
-
-      return this.loader.write(configs)
-      .then(() => {
-        this.discardChanges(debugConfig);
-        this.debugConfigs = configs;
-        this.emitter.emit(DID_REMOVE_CONFIG_EVENT, debugConfig);
-      });
-    });
+  async remove(debugConfig: IDebugConfig): Promise<void> {
+    const configs = this.debugConfigs.slice(); // make a shallow copy
+    const idx = this.debugConfigs.findIndex(config => config.name === debugConfig.name);
+    if (idx !== -1) {
+      configs.splice(idx, 1); // remove the config
+    } else {
+      throw new Error(`Can't remove debug config ${debugConfig.name} as it was never saved.`);
+    }
+    await this.loader.write(configs);
+    this.debugConfigs = configs;
+    this.emitter.emit(DID_REMOVE_CONFIG_EVENT, debugConfig);
   }
 
   /**
@@ -237,20 +219,10 @@ export class DebugConfigManager {
    *
    * @return A promise that will be resolved once all configs have been loaded.
    */
-  load(): Promise<void> {
-    return Promise.resolve().then(() => {
-      this.debugConfigs = [];
-      // FIXME: throw an error if there are pending changes?
-      this.pendingChanges.clear();
-    })
-    .then(() => this.loader.canRead())
-    .then((canRead) => {
-      if (canRead) {
-        return this.loader.read()
-        .then((debugConfigs) => {
-          this.debugConfigs = debugConfigs;
-        });
-      }
-    });
+  async load(): Promise<void> {
+    this.debugConfigs = [];
+    if (this.loader.canRead()) {
+      this.debugConfigs = await this.loader.read();
+    }
   }
 }

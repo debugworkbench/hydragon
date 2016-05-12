@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-beta.2",
+    "ajv": "^4.0.5",
     "codemirror": "^5.8.0",
     "debug-engine": "github:debugworkbench/debug-engine",
     "event-kit": "^1.3.0",
