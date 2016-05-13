@@ -3,6 +3,7 @@
 
 import * as path from 'path';
 import * as electron from 'electron';
+import MobxDevToolsComponent from 'mobx-react-devtools';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
 import { WorkspaceComponent } from './components/workspace';
@@ -129,7 +130,8 @@ export class RendererContext {
           elementFactory: this.reactElementFactory,
           overrideCursor, resetCursor
         }),
-        React.createElement(styleRegistry.Element)
+        React.createElement(styleRegistry.Element),
+        React.createElement(MobxDevToolsComponent)
       )
     }));
     ReactDOM.render(React.createElement(rootComponent), rootContainer);
