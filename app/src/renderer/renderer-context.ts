@@ -103,12 +103,10 @@ export class RendererContext {
     const pagePresenter = new PagePresenter(workspaceModel);
     const pathPicker = new PathPickerProxy();
     const debugConfigPresenter = new DebugConfigPresenter({
-      pathPicker,
-      getExistingDebugConfig: debugConfigManager.get.bind(debugConfigManager),
-      setActiveDialog: (dialog: DialogModel) => {
-        workspaceModel.modalDialog = dialog;
-      },
-      openPage: pagePresenter.openPage.bind(pagePresenter)
+      debugConfigManager,
+      pagePresenter,
+      workspace: workspaceModel,
+      pathPicker
     });
 
     const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });

@@ -49,6 +49,7 @@ export class PageComponent extends React.Component<PageComponent.IProps, {}, Pag
   }
 
   render() {
+    const dirtyIndicator = this.props.model.isDirty ? '\u25cf ' : '';
     return (
       <div className="hydragon-page">
         <div className={this.className}>
@@ -61,7 +62,9 @@ export class PageComponent extends React.Component<PageComponent.IProps, {}, Pag
                 'margin-left': '10px'
               }
             }}>
-            <div className="title">{this.props.model.title}</div>
+            <div className="title">
+              {dirtyIndicator + this.props.model.title}
+            </div>
             <PaperIconButtonComponent
               icon="icons:close" alt="Close Page"
               onDidTap={this.onDidTapClose}

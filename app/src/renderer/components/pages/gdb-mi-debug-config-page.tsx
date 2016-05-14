@@ -2,7 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
-import { FreeStyle } from 'react-free-style';
+import { observer } from 'mobx-react';
 import { GdbMiDebugConfigPageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
@@ -17,6 +17,7 @@ import { stylable } from '../decorators';
  * Page component that displays a debug configuration form.
  */
 @stylable
+@observer
 export class GdbMiDebugConfigPageComponent
        extends React.Component<
                  GdbMiDebugConfigPageComponent.IProps, {}, GdbMiDebugConfigPageComponent.IContext> {
@@ -24,7 +25,10 @@ export class GdbMiDebugConfigPageComponent
   private styleId: string;
   private className: string;
 
-  private onDidClickClose = (e: React.MouseEvent) => this.props.model.close();
+  private onDidTapSaveButton = () => this.props.model.save();
+  private onDidChangeTargetExeArgs = (newValue: string) => this.props.model.executableArgs = newValue;
+  private onDidChangeDebuggerHost = (newValue: string) => this.props.model.host = newValue;
+  private onDidChangeDebuggerPort = (newValue: string) => this.props.model.port = Number(newValue);
 
   componentWillMount(): void {
     this.styleId = this.context.freeStyle.registerStyle(Object.assign(
@@ -50,12 +54,14 @@ export class GdbMiDebugConfigPageComponent
         </PaperDropdownMenuComponent>
         <FileInputComponent label="Debugger Path" model={model.debuggerPath} />
         <FileInputComponent label="Executable" model={model.executable} />
-        <PaperInputComponent label="Arguments" value={model.executableArgs} />
+        <PaperInputComponent label="Arguments" value={model.executableArgs} onDidChange={this.onDidChangeTargetExeArgs} />
 
         <PaperCheckboxComponent checked={model.targetIsRemote}>Remote Target</PaperCheckboxComponent>
-        <PaperInputComponent label="Host" value={model.host} />
-        <PaperInputComponent label="Port" value={model.port} />
-        <PaperButtonComponent>Save</PaperButtonComponent>
+        <PaperInputComponent label="Host" value={model.host} onDidChange={this.onDidChangeDebuggerHost} />
+        <PaperInputComponent label="Port" value={`${model.port}`}
+          type="number" min={0} max={65535} step={1}
+          onDidChange={this.onDidChangeDebuggerPort} />
+        <PaperButtonComponent onDidTap={this.onDidTapSaveButton}>Save</PaperButtonComponent>
       </PageComponent>
     );
   }

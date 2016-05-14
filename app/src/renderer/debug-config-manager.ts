@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { IDebugConfig } from 'debug-engine';
+import { IDebugConfig as IDebugEngineConfig } from 'debug-engine';
 import * as engineProvider from 'debug-engine';
 import * as fs from 'fs';
 import { Disposable, Emitter } from 'event-kit';
@@ -15,6 +15,17 @@ const DID_RENAME_CONFIG_EVENT = 'rename';
 export interface IDebugConfigRenameInfo {
   newName: string;
   oldName: string;
+}
+
+export interface IDebugConfig extends IDebugEngineConfig {
+  /**
+   * The last time the config was loaded from or saved to disk.
+   *
+   * A newly created config will have no timestamp at all (i.e. `undefined`) until the config is
+   * saved to disk. The timestamp itself should never be written to disk as doing so would produce
+   * unwanted diffs if users decide to store the configuration file in a revision control system.
+   */
+  timestamp?: number;
 }
 
 /**
@@ -103,6 +114,7 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
     const validConfigs: IDebugConfig[] = [];
     configs.forEach(config => {
       if (this.validateDebugConfig(config)) {
+        config.timestamp = Date.now();
         validConfigs.push(config);
       }
       // TODO: report validation errors
@@ -110,16 +122,15 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
     return validConfigs;
   }
 
-  write(configs: IDebugConfig[]): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      fs.writeFile(this.configPath, JSON.stringify(configs, null, 2), { encoding: 'utf8' }, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+  async write(configs: IDebugConfig[]): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+      fs.writeFile(
+        this.configPath, JSON.stringify(configs, null, 2), { encoding: 'utf8' },
+        err => err ? reject(err) : resolve()
+      );
     });
+    const timestamp = Date.now();
+    configs.forEach(config => config.timestamp = timestamp);
   }
 }
 

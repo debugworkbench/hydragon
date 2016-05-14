@@ -3,18 +3,17 @@
 
 import { DebugConfigManager } from './debug-config-manager';
 import { IDebugConfig } from 'debug-engine';
-import { CompositeDisposable } from 'event-kit';
 import { PagePresenter } from './page-presenter';
 import {
-  DialogModel, PageModel, NewDebugConfigDialogModel, GdbMiDebugConfigPageModel
+  WorkspaceModel, NewDebugConfigDialogModel, GdbMiDebugConfigPageModel
 } from './models/ui';
 import { PathPickerProxy } from './platform/path-picker-proxy';
 
 export class DebugConfigPresenter {
+  private debugConfigManager: DebugConfigManager;
+  private workspace: WorkspaceModel;
+  private pagePresenter: PagePresenter;
   private pathPicker: PathPickerProxy;
-  private getExistingDebugConfig: (configName: string) => IDebugConfig;
-  private setActiveDialog: (dialog: DialogModel) => void;
-  private openPage: (pageId: string, createPage: () => PageModel) => void;
 
   constructor(params: DebugConfigPresenter.IConstructorParams) {
     Object.assign(this, params)
@@ -32,13 +31,13 @@ export class DebugConfigPresenter {
       let sub = dialog.onDidClose(() => {
         try {
           sub.unsubscribe();
-          this.setActiveDialog(null);
+          this.workspace.modalDialog = null;
           resolve(dialog.debugConfig);
         } catch (error) {
           reject(error);
         }
       });
-      this.setActiveDialog(dialog);
+      this.workspace.modalDialog = dialog;
       dialog.open();
     });
   }
@@ -46,7 +45,7 @@ export class DebugConfigPresenter {
   private getDebugConfig(configName?: string): Promise<IDebugConfig> {
     return Promise.resolve()
     .then(() => {
-      return configName ? this.getExistingDebugConfig(configName) : this.createDebugConfig();
+      return configName ? this.debugConfigManager.get(configName) : this.createDebugConfig();
     });
   }
 
@@ -61,14 +60,15 @@ export class DebugConfigPresenter {
     return this.getDebugConfig(configName)
     .then(debugConfig => {
       if (debugConfig) {
-        this.openPage(
+        this.pagePresenter.openPage(
           `debug-config:${debugConfig.name}`,
           () => {
             const page = new GdbMiDebugConfigPageModel({
               id: `debug-config:${debugConfig.name}`,
+              debugConfig,
+              debugConfigManager: this.debugConfigManager,
               pathPicker: this.pathPicker
             });
-            page.title = `Debug Config ${debugConfig.name}`;
             return page;
           }
         );
@@ -79,9 +79,9 @@ export class DebugConfigPresenter {
 
 namespace DebugConfigPresenter {
   export interface IConstructorParams {
+    debugConfigManager: DebugConfigManager;
+    workspace: WorkspaceModel;
+    pagePresenter: PagePresenter;
     pathPicker: PathPickerProxy;
-    getExistingDebugConfig: (configName: string) => IDebugConfig;
-    setActiveDialog: (dialog: DialogModel) => void;
-    openPage: (pageId: string, createPage: () => PageModel) => void;
   }
 }
