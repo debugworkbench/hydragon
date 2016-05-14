@@ -2,7 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import { WorkspaceModel, PageSetModel, PageModel } from './models/ui';
-import { autorun, Lambda } from 'mobx';
+import { autorun, Lambda, transaction } from 'mobx';
 
 /**
  * Creates and activates page elements.
@@ -45,9 +45,11 @@ export class PagePresenter {
         this.pageIdToModelMap.delete(pageId)
         sub.unsubscribe();
       });
-      this.lastActivePageSet.addPage(page);
-      this.pageIdToModelMap.set(pageId, { page, pageSet: this.lastActivePageSet });
-      this.lastActivePageSet.activatePage(page);
+      transaction(() => {
+        this.lastActivePageSet.addPage(page);
+        this.pageIdToModelMap.set(pageId, { page, pageSet: this.lastActivePageSet });
+        this.lastActivePageSet.activatePage(page);
+      });
     }
   }
 }

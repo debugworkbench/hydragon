@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { observable, autorun, Lambda } from 'mobx';
+import { observable, autorun, Lambda, transaction } from 'mobx';
 import { Subject, Observable, Subscription } from '@reactivex/rxjs';
 import { PageModel } from './page';
 import { PanelModel, IPanelItem } from '../layout/panel';
@@ -39,17 +39,19 @@ export class PageSetModel implements IPanelItem {
   }
 
   addPage(page: PageModel): void {
-    this.pages.push(page);
-    page.onDidAttachToPageSet(this);
-    const sub = page.didCloseStream.subscribe(page => {
-      this.removePage(page);
-      sub.unsubscribe();
-    });
-    this.didAddPageStream.next(page);
+    transaction(() => {
+      this.pages.push(page);
+      page.onDidAttachToPageSet(this);
+      const sub = page.didCloseStream.subscribe(page => {
+        this.removePage(page);
+        sub.unsubscribe();
+      });
+      this.didAddPageStream.next(page);
 
-    if (!this.activePage) {
-      this.activatePage(page);
-    }
+      if (!this.activePage) {
+        this.activatePage(page);
+      }
+    });
   }
 
   removePage(page: PageModel): void {
