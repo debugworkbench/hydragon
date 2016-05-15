@@ -6,8 +6,8 @@ Extensible multi-platform debugger frontend.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) **4.x.x**
-- [NPM](https://www.npmjs.com/) **3.x.x** (2.x.x may also work)
+- [Node.js](https://nodejs.org/) **6.1.x**
+- [NPM](https://www.npmjs.com/) **3.x.x**
 - [Bower](http://bower.io/) - `npm install bower -g`
 - [Grunt](http://gruntjs.com) - `npm install grunt-cli -g`
 
