@@ -9,7 +9,6 @@ export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-ibsforts');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
-  grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('grunt-vulcanize');
 
   const repoRoot = __dirname;
@@ -82,20 +81,6 @@ export = function(grunt: IGrunt) {
         }
       }
     },
-    'tslint': {
-      errors: {
-        options: {
-          configuration: grunt.file.readJSON('app/conf/tslint.json')
-        },
-        files: {
-          src: [
-            'tasks/*.ts',
-            'app/src/**/*.ts',
-            'test/**/*.ts'
-          ]
-        }
-      }
-    },
     'vulcanize': {
       default: {
         options: {
@@ -148,7 +133,7 @@ export = function(grunt: IGrunt) {
     */
   });
 
-  grunt.registerTask('lint', ['jshint', 'tslint']);
+  grunt.registerTask('lint', ['jshint']);
   // FIXME: need some sort of dependency resolution for build and watch tasks!
   grunt.registerTask('build', ['ibsforts:common', 'ibsforts:main', 'ibsforts:renderer']);
   grunt.registerTask('watch', ['ibsforts:watch']);
