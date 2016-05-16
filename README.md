@@ -26,7 +26,7 @@ Then setup the build system:
 ```shell
 cd ..
 npm install
-grunt rebuild-native-modules
+npm run build:native-modules
 ```
 
 Note that the first time you rebuild the native modules it may take a few minutes (and there won't
@@ -65,25 +65,27 @@ code running in the main Electron process by following these steps:
 ## NodeJS modules
 
 Native NodeJS modules used during the build must be built specifically for the NodeJS version used
-to run Grunt etc. However, native NodeJS modules used by Hydragon or any of its dependencies must
-be built with the same NodeJS SDK version that was used to build the Electron runtime.
-To that end any NodeJS modules used by the build system must be referenced in the `package.json`
-file located in this folder, while any NodeJS modules used by Hydragon at runtime must be
-referenced in the `package.json` at the root of this repo. More background info can be found in
-the Electron docs on [native NodeJS modules](https://github.com/atom/electron/blob/v0.35.4/docs/tutorial/using-native-node-modules.md).
+by the build system and the various development packages. However, native NodeJS modules used by
+Hydragon or any of its dependencies must be built with the same NodeJS SDK version that's integrated
+into the Electron runtime.
 
-The `Gruntfile` in this folder has tasks to download the NodeJS SDK used to build Electron, and
-rebuild any native modules found in `app/node_modules`, it can be run using:
+To that end any NodeJS modules used by the build system must be referenced in the `package.json`
+file located in this directory, while any NodeJS modules used by Hydragon at runtime must be
+referenced in the `package.json` found in the `app` directory. More background info can be found in
+the Electron docs on [native NodeJS modules](https://github.com/electron/electron/blob/v0.37.8/docs/tutorial/using-native-node-modules.md).
+
+To download the NodeJS SDK used to build Electron and rebuild any native modules in
+`app/node_modules` execute the following command in the terminal:
 
 ```shell
-grunt rebuild-native-modules
+npm run build:native-modules
 ```
 
 ## Custom Elements
 
-There are a number of build tasks associated with the elements in `app/src/renderer-process/elements`,
-during development you may need to run some or all of them depending on what which files you're
-modifying. These tasks can be run in any order.
+There are a number of build tasks associated with the custom elements in
+`app/src/renderer-process/elements`, during development you may need to run some or all of them
+depending on what which files you're modifying. These tasks can be run in any order.
 
 - `grunt vulcanize` will bundle up the dependencies in `app/bower_components`, this needs to be rerun
   whenever the contents of `app/bower_components` change.

@@ -9,6 +9,7 @@
     "files": [
         "typings/gruntjs/gruntjs.d.ts",
         "typings/main/ambient/shelljs/shelljs.d.ts",
+        "typings/main/definitions/yargs/yargs.d.ts",
         "typings/glob/glob.d.ts",
         "typings/source-map/source-map.d.ts",
         "typings/electron-rebuild/electron-rebuild.d.ts",

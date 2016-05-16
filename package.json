@@ -9,7 +9,9 @@
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "postinstall": "./node_modules/.bin/ts-node npm-post-install.ts"
+    "postinstall": "./node_modules/.bin/ts-node npm-post-install.ts",
+    "build:native-modules": "./node_modules/.bin/ts-node ./tasks/rebuild-native-modules.ts ./app/node_modules",
+    "build:tasks": "./node_modules/.bin/tsc"
   },
   "dependencies": {
     "babel-core": "^6.5.2",
@@ -31,6 +33,7 @@
     "ts-node": "^0.7.3",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.5.1",
-    "typescript": "^1.9.0-dev.20160513"
+    "typescript": "^1.9.0-dev.20160513",
+    "yargs": "^4.7.0"
   }
 }

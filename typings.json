@@ -1,5 +1,8 @@
 {
   "ambientDependencies": {
     "shelljs": "github:DefinitelyTyped/DefinitelyTyped/shelljs/shelljs.d.ts#ce14ae27a020194da3d35aa3468ca1e9e5296316"
+  },
+  "dependencies": {
+    "yargs": "github:typed-typings/npm-yargs#1318e35095ddc705f62d180b6517fff2f6664301"
   }
 }
