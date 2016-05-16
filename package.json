@@ -10,8 +10,13 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "./node_modules/.bin/ts-node npm-post-install.ts",
+    "start": "npm run electron",
+
     "build:native-modules": "./node_modules/.bin/ts-node ./tasks/rebuild-native-modules.ts ./app/node_modules",
-    "build:tasks": "./node_modules/.bin/tsc"
+    "build:tasks": "./node_modules/.bin/tsc",
+    "electron": "./node_modules/.bin/ts-node ./tasks/run-electron.ts ./app/lib/main/main.js",
+    "electron:debug": "./node_modules/.bin/ts-node ./tasks/run-electron.ts ./app/lib/main/main.js --debug --stop-at-entry",
+    "node-inspector": "./node_modules/.bin/ts-node ./tasks/run-node-inspector.ts ./app/node_modules/node-inspector/bin/inspector.js"
   },
   "dependencies": {
     "babel-core": "^6.5.2",

@@ -35,7 +35,7 @@ the headers and libs needed to rebuild the modules. If anything actually goes wr
 process errors will be displayed in the console.
 
 Once the native modules have been rebuilt you can build the app itself by executing `grunt` from
-the root directory, and once built the app can be launched with `npm start` or `grunt run-electron`.
+the root directory, and once built the app can be launched with `npm start` or `npm run electron`.
 
 ## Directory Layout
 
@@ -48,8 +48,8 @@ the root directory, and once built the app can be launched with `npm start` or `
     directory should be ready to use at runtime (if a file needs any kind of pre-processing it
     doesn't belong in here).
   - `typings` - TypeScript type definitions for modules in `node_modules`.
-- `tasks` - Grunt tasks used to build, run, and test the application.
-- `node_modules` - Node modules used by the Grunt tasks.
+- `tasks` - Tasks used to build, run, and test the application.
+- `node_modules` - Node modules used by the build system.
 - `typings` - TypeScript type definitions for modules in `node_modules`.
 
 ## Debugging JavaScript in the main process
@@ -57,8 +57,8 @@ the root directory, and once built the app can be launched with `npm start` or `
 [node-inspector](https://github.com/node-inspector/node-inspector) can be used to debug JavaScript
 code running in the main Electron process by following these steps:
 
-1. Start `node-inspector` by running `grunt run-node-inspector` from the project root directory.
-2. Start Hydragon by running `grunt run-electron:debug`.
+1. Start `node-inspector` by running `npm run node-inspector` from the project root directory.
+2. Start Hydragon by running `npm run electron:debug`.
 3. Open the URL that `node-inspector` prints out in `Chrome`,
    e.g. `http://127.0.0.1:8080/?ws=127.0.0.1:8080&port=5858`
 

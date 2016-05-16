@@ -3,18 +3,6 @@
 import * as path from 'path';
 import * as glob from 'glob';
 
-/** Load Grunt tasks from the .ts files in the tasks directory. */
-function loadTasks(grunt: IGrunt): void {
-  try {
-    const files = glob.sync('*.ts', { cwd: 'tasks' });
-    files.forEach((filename) => {
-      require('./tasks/' + path.basename(filename, '.ts'))(grunt);
-    });
-  } catch (e) {
-    grunt.log.verbose.error(e.stack).or.error(e);
-  }
-}
-
 export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -23,9 +11,6 @@ export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-sync');
   grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('grunt-vulcanize');
-  // grunt.loadTasks() only loads .js and .coffee files, so gotta load .ts files separately
-  loadTasks(grunt);
-
 
   const repoRoot = __dirname;
   const packageJson = grunt.file.readJSON('./package.json');
@@ -126,35 +111,6 @@ export = function(grunt: IGrunt) {
         files: {
           // output: input
           'app/bower_components/dependencies_bundle.html': 'app/bower_components/dependencies.html'
-        }
-      }
-    },
-    'rebuild-native-modules': {
-      default: {
-        options: {
-          nodeModulesDir: path.join(repoRoot, 'app', 'node_modules')
-        }
-      }
-    },
-    'run-node-inspector': {
-      default: {
-        options: {
-          scriptPath: path.join(repoRoot, 'app', 'node_modules', 'node-inspector', 'bin', 'inspector.js')
-        }
-      }
-    },
-    'run-electron': {
-      options: {
-        cwd: repoRoot,
-        scriptPath: path.join('app', 'lib', 'main', 'main.js'),
-      },
-      default: {
-        // run Electron normally without debugging
-      },
-      debug: {
-        options: {
-          debug: true,
-          stopAtEntry: true
         }
       }
     },
