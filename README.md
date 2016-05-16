@@ -37,6 +37,20 @@ process errors will be displayed in the console.
 Once the native modules have been rebuilt you can build the app itself by executing `grunt` from
 the root directory, and once built the app can be launched with `npm start` or `npm run electron`.
 
+## NPM Scripts
+
+- `npm start` - launches the Hydragon app (same as `npm run electron`).
+- `npm run build:native-modules` - rebuilds all native Node module in `app/node_modules` dir,
+  [see below for details](#nodejs-modules).
+- `npm run build:tasks` - transpiles TypeScript source files in `tasks` dir to JavaScript (only used
+  when debugging the tasks).
+- `npm run electron` - launches the Hydragon app.
+- `npm run electron:debug` - launches the Hydragon app with main process debugging enabled,
+  [see below for details](#debugging-javascript-in-the-main-process).
+- `npm run lint -s` - runs `tslint` on the TypeScript source files.
+- `npm run node-inspector` - launches `node-inspector` for debugging the main process of the
+  Hydragon app, [see below for details](#debugging-javascript-in-the-main-process).
+
 ## Directory Layout
 
 - `app`

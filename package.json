@@ -16,6 +16,7 @@
     "build:tasks": "./node_modules/.bin/tsc",
     "electron": "./node_modules/.bin/ts-node ./tasks/run-electron.ts ./app/lib/main/main.js",
     "electron:debug": "./node_modules/.bin/ts-node ./tasks/run-electron.ts ./app/lib/main/main.js --debug --stop-at-entry",
+    "lint": "tslint -c app/conf/tslint.json tasks/*.ts app/src/**/*.ts test/**/*.ts",
     "node-inspector": "./node_modules/.bin/ts-node ./tasks/run-node-inspector.ts ./app/node_modules/node-inspector/bin/inspector.js"
   },
   "dependencies": {
@@ -31,13 +32,12 @@
     "grunt-ibsforts": "github:enlight/grunt-ibsforts",
     "grunt-preprocess": "^5.0.1",
     "grunt-sync": "^0.4.1",
-    "grunt-tslint": "^2.5.0",
     "grunt-vulcanize": "^1.0.0",
     "load-grunt-tasks": "^3.3.0",
     "shelljs": "^0.6.0",
     "ts-node": "^0.7.3",
     "tsd": "^0.6.0-beta.5",
-    "tslint": "^2.5.1",
+    "tslint": "^3.10.0-dev.2",
     "typescript": "^1.9.0-dev.20160513",
     "yargs": "^4.7.0"
   }
