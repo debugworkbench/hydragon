@@ -1,13 +1,13 @@
 // Copyright (c) 2015 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as electron from 'electron';
+import { app, protocol } from 'electron';
 import * as path from 'path';
 import { Application } from './application';
+import { AppProtocolHandler } from './protocol-handlers';
 
 //require('crash-reporter').start();
 
-const app = electron.app;
 let application: Application;
 
 interface CommandLineArgs {
@@ -30,6 +30,9 @@ function main(): void {
   if (args['env-path'] !== undefined) {
     process.env.PATH = args['env-path'];
   }
+
+  // protocol.registerStandardSchemes() must be called before the `ready` event is emitted
+  protocol.registerStandardSchemes([AppProtocolHandler.scheme]);
 
   app.on('ready', () => {
     const rootPath = path.resolve(__dirname, '..', '..');

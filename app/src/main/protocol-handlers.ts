@@ -22,8 +22,6 @@ export class AppProtocolHandler {
       (error: string) => {
         if (error) {
           console.log(error);
-        } else {
-          protocol.registerStandardSchemes([AppProtocolHandler.scheme]);
         }
       }
     );
