@@ -11,8 +11,12 @@
   "scripts": {
     "postinstall": "ts-node npm-post-install.ts",
     "start": "npm run electron",
-
+    "build:common": "tsc -p ./app/src/common/tsconfig.json",
+    "build:main": "tsc -p ./app/src/main/tsconfig.json",
     "build:native-modules": "ts-node ./tasks/rebuild-native-modules.ts ./app/node_modules",
+    "build:renderer": "npm run build:renderer-phase1 && npm run build:renderer-phase2",
+    "build:renderer-phase1": "tsc -p ./app/src/renderer/tsconfig.json",
+    "build:renderer-phase2": "babel ./app/lib/renderer/elements -d ./app/lib/renderer/elements",
     "build:tasks": "tsc",
     "electron": "ts-node ./tasks/run-electron.ts ./app/lib/main/main.js",
     "electron:debug": "ts-node ./tasks/run-electron.ts ./app/lib/main/main.js --debug --stop-at-entry",
@@ -20,16 +24,13 @@
     "node-inspector": "ts-node ./tasks/run-node-inspector.ts ./app/node_modules/node-inspector/bin/inspector.js"
   },
   "dependencies": {
-    "babel-core": "^6.5.2",
-    "babel-plugin-transform-es2015-destructuring": "^6.5.0",
-    "babel-plugin-transform-es2015-parameters": "^6.5.0",
+    "babel-cli": "^6.8.0",
     "babel-plugin-transform-polymer-base": "github:enlight/babel-plugin-transform-polymer-base",
     "electron-prebuilt": "^1.1.0",
     "electron-rebuild": "^1.1.4",
     "grunt": "^0.4.5",
     "grunt-concurrent": "^2.1.0",
     "grunt-contrib-jshint": "^0.11.3",
-    "grunt-ibsforts": "github:enlight/grunt-ibsforts",
     "grunt-preprocess": "^5.0.1",
     "grunt-sync": "^0.4.1",
     "grunt-vulcanize": "^1.0.0",

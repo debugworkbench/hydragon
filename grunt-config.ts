@@ -6,7 +6,6 @@ import * as glob from 'glob';
 export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-ibsforts');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
   grunt.loadNpmTasks('grunt-vulcanize');
@@ -14,61 +13,8 @@ export = function(grunt: IGrunt) {
   const repoRoot = __dirname;
   const packageJson = grunt.file.readJSON('./package.json');
 
-  const buildServerPlugins = [{
-    module: 'ibsforts-plugin-babel',
-    transform: 'babelTransform',
-    options: {
-      enableNodeModuleResolution: true,
-      plugins: [
-        'transform-es2015-parameters',
-        'transform-es2015-destructuring',
-        'transform-polymer-base'
-      ]
-    }
-  }];
-
-  const commonProjectBuildTaskOptions = {
-    projectConfigPath: 'app/src/common/tsconfig.json',
-    plugins: buildServerPlugins
-  };
-  const mainProjectBuildTaskOptions = {
-    projectConfigPath: 'app/src/main/tsconfig.json',
-    plugins: buildServerPlugins
-  };
-  const rendererProjectBuildTaskOptions = {
-    projectConfigPath: 'app/src/renderer/tsconfig.json',
-    plugins: buildServerPlugins
-  };
-
   grunt.initConfig({
     'pkg': packageJson,
-    'ibsforts': {
-      options: {
-        projects: [
-          commonProjectBuildTaskOptions,
-          mainProjectBuildTaskOptions,
-          rendererProjectBuildTaskOptions
-        ]
-      },
-      'common': {
-        options: commonProjectBuildTaskOptions
-      },
-      'main': {
-        options: mainProjectBuildTaskOptions
-      },
-      'renderer': {
-        options: rendererProjectBuildTaskOptions
-      },
-      'build': {
-        // this target will build all projects specified in `options.projects`
-      },
-      'watch': {
-        // this target will watch and rebuild all projects specified in `options.projects`
-        options: {
-          watch: true
-        }
-      }
-    },
     'jshint': {
       files: ['Gruntfile.js'],
       options: {
@@ -134,8 +80,5 @@ export = function(grunt: IGrunt) {
   });
 
   grunt.registerTask('lint', ['jshint']);
-  // FIXME: need some sort of dependency resolution for build and watch tasks!
-  grunt.registerTask('build', ['ibsforts:common', 'ibsforts:main', 'ibsforts:renderer']);
-  grunt.registerTask('watch', ['ibsforts:watch']);
-  grunt.registerTask('default', ['lint', 'build']);
+  grunt.registerTask('default', ['lint']);
 };
