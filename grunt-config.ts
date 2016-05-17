@@ -8,7 +8,6 @@ export = function(grunt: IGrunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
-  grunt.loadNpmTasks('grunt-vulcanize');
 
   const repoRoot = __dirname;
   const packageJson = grunt.file.readJSON('./package.json');
@@ -24,24 +23,6 @@ export = function(grunt: IGrunt) {
           console: true,
           module: true,
           document: true
-        }
-      }
-    },
-    'vulcanize': {
-      default: {
-        options: {
-          // extract all inline JavaScript into a separate file to work around Atom's
-          // Content Security Policy
-          csp: 'dependencies_bundle.js',
-          // files matching these patterns will not be bundled
-          stripExcludes: [
-            // it's got nasty shadow DOM piercing combinators in it
-            'iron-shadow-flex-layout.html'
-          ]
-        },
-        files: {
-          // output: input
-          'app/bower_components/dependencies_bundle.html': 'app/bower_components/dependencies.html'
         }
       }
     },

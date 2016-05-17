@@ -41,15 +41,17 @@ the root directory, and once built the app can be launched with `npm start` or `
 
 - `npm start` - launches the Hydragon app (same as `npm run electron`).
 - `npm run build:native-modules` - rebuilds all native Node module in `app/node_modules` dir,
-  [see below for details](#nodejs-modules).
+  see [Native NodeJS modules](#native-nodejs-modules).
 - `npm run build:tasks` - transpiles TypeScript source files in `tasks` dir to JavaScript (only used
   when debugging the tasks).
 - `npm run electron` - launches the Hydragon app.
 - `npm run electron:debug` - launches the Hydragon app with main process debugging enabled,
-  [see below for details](#debugging-javascript-in-the-main-process).
+  see [Debugging JavaScript in the main process](#debugging-javascript-in-the-main-process).
 - `npm run lint -s` - runs `tslint` on the TypeScript source files.
 - `npm run node-inspector` - launches `node-inspector` for debugging the main process of the
-  Hydragon app, [see below for details](#debugging-javascript-in-the-main-process).
+  Hydragon app, see [Debugging JavaScript in the main process](#debugging-javascript-in-the-main-process).
+- `npm run vulcanize` - bundles the contents of `app/bower_components`, see
+  [Custom Elements](#custom-elements).
 
 ## Directory Layout
 
@@ -76,7 +78,7 @@ code running in the main Electron process by following these steps:
 3. Open the URL that `node-inspector` prints out in `Chrome`,
    e.g. `http://127.0.0.1:8080/?ws=127.0.0.1:8080&port=5858`
 
-## NodeJS modules
+## Native NodeJS modules
 
 Native NodeJS modules used during the build must be built specifically for the NodeJS version used
 by the build system and the various development packages. However, native NodeJS modules used by
@@ -101,12 +103,13 @@ There are a number of build tasks associated with the custom elements in
 `app/src/renderer-process/elements`, during development you may need to run some or all of them
 depending on what which files you're modifying. These tasks can be run in any order.
 
-- `grunt vulcanize` will bundle up the dependencies in `app/bower_components`, this needs to be rerun
-  whenever the contents of `app/bower_components` change.
+- `npm run vulcanize` will bundle up the dependencies in `app/bower_components`, this needs to be
+  rerun whenever the contents of `app/bower_components` change.
 - `grunt preprocess` will preprocess some of the element `.html` files.
 - `grunt sync` will copy all the element `.html` files to the `app/lib` directory, this is where the
   app will load them from at runtime.
-- `grunt build` will compile all the element `.ts` files and place the output in the `app/lib` directory.
+- `npm run build:renderer` will compile all the element `.ts` files and place the output in the
+  `app/lib` directory.
 
 
 # License
