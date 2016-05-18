@@ -30,6 +30,7 @@ export function importHref(href: string): Promise<void> {
 export function replaceEventListener(
   element: HTMLElement, event: string, oldListener: EventListener, newListener: EventListener
 ): void {
+  // tslint:disable-next-line:triple-equals
   if (newListener != oldListener) {
     if (oldListener) {
       element.removeEventListener(event, oldListener);

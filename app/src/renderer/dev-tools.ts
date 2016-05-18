@@ -8,5 +8,5 @@ export function register(): void {
   window.addEventListener('contextmenu', event => {
     event.preventDefault();
     ipcRenderer.send(DevTools.IPC_INSPECT_ELEMENT, { x: event.x, y: event.y });
-  })
+  });
 }

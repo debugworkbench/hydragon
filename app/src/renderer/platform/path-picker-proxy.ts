@@ -42,7 +42,7 @@ export class PathPickerProxy {
       this.pendingRequests.set(request.id, (filePaths: string[]) => {
         this.pendingRequests.delete(request.id);
         (filePaths.length > 0) ? resolve(filePaths[0]) : resolve(null);
-      })
+      });
       ipcRenderer.send(PathPickerIpc.IPC_PICK_PATH_REQUEST, request);
     });
   }

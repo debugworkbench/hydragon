@@ -51,5 +51,6 @@ export class PageTreeModel implements IPanelItem {
   }
 
   onDidAttachToPanel(panel: PanelModel): void {
+    // override in subclass if needed
   }
 }

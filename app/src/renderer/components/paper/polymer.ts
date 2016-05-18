@@ -51,6 +51,7 @@ export abstract class PolymerComponent<
    * @param ref The new custom element reference, may be `null`.
    */
   protected elementRefDidChange(ref: TPolymerElement): void {
+    // override in subclass if needed
   }
 
   /**

@@ -16,7 +16,7 @@ export class DebugConfigPresenter {
   private pathPicker: PathPickerProxy;
 
   constructor(params: DebugConfigPresenter.IConstructorParams) {
-    Object.assign(this, params)
+    Object.assign(this, params);
   }
 
   /**

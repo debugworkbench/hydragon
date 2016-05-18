@@ -109,7 +109,7 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
           resolve(data);
         }
       });
-    })
+    });
     const configs: IDebugConfig[] = JSON.parse(data);
     const validConfigs: IDebugConfig[] = [];
     configs.forEach(config => {
@@ -118,7 +118,7 @@ export class DebugConfigFileLoader implements IDebugConfigLoader {
         validConfigs.push(config);
       }
       // TODO: report validation errors
-    })
+    });
     return validConfigs;
   }
 

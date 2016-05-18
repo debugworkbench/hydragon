@@ -75,7 +75,7 @@ export class GdbMiDebugConfigPageModel extends PageModel {
         this.executable = new FileInputModel({ pathKind: 'file', pathPicker });
         this.debuggerPath = new FileInputModel({ pathKind: 'file', pathPicker });
       }
-    })
+    });
   }
 
   /**

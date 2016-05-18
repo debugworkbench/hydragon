@@ -42,7 +42,7 @@ export class PagePresenter {
     } else {
       const page = createPage();
       const sub = page.didCloseStream.subscribe(page => {
-        this.pageIdToModelMap.delete(pageId)
+        this.pageIdToModelMap.delete(pageId);
         sub.unsubscribe();
       });
       transaction(() => {
