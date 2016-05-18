@@ -4,9 +4,7 @@ import * as path from 'path';
 import * as glob from 'glob';
 
 export = function(grunt: IGrunt) {
-  grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sync');
 
   const repoRoot = __dirname;
@@ -39,25 +37,7 @@ export = function(grunt: IGrunt) {
         verbose: true,
         //pretend: true
       }
-    },
-    'preprocess': {
-      elements: {
-        src: 'app/src/renderer/elements/code-mirror-editor/code-mirror-styles.html',
-        dest: 'app/lib/renderer/elements/code-mirror-editor/code-mirror-styles.html'
-      }
-    },
-    /*
-    'concurrent': {
-      default: {
-        tasks: [
-          'ibsforts:watch'
-        ],
-        options: {
-          logConcurrentOutput: true
-        }
-      }
     }
-    */
   });
 
   grunt.registerTask('lint', ['jshint']);

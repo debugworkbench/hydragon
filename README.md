@@ -105,7 +105,7 @@ depending on what which files you're modifying. These tasks can be run in any or
 
 - `npm run vulcanize` will bundle up the dependencies in `app/bower_components`, this needs to be
   rerun whenever the contents of `app/bower_components` change.
-- `grunt preprocess` will preprocess some of the element `.html` files.
+- `npm run preprocess` will preprocess some of the element `.html` files.
 - `grunt sync` will copy all the element `.html` files to the `app/lib` directory, this is where the
   app will load them from at runtime.
 - `npm run build:renderer` will compile all the element `.ts` files and place the output in the
