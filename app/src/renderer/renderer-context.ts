@@ -14,7 +14,7 @@ import { DebugConfigManager, DebugConfigFileLoader } from './debug-config-manage
 import { DebugConfigPresenter } from './debug-config-presenter';
 import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
-import * as DevTools from './dev-tools';
+import { RendererDevTools } from './dev-tools';
 import { PagePresenter } from './page-presenter';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
@@ -46,6 +46,8 @@ export class RendererContext {
   reactElementFactory: ReactElementFactory;
   rootPath: string;
 
+  private devTools: RendererDevTools;
+
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
     const newContext = new RendererContext(config);
@@ -61,6 +63,7 @@ export class RendererContext {
 
   constructor(config: IAppWindowConfig) {
     this.rootPath = config.rootPath;
+    this.devTools = new RendererDevTools();
   }
 
   async initialize(): Promise<void> {
@@ -155,8 +158,6 @@ export class RendererContext {
       };
       return page;
     });
-
-    DevTools.register();
   }
 
   showWindow(): void {

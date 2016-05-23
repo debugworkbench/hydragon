@@ -2,10 +2,59 @@
 // MIT License, see LICENSE file for full terms.
 
 import { ipcMain, BrowserWindow } from 'electron';
-import * as DevTools from '../common/dev-tools';
+import * as ipc from '../common/dev-tools-ipc';
 
-export function register(): void {
-  ipcMain.on(DevTools.IPC_INSPECT_ELEMENT, (event, { x = 0, y = 0 }) => {
-    BrowserWindow.getFocusedWindow().inspectElement(x, y);
-  });
+/**
+ * Allows Electron DevTools to be controlled from a renderer process via IPC.
+ */
+export class DevTools {
+  constructor() {
+    ipcMain.on(ipc.IPC_CONNECT, onConnectRequest);
+    ipcMain.on(ipc.IPC_OPEN, onOpenRequest);
+    ipcMain.on(ipc.IPC_CLOSE, onCloseRequest);
+    ipcMain.on(ipc.IPC_INSPECT_ELEMENT, onInspectElementRequest);
+  }
+
+  dispose(): void {
+    ipcMain.removeListener(ipc.IPC_CONNECT, onConnectRequest);
+    ipcMain.removeListener(ipc.IPC_OPEN, onOpenRequest);
+    ipcMain.removeListener(ipc.IPC_CLOSE, onCloseRequest);
+    ipcMain.removeListener(ipc.IPC_INSPECT_ELEMENT, onInspectElementRequest);
+  }
 }
+
+function onConnectRequest(event: GitHubElectron.IMainIPCEvent): void {
+  const webContents = event.sender;
+  webContents.on('devtools-opened', onDidOpen);
+  webContents.on('devtools-closed', onDidClose);
+  webContents.once('destroyed', (event: GitHubElectron.IMainIPCEvent) => {
+    event.sender.removeListener('devtools-opened', onDidOpen);
+    event.sender.removeListener('devtools-closed', onDidClose);
+  });
+  const response: ipc.IConnectResponse = {
+    isWindowOpen: webContents.isDevToolsOpened()
+  };
+  webContents.send(ipc.IPC_CONNECT, response);
+}
+
+function onOpenRequest(event: GitHubElectron.IMainIPCEvent): void {
+  event.sender.openDevTools();
+}
+
+function onCloseRequest(event: GitHubElectron.IMainIPCEvent): void {
+  event.sender.closeDevTools();
+}
+
+function onDidOpen(event: GitHubElectron.IMainIPCEvent): void {
+  event.sender.send(ipc.IPC_DID_OPEN);
+}
+
+function onDidClose(event: GitHubElectron.IMainIPCEvent): void {
+  event.sender.send(ipc.IPC_DID_CLOSE);
+}
+
+function onInspectElementRequest(
+  event: GitHubElectron.IMainIPCEvent, request: ipc.IInspectElementRequest
+): void {
+  event.sender.inspectElement(request.x, request.y);
+};
