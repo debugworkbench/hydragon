@@ -51,14 +51,8 @@ export class RendererContext {
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
     const newContext = new RendererContext(config);
-    (<any> global).debugWorkbench = newContext;
     await newContext.initialize();
     return newContext;
-  }
-
-  /** Get the renderer context for the current process. */
-  static get(): RendererContext {
-    return (<any> global).debugWorkbench;
   }
 
   constructor(config: IAppWindowConfig) {
