@@ -62,4 +62,8 @@ export class RendererDevTools {
   inspectElementAt(location: { x: number; y: number }): void {
     ipcRenderer.send(ipc.IPC_INSPECT_ELEMENT, location);
   }
+
+  reloadPage(): void {
+    ipcRenderer.send(ipc.IPC_RELOAD_PAGE);
+  }
 }

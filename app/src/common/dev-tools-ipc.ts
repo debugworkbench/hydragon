@@ -32,6 +32,11 @@ export const IPC_CLOSE = 'dev-tools:close';
  * [[RendererDevTools]] will use this channel to send an [[IInspectElementRequest]] to [[DevTools]].
  */
 export const IPC_INSPECT_ELEMENT = 'dev-tools:inspect-element';
+/**
+ * [[RendererDevTools]] will use this channel to signal to [[DevTools]] that the current renderer
+ * window should be reloaded.
+ */
+export const IPC_RELOAD_PAGE = 'dev-tools:reload-page';
 
 /** Sent from a renderer process to the main process on the [[IPC_INSPECT_ELEMENT]] channel. */
 export interface IInspectElementRequest {

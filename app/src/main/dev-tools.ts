@@ -13,6 +13,7 @@ export class DevTools {
     ipcMain.on(ipc.IPC_OPEN, onOpenRequest);
     ipcMain.on(ipc.IPC_CLOSE, onCloseRequest);
     ipcMain.on(ipc.IPC_INSPECT_ELEMENT, onInspectElementRequest);
+    ipcMain.on(ipc.IPC_RELOAD_PAGE, onReloadPageRequest);
   }
 
   dispose(): void {
@@ -20,6 +21,7 @@ export class DevTools {
     ipcMain.removeListener(ipc.IPC_OPEN, onOpenRequest);
     ipcMain.removeListener(ipc.IPC_CLOSE, onCloseRequest);
     ipcMain.removeListener(ipc.IPC_INSPECT_ELEMENT, onInspectElementRequest);
+    ipcMain.removeListener(ipc.IPC_RELOAD_PAGE, onReloadPageRequest);
   }
 }
 
@@ -58,3 +60,7 @@ function onInspectElementRequest(
 ): void {
   event.sender.inspectElement(request.x, request.y);
 };
+
+function onReloadPageRequest(event: GitHubElectron.IMainIPCEvent): void {
+  event.sender.reload();
+}
