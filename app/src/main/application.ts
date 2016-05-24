@@ -7,6 +7,7 @@ import { AppProtocolHandler } from './protocol-handlers';
 import UriPathResolver from '../common/uri-path-resolver';
 import { DevTools } from './dev-tools';
 import { PathPicker } from './platform/path-picker';
+import { WindowMenuManager } from './platform/window-menu-manager';
 
 export interface IApplicationArgs {
   /** Path to the root directory of the application. */
@@ -18,12 +19,14 @@ export class Application {
   private _window: ApplicationWindow;
   private _appProtocolHandler: AppProtocolHandler;
   private _pathPicker: PathPicker;
+  private _windowMenuManager: WindowMenuManager;
 
   run(args: IApplicationArgs): void {
     this._devTools = new DevTools();
     const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
+    this._windowMenuManager = new WindowMenuManager();
     this._window = new ApplicationWindow();
     const windowUrl = url.format({
       protocol: 'file',

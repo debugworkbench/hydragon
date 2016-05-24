@@ -29,6 +29,8 @@ import {
   DebugToolbarComponent, NewDebugConfigDialogComponent
 } from './components';
 import { PathPickerProxy } from './platform/path-picker-proxy';
+import { WindowMenu } from './platform/window-menu';
+import * as mobx from 'mobx';
 
 export const enum Cursor {
   HorizontalResize,
@@ -46,6 +48,7 @@ export class RendererContext {
   reactElementFactory: ReactElementFactory;
   rootPath: string;
 
+  private windowMenu: WindowMenu;
   private devTools: RendererDevTools;
 
   /** Create the renderer context for the current process. */
@@ -88,6 +91,8 @@ export class RendererContext {
     this.reactElementFactory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
       React.createElement(NewDebugConfigDialogComponent, { model, key })
     );
+
+    this.windowMenu = this.createWindowMenu();
 
     const userDataDir = electron.remote.app.getPath('userData');
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
@@ -208,5 +213,28 @@ export class RendererContext {
         throw new Error('The cursor overlay is not attached to the document!');
       }
     }
+  }
+
+  private createWindowMenu(): WindowMenu {
+    const menu = new WindowMenu();
+
+    const fileMenu = menu.subMenu('File');
+    fileMenu.separator();
+    fileMenu.item('Exit');
+
+    const viewMenu = menu.subMenu('View');
+    const devToolsMenu = viewMenu.subMenu('Developer Tools');
+    devToolsMenu.checkedItem('Electron', {
+      isChecked: mobx.computed(() => this.devTools.isWindowOpen),
+      action: item => {
+        if (item.isChecked !== this.devTools.isWindowOpen) {
+          item.isChecked ? this.devTools.open() : this.devTools.close();
+        }
+      }
+    });
+    devToolsMenu.checkedItem('Mobx', { isChecked: true, isEnabled: false });
+
+    menu.resync();
+    return menu;
   }
 }

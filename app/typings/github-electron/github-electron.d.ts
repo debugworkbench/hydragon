@@ -891,6 +891,21 @@ declare module GitHubElectron {
 
 	// current as at v0.35.4
 	class MenuItem {
+		click: (menuItem: MenuItem, browserWindow: BrowserWindow) => void;
+		role: MenuItemRole;
+		selector: string;
+		type: MenuItemType;
+		label: string;
+		sublabel: string;
+		accelerator: string;
+		icon: NativeImage | string;
+		enabled: boolean;
+		visible: boolean;
+		checked: boolean;
+		submenu: Menu;
+		id: string;
+		position: string;
+
 		constructor(options?: MenuItemOptions);
 	}
 
@@ -962,7 +977,7 @@ declare module GitHubElectron {
 		 * Should be specified for submenu type menu item, when it's specified the
 		 * type: 'submenu' can be omitted for the menu item
 		 */
-		submenu?: MenuItemOptions[];
+		submenu?: MenuItemOptions[] | Menu;
 		/**
 		 * Unique within a single menu. If defined then it can be used as a reference
 		 * to this item by the position attribute.

@@ -14,8 +14,8 @@ declare module GitHubElectron {
     dialog: Dialog;
     globalShortcut: GlobalShortcut;
     ipcMain: MainIPC;
-    Menu: Menu;
-    MenuItem: MenuItem;
+    Menu: typeof Menu;
+    MenuItem: typeof MenuItem;
     powerMonitor: NodeJS.EventEmitter;
     powerSaveBlocker: any;
     protocol: Protocol;
