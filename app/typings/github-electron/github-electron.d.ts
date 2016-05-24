@@ -909,7 +909,8 @@ declare module GitHubElectron {
 		constructor(options?: MenuItemOptions);
 	}
 
-	type MenuItemRole = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'selectall' | 'minimize' | 'close';
+	type MenuItemRole = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'selectall' | 'minimize' |
+	  'close' | 'about' | 'hide' | 'hideothers' | 'unhide' | 'front' | 'window' | 'help' | 'services';
 	type MenuItemType = 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
 
 	interface MenuItemOptions {

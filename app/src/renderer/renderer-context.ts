@@ -218,13 +218,41 @@ export class RendererContext {
   private createWindowMenu(): WindowMenu {
     const menu = new WindowMenu();
 
-    const fileMenu = menu.subMenu('File');
-    fileMenu.separator();
-    fileMenu.item('Exit');
+    if (process.platform === 'darwin') {
+      const appName = 'Hydragon';
+      const appMenu = menu.subMenu(appName);
+      appMenu.item(`About ${appName}`, { role: 'about' });
+      appMenu.separator();
+      appMenu.item(`Hide ${appName}`, { accelerator: 'Command+H', role: 'hide' });
+      appMenu.item('Hide Others', { accelerator: 'Command+Shift+H', role: 'hideothers' });
+      appMenu.item('Show All', { role: 'unhide' });
+      appMenu.separator();
+      appMenu.item('Quit', { accelerator: 'Command+Q' });
+    }
 
-    const viewMenu = menu.subMenu('View');
-    const devToolsMenu = viewMenu.subMenu('Developer Tools');
+    const fileMenu = menu.subMenu('&File');
+    if (process.platform !== 'darwin') {
+      fileMenu.separator();
+      fileMenu.item('E&xit');
+    }
+
+    const editMenu = menu.subMenu('&Edit');
+    editMenu.item('Undo', { accelerator: 'CmdOrCtrl+Z', role: 'undo' });
+    editMenu.item('Redo', {
+      accelerator: (process.platform === 'darwin') ? 'Shift+CmdOrCtrl+Z' : 'Ctrl+Y',
+      role: 'redo'
+    });
+    editMenu.separator();
+    editMenu.item('Cut', { accelerator: 'CmdOrCtrl+X', role: 'cut' });
+    editMenu.item('Copy', { accelerator: 'CmdOrCtrl+C', role: 'copy' });
+    editMenu.item('Paste', { accelerator: 'CmdOrCtrl+V', role: 'paste' });
+    editMenu.item('Select All', { accelerator: 'CmdOrCtrl+A', role: 'selectall' });
+
+    const devMenu = menu.subMenu('&Developer');
+    devMenu.item('Reload', { accelerator: 'CmdOrCtrl+R', action: () => this.devTools.reloadPage() });
+    const devToolsMenu = devMenu.subMenu('DevTools');
     devToolsMenu.checkedItem('Electron', {
+      accelerator: (process.platform === 'darwin') ? 'Alt+Command+I' : 'Ctrl+Shift+I',
       isChecked: mobx.computed(() => this.devTools.isWindowOpen),
       action: item => {
         if (item.isChecked !== this.devTools.isWindowOpen) {
@@ -233,6 +261,14 @@ export class RendererContext {
       }
     });
     devToolsMenu.checkedItem('Mobx', { isChecked: true, isEnabled: false });
+
+    const windowMenu = menu.subMenu('&Window', { role: 'window' });
+    windowMenu.item('Minimize', { accelerator: 'CmdOrCtrl+M', role: 'minimize' });
+    windowMenu.item('Close', { accelerator: 'CmdOrCtrl+W', role: 'close' });
+    if (process.platform === 'darwin') {
+      windowMenu.separator();
+      windowMenu.item('Bring All to Front', { role: 'front' });
+    }
 
     menu.resync();
     return menu;

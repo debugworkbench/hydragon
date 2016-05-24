@@ -67,8 +67,12 @@ export class WindowMenuManager {
   ): void {
     this.setClickCallback(items);
     this.menu = Menu.buildFromTemplate(items);
-    // FIXME: on OS X have to use windowMenu.setApplicationMenu() instead
-    browserWindow.setMenu(this.menu);
+
+    if (process.platform === 'darwin') {
+      Menu.setApplicationMenu(this.menu);
+    } else {
+      browserWindow.setMenu(this.menu);
+    }
   }
 
   private setClickCallback(items: GitHubElectron.MenuItemOptions[]): void {
