@@ -24,6 +24,8 @@ export interface ISerializedItem {
   id: string;
   type?: GitHubElectron.MenuItemType;
   label?: string;
+  role?: GitHubElectron.MenuItemRole;
+  accelerator?: string;
   enabled?: boolean;
   visible?: boolean;
   checked?: boolean;

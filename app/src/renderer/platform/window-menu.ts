@@ -201,11 +201,23 @@ export namespace WindowMenu {
    * Menu items can be activated by being clicked or with a keyboard shortcut.
    */
   export class Item extends AbstractItem {
+    /** Keyboard shortcut that can be used to activate this menu item. */
+    accelerator: string;
+    /**
+     * If set then the menu item will act in the standard OS-specific manner and the action property
+     * will be ignored.
+     *
+     * On OS X if this property is set then the label and accelerator are the only other properties
+     * that will apply, all other properties will be ignored.
+     */
+    role: GitHubElectron.MenuItemRole;
     action: (item: Item) => void;
 
     constructor(id: string, public label: string, options?: Item.IOptions) {
       super(id, options);
       if (options) {
+        this.accelerator = options.accelerator;
+        this.role = options.role;
         this.action = options.action;
       }
     }
@@ -223,12 +235,16 @@ export namespace WindowMenu {
       const obj = super.serialize();
       obj.label = this.label;
       obj.type = 'normal';
+      obj.role = this.role;
+      obj.accelerator = this.accelerator;
       return obj;
     }
   }
 
   export namespace Item {
     export interface IOptions extends AbstractItem.IOptions {
+      accelerator?: string;
+      role?: GitHubElectron.MenuItemRole;
       action?: (item: Item) => void;
     }
   }
