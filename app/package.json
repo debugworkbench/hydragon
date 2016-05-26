@@ -36,6 +36,6 @@
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-free-style": "^2.1.1"
+    "react-free-style": "^2.2.0"
   }
 }
