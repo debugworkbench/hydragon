@@ -13,14 +13,14 @@ declare namespace __React {
             element: SFCElement<P>,
             container: Element,
             callback?: () => any): void;
-        function render<P, T extends Component<P, ComponentState>>(
+        function render<P, T extends Component<P, any, any>>(
             element: CElement<P, T>,
             container: Element,
             callback?: (component: T) => any): T;
-        function render<P>(
+        function render<P, S, C>(
             element: ReactElement<P>,
             container: Element,
-            callback?: (component?: Component<P, ComponentState> | Element) => any): Component<P, ComponentState> | Element | void;
+            callback?: (component?: Component<P, S, C> | Element) => any): Component<P, S, C> | Element | void;
 
         function unmountComponentAtNode(container: Element): boolean;
 
@@ -31,25 +31,25 @@ declare namespace __React {
         function unstable_batchedUpdates(callback: () => any): void;
 
         function unstable_renderSubtreeIntoContainer<P extends DOMAttributes, T extends Element>(
-            parentComponent: Component<any, any>,
+            parentComponent: Component<any, any, any>,
             element: DOMElement<P, T>,
             container: Element,
             callback?: (element: T) => any): T;
-        function unstable_renderSubtreeIntoContainer<P, T extends Component<P, ComponentState>>(
-            parentComponent: Component<any, any>,
+        function unstable_renderSubtreeIntoContainer<P, T extends Component<P, any, any>>(
+            parentComponent: Component<any, any, any>,
             element: CElement<P, T>,
             container: Element,
             callback?: (component: T) => any): T;
         function render<P>(
-            parentComponent: Component<any, any>,
+            parentComponent: Component<any, any, any>,
             element: SFCElement<P>,
             container: Element,
             callback?: () => any): void;
-        function unstable_renderSubtreeIntoContainer<P>(
-            parentComponent: Component<any, any>,
+        function unstable_renderSubtreeIntoContainer<P, S, C>(
+            parentComponent: Component<any, any, any>,
             element: ReactElement<P>,
             container: Element,
-            callback?: (component?: Component<P, ComponentState> | Element) => any): Component<P, ComponentState> | Element | void;
+            callback?: (component?: Component<P, S, C> | Element) => any): Component<P, S, C> | Element | void;
     }
 
     namespace __DOMServer {

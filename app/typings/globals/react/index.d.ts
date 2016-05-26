@@ -6,7 +6,7 @@ declare namespace __React {
     // React Elements
     // ----------------------------------------------------------------------
 
-    type ReactType = string | ComponentClass<any> | StatelessComponent<any>;
+    type ReactType = string | ComponentClass<any, any, any> | StatelessComponent<any>;
 
     type Key = string | number;
     type Ref<T> = string | ((instance: T) => any);
@@ -20,7 +20,7 @@ declare namespace __React {
     }
 
     interface ReactElement<P> {
-        type: string | ComponentClass<P> | SFC<P>;
+        type: string | ComponentClass<P, any, any> | SFC<P>;
         props: P;
         key?: Key;
     }
@@ -29,13 +29,13 @@ declare namespace __React {
         type: SFC<P>;
     }
 
-    type CElement<P, T extends Component<P, ComponentState>> = ComponentElement<P, T>;
-    interface ComponentElement<P, T extends Component<P, ComponentState>> extends ReactElement<P> {
-        type: ComponentClass<P>;
+    type CElement<P, T extends Component<P, any, any>> = ComponentElement<P, T>;
+    interface ComponentElement<P, T extends Component<P, any, any>> extends ReactElement<P> {
+        type: ComponentClass<P, any, any>;
         ref?: Ref<T>;
     }
 
-    type ClassicElement<P> = CElement<P, ClassicComponent<P, ComponentState>>;
+    type ClassicElement<P> = CElement<P, ClassicComponent<P, any>>;
 
     interface DOMElement<P extends DOMAttributes, T extends Element> extends ReactElement<P> {
         type: string;
@@ -60,12 +60,12 @@ declare namespace __React {
         (props?: P & Attributes, ...children: ReactNode[]): SFCElement<P>;
     }
 
-    interface ComponentFactory<P, T extends Component<P, ComponentState>> {
+    interface ComponentFactory<P, T extends Component<P, any, any>> {
         (props?: P & ClassAttributes<T>, ...children: ReactNode[]): CElement<P, T>;
     }
 
-    type CFactory<P, T extends Component<P, ComponentState>> = ComponentFactory<P, T>;
-    type ClassicFactory<P> = CFactory<P, ClassicComponent<P, ComponentState>>;
+    type CFactory<P, T extends Component<P, any, any>> = ComponentFactory<P, T>;
+    type ClassicFactory<P> = CFactory<P, ClassicComponent<P, any>>;
 
     interface DOMFactory<P extends DOMAttributes, T extends Element> {
         (props?: P & ClassAttributes<T>, ...children: ReactNode[]): DOMElement<P, T>;
@@ -99,10 +99,10 @@ declare namespace __React {
         type: string): DOMFactory<P, T>;
     function createFactory<P>(type: SFC<P>): SFCFactory<P>;
     function createFactory<P>(
-        type: ClassType<P, ClassicComponent<P, ComponentState>, ClassicComponentClass<P>>): CFactory<P, ClassicComponent<P, ComponentState>>;
-    function createFactory<P, T extends Component<P, ComponentState>, C extends ComponentClass<P>>(
+        type: ClassType<P, ClassicComponent<P, any>, ClassicComponentClass<P>>): CFactory<P, ClassicComponent<P, any>>;
+    function createFactory<P, T extends Component<P, any, any>, C extends ComponentClass<P, any, any>>(
         type: ClassType<P, T, C>): CFactory<P, T>;
-    function createFactory<P>(type: ComponentClass<P> | SFC<P>): Factory<P>;
+    function createFactory<P>(type: ComponentClass<P, any, any> | SFC<P>): Factory<P>;
 
     function createElement<P extends DOMAttributes, T extends Element>(
         type: string,
@@ -113,15 +113,15 @@ declare namespace __React {
         props?: P & Attributes,
         ...children: ReactNode[]): SFCElement<P>;
     function createElement<P>(
-        type: ClassType<P, ClassicComponent<P, ComponentState>, ClassicComponentClass<P>>,
-        props?: P & ClassAttributes<ClassicComponent<P, ComponentState>>,
-        ...children: ReactNode[]): CElement<P, ClassicComponent<P, ComponentState>>;
-    function createElement<P, T extends Component<P, ComponentState>, C extends ComponentClass<P>>(
+        type: ClassType<P, ClassicComponent<P, any>, ClassicComponentClass<P>>,
+        props?: P & ClassAttributes<ClassicComponent<P, any>>,
+        ...children: ReactNode[]): CElement<P, ClassicComponent<P, any>>;
+    function createElement<P, T extends Component<P, any, any>, C extends ComponentClass<P, any, any>>(
         type: ClassType<P, T, C>,
         props?: P & ClassAttributes<T>,
         ...children: ReactNode[]): CElement<P, T>;
     function createElement<P>(
-        type: ComponentClass<P> | SFC<P>,
+        type: ComponentClass<P, any, any> | SFC<P>,
         props?: P & Attributes,
         ...children: ReactNode[]): ReactElement<P>;
 
@@ -133,7 +133,7 @@ declare namespace __React {
         element: SFCElement<P>,
         props?: Q, // should be Q & Attributes, but then Q is inferred as {}
         ...children: ReactNode[]): SFCElement<P>;
-    function cloneElement<P extends Q, Q, T extends Component<P, ComponentState>>(
+    function cloneElement<P extends Q, Q, T extends Component<P, any, any>>(
         element: CElement<P, T>,
         props?: Q, // should be Q & ClassAttributes<T>
         ...children: ReactNode[]): CElement<P, T>;
@@ -152,11 +152,11 @@ declare namespace __React {
     // Component API
     // ----------------------------------------------------------------------
 
-    type ReactInstance = Component<any, any> | Element;
+    type ReactInstance = Component<any, any, any> | Element;
 
     // Base component for plain JS classes
-    class Component<P, S> implements ComponentLifecycle<P, S> {
-        constructor(props?: P, context?: any);
+    class Component<P, S, C> implements ComponentLifecycle<P, S, C> {
+        constructor(props?: P, context?: C);
         setState(f: (prevState: S, props: P) => S, callback?: () => any): void;
         setState(state: S, callback?: () => any): void;
         forceUpdate(callBack?: () => any): void;
@@ -169,13 +169,13 @@ declare namespace __React {
         // on the existence of `children` in `P`, then we should remove this.
         props: P & { children?: ReactNode };
         state: S;
-        context: {};
+        context: C;
         refs: {
             [key: string]: ReactInstance
         };
     }
 
-    interface ClassicComponent<P, S> extends Component<P, S> {
+    interface ClassicComponent<P, S> extends Component<P, S, any> {
         replaceState(nextState: S, callback?: () => any): void;
         isMounted(): boolean;
         getInitialState?(): S;
@@ -198,17 +198,17 @@ declare namespace __React {
         displayName?: string;
     }
 
-    interface ComponentClass<P> {
-        new(props?: P, context?: any): Component<P, ComponentState>;
+    interface ComponentClass<P, S, C> {
+        new(props?: P, context?: C): Component<P, S, C>;
         propTypes?: ValidationMap<P>;
-        contextTypes?: ValidationMap<any>;
+        contextTypes?: ValidationMap<C>;
         childContextTypes?: ValidationMap<any>;
         defaultProps?: P;
         displayName?: string;
     }
 
-    interface ClassicComponentClass<P> extends ComponentClass<P> {
-        new(props?: P, context?: any): ClassicComponent<P, ComponentState>;
+    interface ClassicComponentClass<P> extends ComponentClass<P, any, any> {
+        new(props?: P, context?: any): ClassicComponent<P, any>;
         getDefaultProps?(): P;
     }
 
@@ -217,7 +217,7 @@ declare namespace __React {
      * a single argument, which is useful for many top-level API defs.
      * See https://github.com/Microsoft/TypeScript/issues/7234 for more info.
      */
-    type ClassType<P, T extends Component<P, ComponentState>, C extends ComponentClass<P>> =
+    type ClassType<P, T extends Component<P, any, any>, C extends ComponentClass<P, any, any>> =
         C &
         (new() => T) &
         (new() => { props: P });
@@ -226,17 +226,17 @@ declare namespace __React {
     // Component Specs and Lifecycle
     // ----------------------------------------------------------------------
 
-    interface ComponentLifecycle<P, S> {
+    interface ComponentLifecycle<P, S, C> {
         componentWillMount?(): void;
         componentDidMount?(): void;
-        componentWillReceiveProps?(nextProps: P, nextContext: any): void;
-        shouldComponentUpdate?(nextProps: P, nextState: S, nextContext: any): boolean;
-        componentWillUpdate?(nextProps: P, nextState: S, nextContext: any): void;
-        componentDidUpdate?(prevProps: P, prevState: S, prevContext: any): void;
+        componentWillReceiveProps?(nextProps: P, nextContext: C): void;
+        shouldComponentUpdate?(nextProps: P, nextState: S, nextContext: C): boolean;
+        componentWillUpdate?(nextProps: P, nextState: S, nextContext: C): void;
+        componentDidUpdate?(prevProps: P, prevState: S, prevContext: C): void;
         componentWillUnmount?(): void;
     }
 
-    interface Mixin<P, S> extends ComponentLifecycle<P, S> {
+    interface Mixin<P, S> extends ComponentLifecycle<P, S, any> {
         mixins?: Mixin<P, S>;
         statics?: {
             [key: string]: any;
@@ -2320,7 +2320,7 @@ declare namespace JSX {
     import React = __React;
 
     interface Element extends React.ReactElement<any> { }
-    interface ElementClass extends React.Component<any, any> {
+    interface ElementClass extends React.Component<any, any, any> {
         render(): JSX.Element;
     }
     interface ElementAttributesProperty { props: {}; }
