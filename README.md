@@ -157,11 +157,21 @@ depending on what which files you're modifying. These tasks can be run in any or
   `app/lib` directory.
 
 
-## React DevTools Extension
+## DevTools Extensions
 
-To install the React DevTools extension launch Hydragon using `npm start`, then open the Electron
-DevTools console and run `require('electron-react-devtools').install()`. The React DevTools will
-now be loaded every time the application is launched, to uninstall the extension run
+### Devtron
+
+To install the [Devtron DevTools extension](https://github.com/electron/devtron) launch Hydragon
+using `npm start`, then open the Electron DevTools console and run `require('devtron').install()`.
+The Devtron extension will now be loaded every time the application is launched, to uninstall the
+extension run `require('devtron').uninstall()`.
+
+### React
+
+To install the [React DevTools extension](https://github.com/firejune/electron-react-devtools)
+launch Hydragon using `npm start`, then open the Electron DevTools console and run
+`require('electron-react-devtools').install()`. The React extension will now be loaded every time
+the application is launched, to uninstall the extension run
 `require('electron-react-devtools').uninstall()`.
 
 # License
