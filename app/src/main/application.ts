@@ -10,6 +10,7 @@ import { DevTools } from './dev-tools';
 import { PathPicker } from './platform/path-picker';
 import { WindowMenuManager } from './platform/window-menu-manager';
 import { CommandTable } from '../common/command-table';
+import * as cmds from '../common/command-ids';
 
 export interface IApplicationArgs {
   /** Path to the root directory of the application. */
@@ -30,6 +31,7 @@ export class Application {
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
     this._commands = new CommandTable();
+    this.registerCommands();
     this._windowMenuManager = new WindowMenuManager(this._commands);
     this._window = new ApplicationWindow();
     const windowUrl = url.format({
@@ -39,5 +41,9 @@ export class Application {
     this._window.open({
       windowUrl, config: { rootPath: args.rootPath }
     });
+  }
+
+  registerCommands(): void {
+    this._commands.add(cmds.QUIT_APP, { execute: () => app.quit() });
   }
 }

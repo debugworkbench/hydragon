@@ -31,6 +31,7 @@ import {
 import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
 import * as mobx from 'mobx';
+import * as cmds from '../common/command-ids';
 
 export const enum Cursor {
   HorizontalResize,
@@ -227,13 +228,13 @@ export class RendererContext {
       appMenu.item('Hide Others', { accelerator: 'Command+Shift+H', role: 'hideothers' });
       appMenu.item('Show All', { role: 'unhide' });
       appMenu.separator();
-      appMenu.item('Quit', { accelerator: 'Command+Q' });
+      appMenu.item('Quit', { accelerator: 'Command+Q', action: cmds.QUIT_APP });
     }
 
     const fileMenu = menu.subMenu('&File');
     if (process.platform !== 'darwin') {
       fileMenu.separator();
-      fileMenu.item('E&xit');
+      fileMenu.item('E&xit', { action: cmds.QUIT_APP });
     }
 
     const editMenu = menu.subMenu('&Edit');
