@@ -4,6 +4,12 @@
 import * as path from 'path';
 import * as electron from 'electron';
 import MobxDevToolsComponent from 'mobx-react-devtools';
+import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactFreeStyle from 'react-free-style';
+import * as DebugEngineProvider from 'debug-engine';
+import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
+import * as mobx from 'mobx';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
 import { WorkspaceComponent } from './components/workspace';
@@ -12,13 +18,8 @@ import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
 import { DebugConfigManager, DebugConfigFileLoader } from './debug-config-manager';
 import { DebugConfigPresenter } from './debug-config-presenter';
-import * as DebugEngineProvider from 'debug-engine';
-import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import { RendererDevTools } from './dev-tools';
 import { PagePresenter } from './page-presenter';
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
-import * as ReactFreeStyle from 'react-free-style';
 import {
   WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
   DebugToolbarModel, NewDebugConfigDialogModel, DialogModel
@@ -30,7 +31,6 @@ import {
 } from './components';
 import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
-import * as mobx from 'mobx';
 import * as cmds from '../common/command-ids';
 
 export const enum Cursor {
