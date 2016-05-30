@@ -20,21 +20,22 @@ export const IPC_UPDATE = 'window-menu:update';
  */
 export const IPC_ACTION = 'window-menu:item-action';
 
-export interface ISerializedItem {
+export interface ISerializedMenuItem {
   id: string;
   type?: GitHubElectron.MenuItemType;
   label?: string;
   role?: GitHubElectron.MenuItemRole;
+  command?: string;
   accelerator?: string;
   enabled?: boolean;
   visible?: boolean;
   checked?: boolean;
-  submenu?: ISerializedItem[];
+  submenu?: ISerializedMenuItem[];
 }
 
 /** Sent by [[WindowMenu]] to [[WindowMenuManager]]. */
 export interface IResetMenuRequest {
-  items: ISerializedItem[];
+  items: ISerializedMenuItem[];
 }
 
 /** Sent by [[WindowMenu]] to [[WindowMenuManager]]. */

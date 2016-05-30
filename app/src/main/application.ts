@@ -2,12 +2,14 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as url from 'url';
+import { app } from 'electron';
 import { ApplicationWindow } from './application-window';
 import { AppProtocolHandler } from './protocol-handlers';
 import UriPathResolver from '../common/uri-path-resolver';
 import { DevTools } from './dev-tools';
 import { PathPicker } from './platform/path-picker';
 import { WindowMenuManager } from './platform/window-menu-manager';
+import { CommandTable } from '../common/command-table';
 
 export interface IApplicationArgs {
   /** Path to the root directory of the application. */
@@ -20,13 +22,15 @@ export class Application {
   private _appProtocolHandler: AppProtocolHandler;
   private _pathPicker: PathPicker;
   private _windowMenuManager: WindowMenuManager;
+  private _commands: CommandTable;
 
   run(args: IApplicationArgs): void {
     this._devTools = new DevTools();
     const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
-    this._windowMenuManager = new WindowMenuManager();
+    this._commands = new CommandTable();
+    this._windowMenuManager = new WindowMenuManager(this._commands);
     this._window = new ApplicationWindow();
     const windowUrl = url.format({
       protocol: 'file',

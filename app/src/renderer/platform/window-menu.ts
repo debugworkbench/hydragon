@@ -82,7 +82,7 @@ export class WindowMenu {
   /**
    * Send a request to [[WindowMenuManager]] to update a menu item.
    */
-  private updateItem = (item: ipc.ISerializedItem): void => {
+  private updateItem = (item: ipc.ISerializedMenuItem): void => {
     if (!this.isAutoSyncEnabled) {
       return;
     }
@@ -150,7 +150,7 @@ export namespace WindowMenu {
     /**
      * Start watching for changes to the menu item and propagate them to [[WindowMenuManager]].
      */
-    autoSync(syncCallback: (item: ipc.ISerializedItem) => void): void {
+    autoSync(syncCallback: (item: ipc.ISerializedMenuItem) => void): void {
       if (this.disposeAutoSync) {
         this.disposeAutoSync();
       }
@@ -179,7 +179,7 @@ export namespace WindowMenu {
      *                     set this option to `false`.
      * @return Plain object containing the serialized properties of the menu item.
      */
-    serialize(options?: { deep?: boolean }): ipc.ISerializedItem {
+    serialize(options?: { deep?: boolean }): ipc.ISerializedMenuItem {
       return {
         id: this.id,
         enabled: (typeof this.isEnabled === 'boolean') ? this.isEnabled : this.isEnabled.get(),
@@ -211,7 +211,13 @@ export namespace WindowMenu {
      * that will apply, all other properties will be ignored.
      */
     role: GitHubElectron.MenuItemRole;
-    action: (item: Item) => void;
+    /**
+     * Action to perform when the menu item is activated.
+     * This can be a callback function or an identifier of a command that's registered in the main
+     * process. In the latter case the corresponding command will be executed in the main process
+     * when the menu item is activated.
+     */
+    action: Item.IActionCallback | string;
 
     constructor(id: string, public label: string, options?: Item.IOptions) {
       super(id, options);
@@ -226,26 +232,30 @@ export namespace WindowMenu {
      * Perform the action associated with this menu item.
      */
     activate(): void {
-      if (this.action) {
+      if (typeof this.action === 'function') {
         this.action(this);
       }
     }
 
-    serialize(options?: { deep?: boolean }): ipc.ISerializedItem {
+    serialize(options?: { deep?: boolean }): ipc.ISerializedMenuItem {
       const obj = super.serialize();
       obj.label = this.label;
       obj.type = 'normal';
       obj.role = this.role;
+      if (typeof this.action === 'string') {
+        obj.command = this.action;
+      }
       obj.accelerator = this.accelerator;
       return obj;
     }
   }
 
   export namespace Item {
+    export type IActionCallback = (item: Item) => void;
     export interface IOptions extends AbstractItem.IOptions {
       accelerator?: string;
       role?: GitHubElectron.MenuItemRole;
-      action?: (item: Item) => void;
+      action?: IActionCallback | string;
     }
   }
 
@@ -253,7 +263,7 @@ export namespace WindowMenu {
    * Separator menu item.
    */
   export class Separator extends AbstractItem {
-    serialize(options?: { deep?: boolean }): ipc.ISerializedItem {
+    serialize(options?: { deep?: boolean }): ipc.ISerializedMenuItem {
       const obj = super.serialize();
       obj.type = 'separator';
       return obj;
@@ -282,7 +292,7 @@ export namespace WindowMenu {
       }
     }
 
-    serialize(options?: { deep?: boolean }): ipc.ISerializedItem {
+    serialize(options?: { deep?: boolean }): ipc.ISerializedMenuItem {
       const obj = super.serialize();
       obj.type = 'checkbox';
       obj.checked = (typeof this.isChecked === 'boolean') ? this.isChecked : this.isChecked.get();
@@ -346,12 +356,12 @@ export namespace WindowMenu {
       this.items.push(item);
     }
 
-    autoSync(syncCallback: (item: ipc.ISerializedItem) => void): void {
+    autoSync(syncCallback: (item: ipc.ISerializedMenuItem) => void): void {
       super.autoSync(syncCallback);
       this.items.forEach(item => item.autoSync(syncCallback));
     }
 
-    serialize(options?: { deep?: boolean }): ipc.ISerializedItem {
+    serialize(options?: { deep?: boolean }): ipc.ISerializedMenuItem {
       const obj = super.serialize();
       obj.type = 'submenu';
       if (!options || (options.deep !== false)) {
