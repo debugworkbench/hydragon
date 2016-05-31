@@ -225,6 +225,10 @@ export namespace WindowMenu {
         this.accelerator = options.accelerator;
         this.role = options.role;
         this.action = options.action;
+        // OS X doesn't understand mnemonics so strip them out
+        if (process.platform === 'darwin') {
+          this.label = label.replace(/\&/g, '');
+        }
       }
     }
 
