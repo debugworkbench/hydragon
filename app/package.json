@@ -36,8 +36,8 @@
     "mobx-react": "^3.1.0",
     "mobx-react-devtools": "^4.0.5",
     "polymer-ts-decorators": "github:enlight/polymer-ts-decorators",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
     "react-free-style": "^2.2.0"
   }
 }
