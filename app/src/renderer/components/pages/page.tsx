@@ -5,7 +5,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { PageModel } from '../../models/ui';
 import { IronFlexLayout } from '../styles';
-import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable } from '../decorators';
 import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
 

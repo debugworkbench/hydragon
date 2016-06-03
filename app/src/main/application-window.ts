@@ -2,7 +2,7 @@
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
-import * as electron from 'electron';
+import { BrowserWindow } from 'electron';
 import { IAppWindowConfig } from '../common/app-window-config';
 import * as AppWindowConfig from '../common/app-window-config';
 
@@ -23,9 +23,9 @@ export class ApplicationWindow {
         directWrite: true
       }
     };
-    this._browserWindow = new electron.BrowserWindow(options);
-    this._browserWindow.loadURL(windowUrl + '#' + AppWindowConfig.encodeToUriComponent(config));
+    this._browserWindow = new BrowserWindow(options);
     this._bindEventHandlers();
+    this._browserWindow.loadURL(windowUrl + '#' + AppWindowConfig.encodeToUriComponent(config));
   }
 
   private _bindEventHandlers(): void {
