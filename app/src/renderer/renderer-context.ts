@@ -65,9 +65,7 @@ export class RendererContext {
   }
 
   async initialize(): Promise<void> {
-    await importHref('app:///bower_components/dependencies_bundle.html');
     const uriPathResolver = new UriPathResolver(this.rootPath);
-    await importHref('app:///static/dark-paper-elements-theme.html');
     const elementManifestLoader = new ElementManifestLoader(uriPathResolver);
     this.elementRegistry = new ElementRegistry(uriPathResolver, elementManifestLoader);
     await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
