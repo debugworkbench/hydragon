@@ -144,6 +144,7 @@ export namespace PolymerComponent {
      * element.
      */
     suffix?: boolean;
+    style?: React.CSSProperties;
     /**
      * Object containing properties that represent custom CSS variables that should be passed
      * through to the underlying custom element.

@@ -9,16 +9,6 @@
           "tag": "code-mirror-editor",
           "template": "code-mirror-editor/code-mirror-editor.html",
           "script": "code-mirror-editor/code-mirror-editor"
-        },
-        {
-          "tag": "hydragon-directory-tree-view",
-          "template": "tree-view/directory-tree-view.html",
-          "script": "tree-view/directory-tree-view"
-        },
-        {
-          "tag": "hydragon-directory-tree-view-item",
-          "template": "tree-view/directory-tree-view-item.html",
-          "script": "tree-view/directory-tree-view-item"
         }
       ]
     }

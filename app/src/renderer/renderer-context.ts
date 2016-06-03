@@ -22,12 +22,12 @@ import { RendererDevTools } from './dev-tools';
 import { PagePresenter } from './page-presenter';
 import {
   WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
-  DebugToolbarModel, NewDebugConfigDialogModel, DialogModel
+  DebugToolbarModel, NewDebugConfigDialogModel, DialogModel, DirectoryTreeModel
 } from './models/ui';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
 import {
   PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
-  DebugToolbarComponent, NewDebugConfigDialogComponent
+  DebugToolbarComponent, NewDebugConfigDialogComponent, DirectoryTreeComponent
 } from './components';
 import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
@@ -92,6 +92,9 @@ export class RendererContext {
     this.reactElementFactory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
       React.createElement(NewDebugConfigDialogComponent, { model, key })
     );
+    this.reactElementFactory.registerElementConstructor(DirectoryTreeModel, ({ model, key }) =>
+      React.createElement(DirectoryTreeComponent, { model, key })
+    );
 
     this.windowMenu = this.createWindowMenu();
 
@@ -115,8 +118,9 @@ export class RendererContext {
     const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
     const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
     const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar', debugConfigManager, debugConfigPresenter });
+    const dirTree = new DirectoryTreeModel({ id: 'explorer', displayRoot: false });
 
-    workspaceModel.createDefaultLayout({ mainPageSet, pageTree, debugToolbar });
+    workspaceModel.createDefaultLayout({ mainPageSet, pageTree, debugToolbar, dirTree });
 
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';
@@ -158,6 +162,8 @@ export class RendererContext {
       };
       return page;
     });
+
+    dirTree.addDirectory(__dirname);
   }
 
   showWindow(): void {

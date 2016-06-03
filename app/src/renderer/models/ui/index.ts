@@ -1,6 +1,8 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+export { DirectoryTreeModel } from '../../components/directory-tree/directory-tree-model';
+
 export { LayoutContainerModel } from './layout/layout-container';
 export { LayoutItemModel } from './layout/layout-item';
 export { PanelModel } from './layout/panel';

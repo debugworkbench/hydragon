@@ -1,6 +1,9 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+export { DirectoryTreeComponent } from './directory-tree/directory-tree';
+export { DirectoryTreeItemComponent } from './directory-tree/directory-tree-item';
+
 export { LayoutContainerComponent } from './layout/layout-container';
 export { PanelComponent } from './layout/panel';
 export { SplitterComponent } from './layout/splitter';

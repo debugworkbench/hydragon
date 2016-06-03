@@ -11,6 +11,7 @@ import { DebugToolbarModel } from './debug-toolbar';
 import { DialogModel } from './dialog';
 import { DebugConfigManager } from '../../debug-config-manager';
 import { DebugConfigPresenter } from '../../debug-config-presenter';
+import { DirectoryTreeModel } from '../../components/directory-tree/directory-tree-model';
 
 export class WorkspaceModel {
   /** Most recently active page-set. */
@@ -26,7 +27,9 @@ export class WorkspaceModel {
   mainPageSet: PageSetModel = null;
   rootLayoutContainer: LayoutContainerModel;
 
-  createDefaultLayout({ mainPageSet, pageTree, debugToolbar }: WorkspaceModel.IDefaultLayoutParams): void {
+  createDefaultLayout({
+    mainPageSet, pageTree, debugToolbar, dirTree
+  }: WorkspaceModel.IDefaultLayoutParams): void {
     this.rootLayoutContainer = new LayoutContainerModel({
       id: 'root-layout', direction: 'vertical', windowDidResizeStream: this.windowDidResizeStream
     });
@@ -44,9 +47,12 @@ export class WorkspaceModel {
     const openPagesPanel = new PanelModel({
       id: 'open-pages-panel', title: 'Open Pages', height: '300px', resizable: true, showHeader: true
     });
+    const dirTreePanel = new PanelModel({
+      id: 'explorer-panel', title: 'Explorer', resizable: true, showHeader: true
+    });
     leftLayoutContainer.add(
       openPagesPanel,
-      new PanelModel({ id: 'dir-tree-panel', title: 'Explorer', resizable: true, showHeader: true })
+      dirTreePanel
     );
 
     const pageSetPanel = new PanelModel({ id: 'page-set-panel' });
@@ -54,6 +60,7 @@ export class WorkspaceModel {
     pageSetPanel.add(this.mainPageSet);
     pageTree.pageSet = this.mainPageSet;
     openPagesPanel.add(pageTree);
+    dirTreePanel.add(dirTree);
 
     rightLayoutContainer.add(
       pageSetPanel,
@@ -77,5 +84,6 @@ namespace WorkspaceModel {
     mainPageSet: PageSetModel;
     pageTree: PageTreeModel;
     debugToolbar: DebugToolbarModel;
+    dirTree: DirectoryTreeModel;
   }
 }

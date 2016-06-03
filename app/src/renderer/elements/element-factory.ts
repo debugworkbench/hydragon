@@ -4,8 +4,6 @@
 import * as path from 'path';
 import ElementRegistry from './element-registry';
 import CodeMirrorEditorElement, { ICodeMirrorEditorElement } from './code-mirror-editor/code-mirror-editor';
-import DirectoryTreeViewElement, { IDirectoryTreeViewElement, IDirectoryTreeViewState } from './tree-view/directory-tree-view';
-import DirectoryTreeViewItemElement, { IDirectoryTreeViewItemElement } from './tree-view/directory-tree-view-item';
 
 /**
  * Creates new instances of custom elements.
@@ -16,14 +14,6 @@ export default class ElementFactory {
 
   createCodeMirrorEditor(config?: CodeMirror.EditorConfiguration): ICodeMirrorEditorElement {
     return this._createElement((<any> CodeMirrorEditorElement.prototype).is, config);
-  }
-
-  createDirectoryTreeView(state?: IDirectoryTreeViewState): IDirectoryTreeViewElement {
-    return this._createElement((<any> DirectoryTreeViewElement.prototype).is, state);
-  }
-
-  createDirectoryTreeViewItem(): IDirectoryTreeViewItemElement {
-    return this._createElement((<any> DirectoryTreeViewItemElement.prototype).is);
   }
 
   /**
