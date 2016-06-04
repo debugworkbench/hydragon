@@ -3,12 +3,11 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { DebugToolbarModel } from '../models/ui';
+import { DebugToolbarModel } from './debug-toolbar-model';
 import {
   PaperDropdownMenuComponent, PaperIconButtonComponent, PaperToolbarComponent, PaperMenuComponent
-} from './paper';
-import { stylable } from './decorators';
-import { updatePolymerCSSVars } from '../elements/utils';
+} from '../paper';
+import { stylable } from '../decorators';
 
 /**
  * Toolbar component that provides access to frequently used debugging features.

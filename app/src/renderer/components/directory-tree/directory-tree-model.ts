@@ -4,7 +4,7 @@
 import * as fs from 'fs-promisified';
 import * as path from 'path';
 import * as mobx from 'mobx';
-import { PanelModel, IPanelItem } from '../../models/ui/layout/panel';
+import { PanelModel, IPanelItem } from '../layout/panel-model';
 
 // FIXME: Watch directories in the tree for changes, and update the children of any expanded items
 export class DirectoryTreeModel implements IPanelItem {

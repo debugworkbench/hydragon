@@ -12,7 +12,6 @@ import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import * as mobx from 'mobx';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
 import ElementFactory from './elements/element-factory';
-import { WorkspaceComponent } from './components/workspace';
 import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
@@ -23,11 +22,11 @@ import { PagePresenter } from './page-presenter';
 import {
   WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
   DebugToolbarModel, NewDebugConfigDialogModel, DialogModel, DirectoryTreeModel
-} from './models/ui';
+} from './components/models';
 import { ElementFactory as ReactElementFactory } from './components/element-factory';
 import {
   PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
-  DebugToolbarComponent, NewDebugConfigDialogComponent, DirectoryTreeComponent
+  DebugToolbarComponent, NewDebugConfigDialogComponent, DirectoryTreeComponent, WorkspaceComponent
 } from './components';
 import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';

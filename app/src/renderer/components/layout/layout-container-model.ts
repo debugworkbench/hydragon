@@ -3,8 +3,8 @@
 
 import { Observable, Subject, Subscription } from '@reactivex/rxjs';
 import { observable } from 'mobx';
-import { LayoutItemModel } from './layout-item';
-import { SplitterOrientation, SplitterModel } from './splitter';
+import { LayoutItemModel } from './layout-item-model';
+import { SplitterOrientation, SplitterModel } from './splitter-model';
 
 export type LayoutContainerDirection = 'vertical' | 'horizontal';
 

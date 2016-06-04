@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { WorkspaceModel, PageSetModel, PageModel } from './models/ui';
+import { WorkspaceModel, PageSetModel, PageModel } from './components/models';
 import { autorun, Lambda, transaction } from 'mobx';
 
 /**

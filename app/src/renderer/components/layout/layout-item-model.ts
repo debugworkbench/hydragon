@@ -3,7 +3,7 @@
 
 import { Subject, Subscription } from '@reactivex/rxjs';
 import { observable } from 'mobx';
-import { LayoutContainerModel } from './layout-container';
+import { LayoutContainerModel } from './layout-container-model';
 
 /**
  * Base class for layout container and panel models.

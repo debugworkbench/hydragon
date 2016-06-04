@@ -3,14 +3,14 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { GdbMiDebugConfigPageModel } from '../../models/ui';
+import { GdbMiDebugConfigPageModel } from './gdb-mi-debug-config-page-model';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
 import {
   PaperDropdownMenuComponent, PaperMenuComponent, PaperCheckboxComponent, PaperInputComponent,
   PaperButtonComponent
 } from '../paper';
-import { FileInputComponent } from '../file-input';
+import { FileInputComponent } from '../file-input/file-input';
 import { stylable } from '../decorators';
 
 /**

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { PageModel } from '../../models/ui';
+import { PageModel } from './page-model';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';

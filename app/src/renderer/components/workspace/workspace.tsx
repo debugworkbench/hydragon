@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { LayoutContainerComponent } from './layout/layout-container';
-import { IronFlexLayout } from './styles';
-import { WorkspaceModel } from '../models/ui';
 import { Observable, Subscription } from '@reactivex/rxjs';
-import { stylable } from './decorators';
-import { Cursor } from '../renderer-context';
-import { ElementFactory } from './element-factory';
+import { LayoutContainerComponent } from '../layout/layout-container';
+import { IronFlexLayout } from '../styles';
+import { WorkspaceModel } from './workspace-model';
+import { stylable } from '../decorators';
+import { Cursor } from '../../renderer-context';
+import { ElementFactory } from '../element-factory';
 import { darkWorkspaceTheme } from './workspace-theme';
 
 /**

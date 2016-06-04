@@ -17,8 +17,8 @@ export { PageTreeItemComponent } from './pages/page-tree-item';
 
 export * from './paper';
 
-export { DebugToolbarComponent } from './debug-toolbar';
-export { FileInputComponent } from './file-input';
-export { NewDebugConfigDialogComponent } from './new-debug-config-dialog';
+export { DebugToolbarComponent } from './toolbars/debug-toolbar';
+export { FileInputComponent } from './file-input/file-input';
+export { NewDebugConfigDialogComponent } from './dialogs/new-debug-config-dialog';
 
-export { WorkspaceComponent } from './workspace';
+export { WorkspaceComponent } from './workspace/workspace';

@@ -6,7 +6,7 @@ import { CompositeDisposable, Disposable } from 'event-kit';
 import {
   IDebugSession, IInferiorDidExitEvent, DebugEngineError, ConnectionError
 } from 'debug-engine';
-import { IPanelItem, PanelModel } from './layout/panel';
+import { IPanelItem, PanelModel } from '../layout/panel-model';
 import { DebugConfigManager } from '../../debug-config-manager';
 import { DebugConfigPresenter } from '../../debug-config-presenter';
 

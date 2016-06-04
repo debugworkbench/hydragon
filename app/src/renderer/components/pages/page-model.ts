@@ -3,7 +3,7 @@
 
 import { Subject, Subscription } from '@reactivex/rxjs';
 import { computed } from 'mobx';
-import { PageSetModel } from './page-set';
+import { PageSetModel } from './page-set-model';
 
 export class PageModel {
   id: string;

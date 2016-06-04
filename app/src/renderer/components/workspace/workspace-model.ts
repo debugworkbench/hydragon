@@ -3,15 +3,15 @@
 
 import { observable } from 'mobx';
 import { Subject, Observable } from '@reactivex/rxjs';
-import { PageSetModel } from './pages/page-set';
-import { PageTreeModel } from './pages/page-tree';
-import { LayoutContainerModel } from './layout/layout-container';
-import { PanelModel } from './layout/panel';
-import { DebugToolbarModel } from './debug-toolbar';
-import { DialogModel } from './dialog';
+import { PageSetModel } from '../pages/page-set-model';
+import { PageTreeModel } from '../pages/page-tree-model';
+import { LayoutContainerModel } from '../layout/layout-container-model';
+import { PanelModel } from '../layout/panel-model';
+import { DebugToolbarModel } from '../toolbars/debug-toolbar-model';
+import { DialogModel } from '../dialogs/dialog-model';
 import { DebugConfigManager } from '../../debug-config-manager';
 import { DebugConfigPresenter } from '../../debug-config-presenter';
-import { DirectoryTreeModel } from '../../components/directory-tree/directory-tree-model';
+import { DirectoryTreeModel } from '../directory-tree/directory-tree-model';
 
 export class WorkspaceModel {
   /** Most recently active page-set. */

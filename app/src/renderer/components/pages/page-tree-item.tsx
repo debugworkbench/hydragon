@@ -3,9 +3,8 @@
 
 import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
-import { PageModel } from '../../models/ui';
+import { PageModel } from './page-model';
 import { IronFlexLayout, PaperStyles } from '../styles';
-import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable } from '../decorators';
 import { PaperIconButtonComponent } from '../paper';
 

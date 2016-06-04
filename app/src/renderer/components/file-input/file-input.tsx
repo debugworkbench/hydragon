@@ -3,10 +3,10 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IronFlexLayout } from './styles';
-import { stylable } from './decorators';
-import { PaperInputComponent, PaperButtonComponent } from './paper';
-import { FileInputModel } from '../models/ui';
+import { IronFlexLayout } from '../styles';
+import { stylable } from '../decorators';
+import { PaperInputComponent, PaperButtonComponent } from '../paper';
+import { FileInputModel } from './file-input-model';
 
 /**
  * A component that consists of an input field containing a file/directory path and a button that

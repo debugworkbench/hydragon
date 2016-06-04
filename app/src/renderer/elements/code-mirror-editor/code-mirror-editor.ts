@@ -62,6 +62,7 @@ export default class CodeMirrorEditorElement extends Polymer.BaseClass<any, IBeh
       const newHeight = this.clientHeight;
       // don't bother resizing the editor if it's not going to be visible
       if ((newWidth !== 0) && (newHeight !== 0)) {
+        console.log(`Setting editor size to ${newWidth}x${newHeight}`);
         this._editor.setSize(newWidth, newHeight);
         // force a refresh so the gutters are drawn correctly
         this._editor.refresh();

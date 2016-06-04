@@ -6,7 +6,7 @@ import { IDebugConfig } from 'debug-engine';
 import { PagePresenter } from './page-presenter';
 import {
   WorkspaceModel, NewDebugConfigDialogModel, GdbMiDebugConfigPageModel
-} from './models/ui';
+} from './components/models';
 import { PathPickerProxy } from './platform/path-picker-proxy';
 
 export class DebugConfigPresenter {

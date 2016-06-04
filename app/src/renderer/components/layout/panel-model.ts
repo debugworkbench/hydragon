@@ -2,8 +2,8 @@
 // MIT License, see LICENSE file for full terms.
 
 import { Subject, Subscription } from '@reactivex/rxjs';
-import { LayoutContainerModel } from './layout-container';
-import { LayoutItemModel } from './layout-item';
+import { LayoutContainerModel } from './layout-container-model';
+import { LayoutItemModel } from './layout-item-model';
 
 /**
  * Items that are added to a panel must implement this interface.

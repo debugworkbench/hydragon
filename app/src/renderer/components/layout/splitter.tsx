@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Observable, Subscription } from '@reactivex/rxjs';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
-import { SplitterModel } from '../../models/ui';
+import { SplitterModel } from './splitter-model';
 
 /**
  * Component that resizes its sibling elements when the user drags it with the primary mouse button.

@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { LayoutItemModel } from './layout-item';
+import { LayoutItemModel } from './layout-item-model';
 
 export type SplitterOrientation = 'vertical' | 'horizontal';
 

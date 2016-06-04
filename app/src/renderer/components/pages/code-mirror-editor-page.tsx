@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Observable, Subscription } from '@reactivex/rxjs';
 import { FreeStyle } from 'react-free-style';
-import { CodeMirrorEditorPageModel } from '../../models/ui';
+import { CodeMirrorEditorPageModel } from './code-mirror-editor-page-model';
 import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
 import { ICodeMirrorEditorElement } from '../../elements/code-mirror-editor/code-mirror-editor';

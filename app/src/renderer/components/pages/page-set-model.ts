@@ -3,8 +3,8 @@
 
 import { observable, autorun, Lambda, transaction } from 'mobx';
 import { Subject, Observable, Subscription } from '@reactivex/rxjs';
-import { PageModel } from './page';
-import { PanelModel, IPanelItem } from '../layout/panel';
+import { PageModel } from './page-model';
+import { PanelModel, IPanelItem } from '../layout/panel-model';
 
 export interface IPageSetParams {
   id: string;

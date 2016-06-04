@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FreeStyle } from 'react-free-style';
-import { IWorkspaceTheme } from './workspace-theme';
+import { IWorkspaceTheme } from './workspace/workspace-theme';
 
 /**
  * Decorator for React component classes that adds a `freeStyle` property to the context of the

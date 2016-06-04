@@ -5,7 +5,7 @@ import * as React from 'react';
 import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import { FreeStyle } from 'react-free-style';
-import { PageTreeModel } from '../../models/ui';
+import { PageTreeModel } from './page-tree-model';
 import { IronFlexLayout } from '../styles';
 import { PageTreeItemComponent } from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';

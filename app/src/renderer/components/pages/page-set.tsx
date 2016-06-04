@@ -5,7 +5,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Observable } from '@reactivex/rxjs';
 import { FreeStyle } from 'react-free-style';
-import { PageSetModel } from '../../models/ui';
+import { PageSetModel } from './page-set-model';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { requiresElementFactory, IRequiresElementFactoryContext } from '../element-factory';

@@ -8,7 +8,7 @@ import { updatePolymerCSSVars } from '../../elements/utils';
 import { stylable, themable } from '../decorators';
 import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
 import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
-import { PanelModel } from '../../models/ui';
+import { PanelModel } from './panel-model';
 import { PaperToolbarComponent } from '../paper';
 
 /**

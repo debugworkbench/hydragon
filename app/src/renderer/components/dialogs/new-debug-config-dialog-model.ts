@@ -3,7 +3,7 @@
 
 import * as DebugEngineProvider from 'debug-engine';
 import { IDebugConfig } from 'debug-engine';
-import { DialogModel } from './dialog';
+import { DialogModel } from './dialog-model';
 
 export class NewDebugConfigDialogModel extends DialogModel {
   debugConfig: IDebugConfig;

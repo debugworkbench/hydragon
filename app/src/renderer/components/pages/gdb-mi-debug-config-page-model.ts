@@ -3,11 +3,11 @@
 
 import { observable, transaction } from 'mobx';
 import { IGdbMiDebugConfig, DebuggerType } from 'gdb-mi-debug-engine';
-import { PageModel } from './page';
-import { FileInputModel } from '../file-input';
-import { PathPickerProxy } from '../../../platform/path-picker-proxy';
-import { DebugConfigManager, IDebugConfig } from '../../../debug-config-manager';
-import { omitOwnProps } from '../../../../common/utils';
+import { PageModel } from './page-model';
+import { FileInputModel } from '../file-input/file-input-model';
+import { PathPickerProxy } from '../../platform/path-picker-proxy';
+import { DebugConfigManager, IDebugConfig } from '../../debug-config-manager';
+import { omitOwnProps } from '../../../common/utils';
 
 export class GdbMiDebugConfigPageModel extends PageModel {
   @observable

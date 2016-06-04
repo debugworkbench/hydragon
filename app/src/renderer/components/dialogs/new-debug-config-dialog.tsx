@@ -4,11 +4,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { autorun, Lambda } from 'mobx';
-import { NewDebugConfigDialogModel } from '../models/ui';
+import { NewDebugConfigDialogModel } from './new-debug-config-dialog-model';
 import {
   PaperDropdownMenuComponent, PaperMenuComponent, PaperDialogComponent, PaperInputComponent,
   PaperButtonComponent
-} from './paper';
+} from '../paper';
 
 /**
  * A simple dialog component that lets the user enter the name for a new debug config and select

@@ -8,9 +8,10 @@ import { stylable } from '../decorators';
 import { SplitterComponent } from './splitter';
 import { PanelComponent } from './panel';
 import { Cursor } from '../../renderer-context';
-import {
-  LayoutContainerModel, SplitterModel, PanelModel, LayoutItemModel
-} from '../../models/ui';
+import { LayoutContainerModel } from './layout-container-model';
+import { SplitterModel } from './splitter-model';
+import { PanelModel } from './panel-model';
+import { LayoutItemModel } from './layout-item-model';
 import {
   requiresElementFactory, IRequiresElementFactoryContext, ElementFactory
 } from '../element-factory';
