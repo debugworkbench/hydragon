@@ -52,7 +52,9 @@ export class PanelComponent
   }
 
   renderContent(): JSX.Element | JSX.Element[] {
-    if (this.props.model.showHeader) {
+    const model = this.props.model;
+
+    if (model.showHeader) {
       return (
         <paper-header-panel>
           <PaperToolbarComponent
@@ -66,27 +68,28 @@ export class PanelComponent
                 'margin-left': '0'
               }
             }}>
-            <div className="title">{this.props.model.title}</div>
+            <div className="title">{model.title}</div>
           </PaperToolbarComponent>
           {
-            this.props.model.items.map(
+            model.items.map(
               item => this.context.elementFactory.createElement({ model: item, key: item.id })
             )
           }
         </paper-header-panel>
       );
     } else {
-      return this.props.model.items.map(
+      return model.items.map(
         item => this.context.elementFactory.createElement({ model: item, key: item.id })
       );
     }
   }
 
   render() {
+    const model = this.props.model;
     const inlineStyle = {
-      width: (this.props.model.width !== undefined) ? this.props.model.width : undefined,
-      height: (this.props.model.height !== undefined) ? this.props.model.height : undefined,
-      flex: (this.props.model.mainAxisSize !== null) ? `0 0 ${this.props.model.mainAxisSize}` : undefined
+      width: (model.width !== undefined) ? model.width : undefined,
+      height: (model.height !== undefined) ? model.height : undefined,
+      flex: (model.mainAxisSize !== null) ? `0 0 ${model.mainAxisSize}` : undefined
     }
 
     return (
