@@ -33,10 +33,12 @@ export class PanelModel extends LayoutItemModel {
     showHeader = false
   }: IPanelParams) {
     super(id);
+    this.title = title;
     this.items = [];
     this.width = width;
     this.height = height;
     this.resizable = resizable;
+    this.showHeader = showHeader;
   }
 
   add(...items: IPanelItem[]): void {
