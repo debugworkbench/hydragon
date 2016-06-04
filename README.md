@@ -15,18 +15,9 @@ Extensible multi-platform debugger frontend.
 
 ## Setup
 
-After cloning this repository install the depedencies:
+After cloning this repository run the following commands:
 
 ```shell
-cd app
-npm install
-bower install
-```
-
-Then setup the build system:
-
-```shell
-cd ..
 npm install
 npm run build:native-modules
 ```
@@ -36,8 +27,9 @@ be any visible indicator that anything is actually happening) because the task i
 the headers and libs needed to rebuild the modules. If anything actually goes wrong during this
 process errors will be displayed in the console.
 
-Once the native modules have been rebuilt you can build the app itself by executing `grunt` from
-the root directory, and once built the app can be launched with `npm start` or `npm run electron`.
+Once the native modules have been rebuilt you can build the app itself by executing
+`npm run build:full` from the root directory, and once built the app can be launched with
+`npm start` or `npm run electron`.
 
 ## NPM Scripts
 

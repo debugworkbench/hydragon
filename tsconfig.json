@@ -14,11 +14,11 @@
         "typings/preprocess/preprocess.d.ts",
         "typings/source-map/source-map.d.ts",
         "typings/electron-rebuild/electron-rebuild.d.ts",
+        "tasks/fix-typings.ts",
         "tasks/preprocess.ts",
         "tasks/rebuild-native-modules.ts",
         "tasks/run-electron.ts",
         "tasks/run-node-inspector.ts",
-        "grunt-config.ts",
-        "npm-post-install.ts"
+        "grunt-config.ts"
     ]
 }

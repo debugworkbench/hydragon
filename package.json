@@ -9,7 +9,7 @@
   "author": "Vadim Macagon <vadim.macagon@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "postinstall": "ts-node npm-post-install.ts",
+    "postinstall": "cd app && npm install && bower install && cd .. && npm run fix-typings",
     "start": "npm run electron",
     "build": "tslint --force -c app/conf/tslint.json app/src/**/*.ts && tsc -p ./app/src/main/tsconfig.json && tsc -p ./app/src/renderer/tsconfig.json && babel ./app/lib/renderer/elements -d ./app/lib/renderer/elements",
     "build:clean": "npm run clean && npm run build:full",
@@ -23,6 +23,7 @@
     "clean": "rimraf app/lib app/bower_components/dependencies_bundle.html app/bower_components/dependencies_bundle.js",
     "electron": "ts-node ./tasks/run-electron.ts ./app/lib/main/main.js",
     "electron:debug": "ts-node ./tasks/run-electron.ts ./app/lib/main/main.js --debug --stop-at-entry",
+    "fix-typings": "ts-node ./tasks/fix-typings.ts",
     "lint": "tslint --force -c app/conf/tslint.json app/src/**/*.ts",
     "lint:main": "tslint --force -c app/conf/tslint.json app/src/common/**/*.ts app/src/main/**/*.ts",
     "lint:renderer": "tslint --force -c app/conf/tslint.json app/src/common/**/*.ts app/src/renderer/**/*.ts",
