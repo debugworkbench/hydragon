@@ -9,7 +9,10 @@ import * as AppWindowConfig from '../common/app-window-config';
 window.onload = (e: Event) => {
   const config = AppWindowConfig.decodeFromUriComponent(window.location.hash.substr(1));
   RendererContext.create(config)
-  .then(rendererContext => rendererContext.showWindow())
+  .then(rendererContext => {
+    window.onunload = () => rendererContext.dispose();
+    rendererContext.showWindow();
+  })
   .catch((error) => {
     showError(error);
   });

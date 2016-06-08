@@ -31,6 +31,7 @@ import {
 import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
 import * as cmds from '../common/command-ids';
+import { RendererSourceDirRegistry } from './source-dir-registry';
 
 export const enum Cursor {
   HorizontalResize,
@@ -50,6 +51,7 @@ export class RendererContext {
 
   private windowMenu: WindowMenu;
   private devTools: RendererDevTools;
+  private _sourceDirRegistry: RendererSourceDirRegistry;
 
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
@@ -61,6 +63,12 @@ export class RendererContext {
   constructor(config: IAppWindowConfig) {
     this.rootPath = config.rootPath;
     this.devTools = new RendererDevTools();
+  }
+
+  dispose(): void {
+    if (this._sourceDirRegistry) {
+      this._sourceDirRegistry.dispose();
+    }
   }
 
   async initialize(): Promise<void> {
@@ -94,6 +102,7 @@ export class RendererContext {
     );
 
     this.windowMenu = this.createWindowMenu();
+    this._sourceDirRegistry = new RendererSourceDirRegistry();
 
     const userDataDir = electron.remote.app.getPath('userData');
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
@@ -115,7 +124,7 @@ export class RendererContext {
     const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
     const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
     const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar', debugConfigManager, debugConfigPresenter });
-    const dirTree = new DirectoryTreeModel({ id: 'explorer', displayRoot: false });
+    const dirTree = new DirectoryTreeModel({ id: 'explorer', displayRoot: false, dirPaths: this._sourceDirRegistry.dirPaths });
 
     workspaceModel.createDefaultLayout({ mainPageSet, pageTree, debugToolbar, dirTree });
 
@@ -235,6 +244,7 @@ export class RendererContext {
     }
 
     const fileMenu = menu.subMenu('&File');
+    fileMenu.item('Open Source Directory...', { action: cmds.OPEN_SRC_DIR });
     if (process.platform !== 'darwin') {
       fileMenu.separator();
       fileMenu.item('E&xit', { action: cmds.QUIT_APP });

@@ -7,8 +7,16 @@
 // TODO: Eventually this all needs to work with users typing in commands, but that's a problem for
 //       another day.
 
+export interface ICommandArgs {
+  /**
+   * The browser window (if any) that invoked the command.
+   * This argument will always be provided when the command is invoked via the window menu.
+   */
+  browserWindow?: GitHubElectron.BrowserWindow;
+}
+
 export interface ICommand {
-  execute(...args: any[]): void;
+  execute<T extends ICommandArgs>(args: T): void;
 }
 
 export class CommandTable {

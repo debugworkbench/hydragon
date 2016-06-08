@@ -3,7 +3,7 @@
 
 import { ipcMain, BrowserWindow, Menu } from 'electron';
 import * as ipc from '../../common/window-menu-ipc';
-import { CommandTable } from '../../common/command-table';
+import { CommandTable, ICommandArgs } from '../../common/command-table';
 
 /**
  * Works in conjuction with [[WindowMenu]] to allow the `BrowserWindow` menu to be manipulated
@@ -99,7 +99,7 @@ export class WindowMenuManager {
     if (cmdId) {
       const cmd = this.commands.findCommandById(cmdId);
       if (cmd) {
-        cmd.execute();
+        cmd.execute({ browserWindow });
       }
     } else {
       const request: ipc.IActionRequest = { id: menuItem.id };
@@ -114,7 +114,7 @@ export class WindowMenuManager {
     if (cmdId) {
       const cmd = this.commands.findCommandById(cmdId);
       if (cmd) {
-        cmd.execute(menuItem.checked);
+        cmd.execute({ value: menuItem.checked, browserWindow });
       }
     } else {
       const request: ipc.IActionRequest = {

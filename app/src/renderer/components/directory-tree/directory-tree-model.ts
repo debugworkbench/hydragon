@@ -6,6 +6,18 @@ import * as path from 'path';
 import * as mobx from 'mobx';
 import { PanelModel, IPanelItem } from '../layout/panel-model';
 
+function isArrayChange(change: mobx.IArrayChange<any> | mobx.IArraySplice<any>): change is mobx.IArrayChange<any> {
+  return change.type === 'update';
+}
+
+function isArraySplice(change: mobx.IArrayChange<any> | mobx.IArraySplice<any>): change is mobx.IArraySplice<any> {
+  return change.type === 'splice';
+}
+
+function isObservableArray<T>(array: T[]): array is mobx.IObservableArray<T> {
+  return mobx.isObservableArray(array);
+}
+
 // FIXME: Watch directories in the tree for changes, and update the children of any expanded items
 export class DirectoryTreeModel implements IPanelItem {
   id: string;
@@ -20,17 +32,30 @@ export class DirectoryTreeModel implements IPanelItem {
   private _itemIndices = new Map<DirectoryTreeItemModel, /*index:*/number>();
 
   constructor({
-    id, displayRoot = true, indentPerLevel = 25
+    id, dirPaths, displayRoot = true, indentPerLevel = 25
   }: DirectoryTreeModel.IConstructorParams) {
     this.id = id;
     this._isRootExcluded = !displayRoot;
     this._indentPerLevel = indentPerLevel;
-    this._root = new DirectoryTreeItemModel({ id: 'root', fullPath: null, level: 0, isExpandable: true, isExpanded: true });
+    this._root = new DirectoryTreeItemModel({
+      id: 'root', fullPath: null, level: 0, isExpandable: true, isExpanded: true
+    });
     if (this._isRootExcluded) {
       this.items = [];
     } else {
       this.items = [this._root];
       this._itemIndices.set(this._root, 0);
+    }
+    if (isObservableArray(dirPaths)) {
+      dirPaths.observe(this._onDirsDidChange.bind(this), true);
+    }
+  }
+
+  @mobx.action
+  private _onDirsDidChange(change: mobx.IArrayChange<string> | mobx.IArraySplice<string>): void {
+    if (isArraySplice(change)) {
+      change.added.forEach(dirPath => this.addDirectory(dirPath));
+      change.removed.forEach(dirPath => this.removeDirectory(dirPath));
     }
   }
 
@@ -43,7 +68,10 @@ export class DirectoryTreeModel implements IPanelItem {
     if (!dirStat.isDirectory()) {
       throw new Error(`"${absolutePath}" is not a directory.`);
     }
-    const item = new DirectoryTreeItemModel({ id: 'test', fullPath: absolutePath, level: 1, parent: this._root, isExpandable: true });
+    const item = new DirectoryTreeItemModel({
+      id: `${this._root.children ? this._root.children.length : 0}`,
+      fullPath: absolutePath, level: 1, parent: this._root, isExpandable: true
+    });
 
     // FIXME: can't just call getLastSubTreeItem() since the order of siblings will depend on the sort order
     this._addItems(getLastSubTreeItem(item.parent), [item]);
@@ -148,6 +176,7 @@ export class DirectoryTreeModel implements IPanelItem {
 export namespace DirectoryTreeModel {
   export interface IConstructorParams {
     id: string;
+    dirPaths: string[];
     /** Set to `false` to prevent the root item from being rendered, defaults to `true`. */
     displayRoot?: boolean;
     /** Number of pixels to indent each level of the tree by when the tree is rendered. */

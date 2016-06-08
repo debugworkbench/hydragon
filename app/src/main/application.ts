@@ -11,6 +11,8 @@ import { PathPicker } from './platform/path-picker';
 import { WindowMenuManager } from './platform/window-menu-manager';
 import { CommandTable } from '../common/command-table';
 import * as cmds from '../common/command-ids';
+import { SourceDirRegistry } from './source-dir-registry';
+import { OpenSourceDirCommand } from './commands'
 
 export interface IApplicationArgs {
   /** Path to the root directory of the application. */
@@ -24,12 +26,14 @@ export class Application {
   private _pathPicker: PathPicker;
   private _windowMenuManager: WindowMenuManager;
   private _commands: CommandTable;
+  private _sourceDirRegistry: SourceDirRegistry;
 
   run(args: IApplicationArgs): void {
     this._devTools = new DevTools();
     const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
+    this._sourceDirRegistry = new SourceDirRegistry();
     this._commands = new CommandTable();
     this.registerCommands();
     this._windowMenuManager = new WindowMenuManager(this._commands);
@@ -44,6 +48,9 @@ export class Application {
   }
 
   registerCommands(): void {
+    this._commands.add(cmds.OPEN_SRC_DIR, new OpenSourceDirCommand({
+      pathPicker: this._pathPicker, sourceDirRegistry: this._sourceDirRegistry
+    }));
     this._commands.add(cmds.QUIT_APP, { execute: () => app.quit() });
   }
 }
