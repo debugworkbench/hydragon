@@ -58,24 +58,26 @@ export class DirectoryTreeItemComponent
   render() {
     const { model, indent, onExpand, onCollapse } = this.props;
 
-    return <div className={this._className} tabIndex="0" onClick={this._onClick}>
-      <span className="indent" style={{ flexBasis: indent }}></span>
-      <div className="buttons" hidden={!model.isExpandable}>
-        <PaperIconButtonComponent className="expander"
-          icon="icons:chevron-right"
-          alt={model.isExpanded ? 'Collapse' : 'Expand'}
-          style={{ transform: model.isExpanded ? 'rotate(90deg)' : '' }}
-          cssVars={{
-            '--paper-icon-button': {
-              width: '30px',
-              height: '30px',
-              padding: '5px'
-            }
-          }}
-        />
+    return (
+      <div className={this._className} tabIndex="0" onClick={this._onClick}>
+        <span className="indent" style={{ flexBasis: indent }}></span>
+        <div className="buttons" hidden={!model.isExpandable}>
+          <PaperIconButtonComponent className="expander"
+            icon="icons:chevron-right"
+            alt={model.isExpanded ? 'Collapse' : 'Expand'}
+            style={{ transform: model.isExpanded ? 'rotate(90deg)' : '' }}
+            cssVars={{
+              '--paper-icon-button': {
+                width: '30px',
+                height: '30px',
+                padding: '5px'
+              }
+            }}
+          />
+        </div>
+        <span className="title">{model.title}</span>
       </div>
-      <span className="title">{model.title}</span>
-    </div>
+    );
   }
 }
 

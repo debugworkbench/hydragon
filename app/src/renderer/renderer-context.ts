@@ -77,30 +77,7 @@ export class RendererContext {
     this.elementRegistry = new ElementRegistry(uriPathResolver, elementManifestLoader);
     await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
     this.elementFactory = new ElementFactory(this.elementRegistry);
-
-    this.reactElementFactory = new ReactElementFactory();
-    this.reactElementFactory.registerElementConstructor(PageSetModel, ({ model, key }) =>
-      React.createElement(PageSetComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(PageTreeModel, ({ model, key }) =>
-      React.createElement(PageTreeComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(CodeMirrorEditorPageModel, ({ model, key }) =>
-      React.createElement(CodeMirrorEditorPageComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(GdbMiDebugConfigPageModel, ({ model, key }) =>
-      React.createElement(GdbMiDebugConfigPageComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(DebugToolbarModel, ({ model, key }) =>
-      React.createElement(DebugToolbarComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
-      React.createElement(NewDebugConfigDialogComponent, { model, key })
-    );
-    this.reactElementFactory.registerElementConstructor(DirectoryTreeModel, ({ model, key }) =>
-      React.createElement(DirectoryTreeComponent, { model, key })
-    );
-
+    this.reactElementFactory = this._createReactElementFactory();
     this.windowMenu = this.createWindowMenu();
     this._sourceDirRegistry = new RendererSourceDirRegistry();
 
@@ -226,6 +203,34 @@ export class RendererContext {
         throw new Error('The cursor overlay is not attached to the document!');
       }
     }
+  }
+
+  private _createReactElementFactory(): ReactElementFactory {
+    const factory = new ReactElementFactory();
+
+    factory.registerElementConstructor(PageSetModel, ({ model, key }) =>
+      React.createElement(PageSetComponent, { model, key })
+    );
+    factory.registerElementConstructor(PageTreeModel, ({ model, key }) =>
+      React.createElement(PageTreeComponent, { model, key })
+    );
+    factory.registerElementConstructor(CodeMirrorEditorPageModel, ({ model, key }) =>
+      React.createElement(CodeMirrorEditorPageComponent, { model, key })
+    );
+    factory.registerElementConstructor(GdbMiDebugConfigPageModel, ({ model, key }) =>
+      React.createElement(GdbMiDebugConfigPageComponent, { model, key })
+    );
+    factory.registerElementConstructor(DebugToolbarModel, ({ model, key }) =>
+      React.createElement(DebugToolbarComponent, { model, key })
+    );
+    factory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
+      React.createElement(NewDebugConfigDialogComponent, { model, key })
+    );
+    factory.registerElementConstructor(DirectoryTreeModel, ({ model, key }) =>
+      React.createElement(DirectoryTreeComponent, { model, key })
+    );
+
+    return factory;
   }
 
   private createWindowMenu(): WindowMenu {

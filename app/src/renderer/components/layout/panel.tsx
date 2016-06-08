@@ -36,7 +36,7 @@ export class PanelComponent
     if (this.element) {
       return { width: this.element.clientWidth, height: this.element.clientHeight };
     } else {
-      throw new Error('Reference to DOM element not set.')
+      throw new Error('Reference to DOM element not set.');
     }
   }
 
@@ -90,7 +90,7 @@ export class PanelComponent
       width: (model.width !== undefined) ? model.width : undefined,
       height: (model.height !== undefined) ? model.height : undefined,
       flex: (model.mainAxisSize !== null) ? `0 0 ${model.mainAxisSize}` : undefined
-    }
+    };
 
     return (
       <div className={this.className} style={inlineStyle} ref={this.onSetRef}>

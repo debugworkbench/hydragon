@@ -91,6 +91,6 @@ namespace PaperInputComponent {
       focusedLabelColor?: string;
       /** Color of the text in the input field. */
       textColor?: string;
-    }
+    };
   }
 }
