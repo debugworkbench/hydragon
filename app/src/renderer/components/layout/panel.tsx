@@ -26,7 +26,8 @@ export class PanelComponent
   private className: string;
   private element: HTMLDivElement;
 
-  private onSetRef = (ref: HTMLDivElement) => this.element = ref;
+  private _onSetRef = (ref: HTMLDivElement) => this.element = ref;
+  private _onContextMenu = (event: React.MouseEvent) => this.props.model.showContextMenu();
 
   get id(): string {
     return this.props.model.id;
@@ -93,7 +94,8 @@ export class PanelComponent
     };
 
     return (
-      <div className={this.className} style={inlineStyle} ref={this.onSetRef}>
+      <div className={this.className} style={inlineStyle} ref={this._onSetRef}
+        onContextMenu={this._onContextMenu}>
         <div className="content-wrapper">
         {this.renderContent()}
         </div>

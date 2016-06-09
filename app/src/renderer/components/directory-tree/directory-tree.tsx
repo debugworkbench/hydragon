@@ -30,6 +30,7 @@ export class DirectoryTreeComponent
     super();
     this._onExpandItem = this._onExpandItem.bind(this);
     this._onCollapseItem = this._onCollapseItem.bind(this);
+    this._onContextMenu = this._onContextMenu.bind(this);
     this._renderItems = this._renderItems.bind(this);
     this._renderRow = this._renderRow.bind(this);
   }
@@ -55,9 +56,15 @@ export class DirectoryTreeComponent
     this.props.model.collapseItem(item);
   }
 
+  private _onContextMenu(event: React.MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.props.model.showContextMenu();
+  }
+
   render() {
     return (
-      <div className={this._className}>
+      <div className={this._className} onContextMenu={this._onContextMenu}>
         <AutoSizerComponent>{this._renderItems}</AutoSizerComponent>
         {/* The not so smart "render all the things!" approach:
           this.props.model.items.map(item => {

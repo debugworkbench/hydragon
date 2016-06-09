@@ -52,6 +52,7 @@ export class RendererContext {
   private windowMenu: WindowMenu;
   private devTools: RendererDevTools;
   private _sourceDirRegistry: RendererSourceDirRegistry;
+  private _dirTree: DirectoryTreeModel;
 
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
@@ -66,6 +67,9 @@ export class RendererContext {
   }
 
   dispose(): void {
+    if (this._dirTree) {
+      this._dirTree.dispose();
+    }
     if (this._sourceDirRegistry) {
       this._sourceDirRegistry.dispose();
     }
@@ -101,9 +105,13 @@ export class RendererContext {
     const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
     const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
     const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar', debugConfigManager, debugConfigPresenter });
-    const dirTree = new DirectoryTreeModel({ id: 'explorer', displayRoot: false, dirPaths: this._sourceDirRegistry.dirPaths });
+    this._dirTree = new DirectoryTreeModel({
+      id: 'explorer', displayRoot: false, dirPaths: this._sourceDirRegistry.dirPaths
+    });
 
-    workspaceModel.createDefaultLayout({ mainPageSet, pageTree, debugToolbar, dirTree });
+    workspaceModel.createDefaultLayout({
+      mainPageSet, pageTree, debugToolbar, dirTree: this._dirTree
+    });
 
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';
@@ -146,7 +154,7 @@ export class RendererContext {
       return page;
     });
 
-    dirTree.addDirectory(__dirname);
+    this._dirTree.addDirectory(__dirname);
   }
 
   showWindow(): void {

@@ -36,11 +36,6 @@ export class RendererDevTools {
     ipcRenderer.on(ipc.IPC_DID_OPEN, this.onDidOpen);
     ipcRenderer.on(ipc.IPC_DID_CLOSE, this.onDidClose);
 
-    window.addEventListener('contextmenu', event => {
-      event.preventDefault();
-      this.inspectElementAt(event);
-    });
-
     this.isConnected = true;
     this.isWindowOpen = isWindowOpen;
   }

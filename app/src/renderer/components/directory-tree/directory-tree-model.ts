@@ -5,6 +5,8 @@ import * as fs from 'fs-promisified';
 import * as path from 'path';
 import * as mobx from 'mobx';
 import { PanelModel, IPanelItem } from '../layout/panel-model';
+import { ContextMenu } from '../../platform/context-menu';
+import * as cmds from '../../../common/command-ids';
 
 function isArrayChange(change: mobx.IArrayChange<any> | mobx.IArraySplice<any>): change is mobx.IArrayChange<any> {
   return change.type === 'update';
@@ -30,6 +32,7 @@ export class DirectoryTreeModel implements IPanelItem {
   private _isRootExcluded: boolean;
   private _indentPerLevel: number;
   private _itemIndices = new Map<DirectoryTreeItemModel, /*index:*/number>();
+  private _contextMenu: ContextMenu;
 
   constructor({
     id, dirPaths, displayRoot = true, indentPerLevel = 25
@@ -51,16 +54,19 @@ export class DirectoryTreeModel implements IPanelItem {
     }
   }
 
+  dispose(): void {
+    if (this._contextMenu) {
+      this._contextMenu.dispose();
+      this._contextMenu = null;
+    }
+  }
+
   @mobx.action
   private _onDirsDidChange(change: mobx.IArrayChange<string> | mobx.IArraySplice<string>): void {
     if (isArraySplice(change)) {
       change.added.forEach(dirPath => this.addDirectory(dirPath));
       change.removed.forEach(dirPath => this.removeDirectory(dirPath));
     }
-  }
-
-  onDidAttachToPanel(panel: PanelModel): void {
-    // noop
   }
 
   async addDirectory(absolutePath: string): Promise<void> {
@@ -119,6 +125,25 @@ export class DirectoryTreeModel implements IPanelItem {
 
   computeItemIndent(item: DirectoryTreeItemModel): number {
     return (this._isRootExcluded ? (item.level - 1) : item.level) * this._indentPerLevel;
+  }
+
+  extendPanelContextMenu(panelContextMenu: ContextMenu): void {
+    if (panelContextMenu.hasItems) {
+      panelContextMenu.separator();
+    }
+    this._extendContextMenu(panelContextMenu);
+  }
+
+  showContextMenu(): void {
+    if (!this._contextMenu) {
+      this._contextMenu = new ContextMenu();
+      this._extendContextMenu(this._contextMenu);
+    }
+    this._contextMenu.show();
+  }
+
+  private _extendContextMenu(menu: ContextMenu): void {
+    menu.item('Add Directory...', { action: cmds.OPEN_SRC_DIR });
   }
 
   private _addItems(start: DirectoryTreeItemModel, items: DirectoryTreeItemModel[]): void {
