@@ -60,7 +60,7 @@ export class NewDebugConfigDialogComponent
   }
 }
 
-namespace NewDebugConfigDialogComponent {
+export namespace NewDebugConfigDialogComponent {
   export interface IProps extends React.Props<NewDebugConfigDialogComponent> {
     model: NewDebugConfigDialogModel;
   }

@@ -67,7 +67,7 @@ export class GdbMiDebugConfigPageComponent
   }
 }
 
-namespace GdbMiDebugConfigPageComponent {
+export namespace GdbMiDebugConfigPageComponent {
   export interface IProps extends React.Props<GdbMiDebugConfigPageComponent> {
     model: GdbMiDebugConfigPageModel;
   }

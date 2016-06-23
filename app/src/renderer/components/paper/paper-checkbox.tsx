@@ -64,7 +64,7 @@ export class PaperCheckboxComponent
   }
 }
 
-namespace PaperCheckboxComponent {
+export namespace PaperCheckboxComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Sets the state of the box, `true` means checked, and `false` means unchecked. */
     checked?: boolean;
@@ -92,6 +92,6 @@ namespace PaperCheckboxComponent {
       labelSpacing?: string;
       /** Size of the checkbox, defaults to 18px. */
       size?: string;
-    }
+    };
   }
 }

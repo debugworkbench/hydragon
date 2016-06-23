@@ -56,7 +56,7 @@ export class PaperDialogComponent
   }
 }
 
-namespace PaperDialogComponent {
+export namespace PaperDialogComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Set to `true` to open the dialog, `false` to close it. */
     isOpen: boolean;

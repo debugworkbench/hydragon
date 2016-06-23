@@ -77,7 +77,7 @@ export class DebugConfigPresenter {
   }
 }
 
-namespace DebugConfigPresenter {
+export namespace DebugConfigPresenter {
   export interface IConstructorParams {
     debugConfigManager: DebugConfigManager;
     workspace: WorkspaceModel;

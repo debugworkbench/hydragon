@@ -54,10 +54,6 @@ export class DebugToolbarModel implements IPanelItem {
     ));
   }
 
-  onDidAttachToPanel(panel: PanelModel): void {
-    // noop
-  }
-
   openDebugConfig(configName?: string): void {
     this.debugConfigPresenter.openDebugConfig(configName);
   }
@@ -97,7 +93,7 @@ export class DebugToolbarModel implements IPanelItem {
   }
 }
 
-namespace DebugToolbarModel {
+export namespace DebugToolbarModel {
   export interface IConstructorParams {
     id: string;
     debugConfigManager: DebugConfigManager;

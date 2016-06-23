@@ -79,7 +79,7 @@ export class WorkspaceModel {
   }
 }
 
-namespace WorkspaceModel {
+export namespace WorkspaceModel {
   export interface IDefaultLayoutParams {
     mainPageSet: PageSetModel;
     pageTree: PageTreeModel;

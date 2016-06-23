@@ -15,7 +15,7 @@ export interface IProps extends React.Props<PageTreeComponentImpl> {
   model: PageTreeModel;
 }
 
-interface IContext extends stylable.IContext, themable.IContext {
+export interface IContext extends stylable.IContext, themable.IContext {
 }
 
 const SELECTED = 'selected';

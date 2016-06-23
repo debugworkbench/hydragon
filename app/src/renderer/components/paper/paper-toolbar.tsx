@@ -44,7 +44,7 @@ export class PaperToolbarComponent
   }
 }
 
-namespace PaperToolbarComponent {
+export namespace PaperToolbarComponent {
   export interface IProps extends PolymerComponent.IProps {
     styles?: {
       /** Style mixin to apply to the title of the toolbar. */

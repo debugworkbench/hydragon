@@ -22,7 +22,7 @@ export class NewDebugConfigDialogModel extends DialogModel {
   }
 }
 
-namespace NewDebugConfigDialogModel {
+export namespace NewDebugConfigDialogModel {
   export interface IData {
     debugEngineId: string;
     debugConfigName: string;

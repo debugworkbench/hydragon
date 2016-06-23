@@ -43,7 +43,7 @@ export class FileInputModel {
   }
 }
 
-namespace FileInputModel {
+export namespace FileInputModel {
   export interface IConstructorParams {
     promptTitle?: string;
     defaultPath?: string;

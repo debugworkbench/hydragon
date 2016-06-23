@@ -10,7 +10,7 @@ import { WorkspaceModel } from './workspace-model';
 import { stylable } from '../decorators';
 import { Cursor } from '../../renderer-context';
 import { ElementFactory } from '../element-factory';
-import { darkWorkspaceTheme } from './workspace-theme';
+import { darkWorkspaceTheme, IWorkspaceTheme } from './workspace-theme';
 
 /**
  * Chief UI wrangler component.
@@ -28,7 +28,7 @@ export class WorkspaceComponent
     theme: React.PropTypes.object
   };
 
-  getChildContext() {
+  getChildContext(): WorkspaceComponent.IChildContext {
     return {
       elementFactory: this.props.elementFactory,
       theme: darkWorkspaceTheme
@@ -86,5 +86,10 @@ export namespace WorkspaceComponent {
   }
 
   export interface IContext extends stylable.IContext {
+  }
+
+  export interface IChildContext {
+    elementFactory: ElementFactory;
+    theme: IWorkspaceTheme;
   }
 }

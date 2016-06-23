@@ -14,7 +14,7 @@ export interface IProps extends React.Props<PageSetComponent> {
   model: PageSetModel;
 }
 
-interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
+export interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
 }
 
 /**

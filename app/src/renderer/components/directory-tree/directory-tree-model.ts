@@ -296,7 +296,7 @@ export class DirectoryTreeItemModel {
   }
 }
 
-namespace DirectoryTreeItemModel {
+export namespace DirectoryTreeItemModel {
   export interface IConstructorParams {
     id: string;
     fullPath: string;

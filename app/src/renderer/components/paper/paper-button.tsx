@@ -41,13 +41,13 @@ export class PaperButtonComponent
   }
 }
 
-namespace PaperButtonComponent {
+export namespace PaperButtonComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Callback to invoke after the user taps on the button. */
     onDidTap?: (e: polymer.TapEvent) => void;
     styles?: {
       backgroundColor?: string;
       textColor?: string;
-    }
+    };
   }
 }

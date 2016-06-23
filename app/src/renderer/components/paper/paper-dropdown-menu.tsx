@@ -54,7 +54,7 @@ export class PaperDropdownMenuComponent
   }
 }
 
-namespace PaperDropdownMenuComponent {
+export namespace PaperDropdownMenuComponent {
   export interface IProps extends PolymerComponent.IProps {
     styles?: {
       textColor?: string;

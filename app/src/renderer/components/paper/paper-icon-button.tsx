@@ -44,7 +44,7 @@ export class PaperIconButtonComponent
   }
 }
 
-namespace PaperIconButtonComponent {
+export namespace PaperIconButtonComponent {
   export interface IProps extends PolymerComponent.IProps {
     icon?: string;
     styles?: {

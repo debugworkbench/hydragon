@@ -17,7 +17,7 @@ export interface IFocusableState {
  */
 export function makeFocusable<P, S extends IFocusableState, C>(
   InputClass: React.ComponentClass<P, S, C>
-) {
+): typeof InputClass {
   return class extends InputClass {
     private element: Element;
 

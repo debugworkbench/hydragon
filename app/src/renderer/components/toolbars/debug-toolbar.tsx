@@ -98,7 +98,7 @@ export class DebugToolbarComponent
   }
 }
 
-namespace DebugToolbarComponent {
+export namespace DebugToolbarComponent {
   export interface IProps extends React.Props<DebugToolbarComponent> {
     model: DebugToolbarModel;
   }

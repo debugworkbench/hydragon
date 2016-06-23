@@ -53,7 +53,7 @@ export class PaperInputComponent
   }
 }
 
-namespace PaperInputComponent {
+export namespace PaperInputComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Text that should be displayed in the input field. */
     value?: string;

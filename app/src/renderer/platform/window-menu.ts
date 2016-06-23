@@ -125,7 +125,7 @@ export namespace WindowMenu {
    *
    * Changes to any observable properties will be automatically propagated to [[WindowMenuManager]].
    */
-  abstract class AbstractItem {
+  export abstract class AbstractItem {
     @mobx.observable
     isEnabled: boolean | mobx.IObservableValue<boolean>;
     @mobx.observable

@@ -76,7 +76,7 @@ export class CodeMirrorEditorPageComponent
   }
 }
 
-namespace CodeMirrorEditorPageComponent {
+export namespace CodeMirrorEditorPageComponent {
   export interface IProps extends React.Props<CodeMirrorEditorPageComponent> {
     model: CodeMirrorEditorPageModel;
   }

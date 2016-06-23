@@ -49,8 +49,4 @@ export class PageTreeModel implements IPanelItem {
   activatePage(page: PageModel): void {
     this.pageSet.activatePage(page);
   }
-
-  onDidAttachToPanel(panel: PanelModel): void {
-    // override in subclass if needed
-  }
 }

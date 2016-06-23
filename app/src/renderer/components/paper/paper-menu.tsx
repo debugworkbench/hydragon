@@ -38,7 +38,7 @@ export class PaperMenuComponent
   }
 }
 
-namespace PaperMenuComponent {
+export namespace PaperMenuComponent {
   export interface IProps extends PolymerComponent.IProps {
     /** Sets the selected element, by default the value should be the index of a menu item. */
     selected?: string | number;
