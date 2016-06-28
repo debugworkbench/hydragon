@@ -517,6 +517,8 @@ declare module GitHubElectron {
 		 * throttling of DOM timers, by default this options is set to `false`.
 		 */
 		pageVisibility?: boolean;
+		/** Whether to throttle animations and timers when the page is not in focus. */
+		backgroundThrottling?: boolean;
 	}
 
 	// Includes all options BrowserWindow can take as at v0.35.4.

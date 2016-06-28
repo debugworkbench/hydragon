@@ -12,3 +12,4 @@ app/typings/browser.d.ts
 app/typings/browser/*
 /typings/browser.d.ts
 /typings/browser/*
+app/tests/lib/

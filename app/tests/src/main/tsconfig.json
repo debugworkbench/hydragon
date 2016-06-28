@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "jsx": "react",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": false,
+        "noLib": false,
+        "outDir": "../../lib",
+        "rootDir": "../",
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "app/*": ["../../../lib/*"]
+        }
+    },
+    "files": [
+        "../../../typings/node/node.d.ts",
+        "../../../typings/github-electron/node.d.ts",
+        "../../../typings/github-electron/github-electron.d.ts",
+        "../../../typings/github-electron/github-electron-main.d.ts",
+        "../../../typings/walkdir/walkdir.d.ts",
+        "../common/node-ext.d.ts",
+        "../common/loader.ts",
+        "index.ts"
+    ],
+    "include": [
+        "suites/**/*.ts"
+    ]
+}

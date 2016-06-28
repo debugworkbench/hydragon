@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="../../../node_modules/mocha/mocha.css" rel="stylesheet">
+  </head>
+  <body>
+    We are using node <script>document.write(process.versions.node)</script>,
+    Chrome <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+    <div id="mocha"></div>
+
+    <script type="text/javascript" charset="utf-8">
+      (() => {
+        require('../lib/common/loader');
+      })();
+    </script>
+  </body>
+</html>

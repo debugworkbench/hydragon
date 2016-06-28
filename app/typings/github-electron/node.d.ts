@@ -14,7 +14,7 @@ declare namespace NodeJS {
          * the value of this property will be `browser` for the main process, and `renderer`
          * for a renderer process.
          */
-        type: string;
+        type: 'browser' | 'renderer';
         /** Path to the Electron resources directory which contains JavaScript/ASAR files. */
         resourcesPath: string;
         /** Read-only property that will be `true` only for Mac App Store builds. */
