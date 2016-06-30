@@ -19,6 +19,10 @@ const mochaBridge = new MochaIPCBridge(reportGenerator);
 
 ipcRenderer.on(channels.RENDERER_MOCHA_RUN,
   (event: GitHubElectron.IRendererIPCEvent, options: ITestRunOptions) => {
+    // clear out the test file from the require cache to work around a Mocha "feature" where it
+    // skips running tests from a file that was previously loaded by any other Mocha instance in
+    // this process
+    delete require.cache[options.file];
     new Mocha()
     .addFile(options.file)
     .grep(new RegExp(options.grep, options.grepFlags))
