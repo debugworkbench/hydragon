@@ -5,8 +5,8 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { MainIPCDispatcher } from 'app/main/ipc-dispatcher';
-import { IPC_CONNECT, IPC_DISCONNECT, IPC_MESSAGE } from 'app/common/ipc/ipc-node';
+import { MainIPCDispatcher, IMainDispatcherNode } from 'app/main/ipc-dispatcher';
+import { ipcChannels as dispatcherIpcChannels } from 'app/common/ipc/ipc-node';
 import {
   DISPATCHER_IPC_KEY, dispatcherChannels, ipcChannels, ITestPayload
 } from '../../common/ipc-dispatcher';
@@ -24,7 +24,11 @@ describe('MainIPCDispatcher', function () {
   it('cleans up IPC listeners when disposed', () => {
     const dispatcher = new MainIPCDispatcher();
     dispatcher.dispose();
-    [IPC_CONNECT, IPC_DISCONNECT, IPC_MESSAGE].forEach(event => {
+    [
+      dispatcherIpcChannels.CONNECT,
+      dispatcherIpcChannels.DISCONNECT,
+      dispatcherIpcChannels.MESSAGE
+    ].forEach(event => {
       expect(ipcMain.listeners(event)).to.have.lengthOf(0);
     });
   });
@@ -58,25 +62,24 @@ describe('MainIPCDispatcher', function () {
     });
 
     it('sends a message', () => {
-      let disposeNode: MainIPCDispatcher.UnregisterNodeCallback;
+      let node: IMainDispatcherNode;
       const sendMsgWhenRendererReady = new Promise<void>((resolve, reject) => {
-        disposeNode = dispatcher.registerNode({
-          keys: { [DISPATCHER_IPC_KEY]: Object.create(null) },
-          onConnect: (key, node) => {
-            try {
-              dispatcher.sendMessage<ITestPayload>(
-                node, DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, { title: 'This is a message' }
-              );
-              resolve();
-            } catch (err) {
-              reject(err);
-            }
+        node = dispatcher.createNode();
+        node.onConnect(DISPATCHER_IPC_KEY, (key, remoteNode) => {
+          try {
+            dispatcher.sendMessage<ITestPayload>(
+              remoteNode, DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE,
+              { title: 'This is a message' }
+            );
+            resolve();
+          } catch (err) {
+            reject(err);
           }
         });
       });
       return runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitMessage/ })
       .then(() => sendMsgWhenRendererReady)
-      .then(() => disposeNode());
+      .then(() => node.dispose());
     });
 
     it('sends a request and receives a response', () => {

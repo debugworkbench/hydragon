@@ -3,8 +3,8 @@
 
 import { ipcMain } from 'electron';
 import {
-  IPC_CONNECT, IPC_DISCONNECT, IPC_MESSAGE, ISimpleMessage, IRequest, MessageKind, IConnectMessage,
-  IDisconnectMessage, IMessage, IResponse
+  ipcChannels, ISimpleMessage, IRequest, MessageKind, IConnectMessage, IDisconnectMessage, IMessage,
+  IResponse
 } from '../common/ipc/ipc-node';
 
 interface IPendingRequest {
@@ -13,83 +13,179 @@ interface IPendingRequest {
   cancel(): void;
 }
 
-export type MessageCallback = (msg: any) => Promise<any> | void;
+export type ConnectCallback = (key: string, remoteNode: IRemoteNode) => void;
+export type DisconnectCallback = (key: string, remoteNodeId: number) => void;
 
-export interface INode {
-  keys: { [key: string]: { [channel: string]: MessageCallback } };
-  onConnect?: (key: string, node: IRemoteNode) => void;
-  onDisconnect?: (key: string, remoteNodeId: number) => void;
+export interface IMainDispatcherNode {
+  /** Should be called when the node is no longer needed. */
+  dispose(): void;
+  /** Set a function to be called when a remote node subscribes to the specified key. */
+  onConnect(key: string, callback: ConnectCallback): void;
+  /** Set a function to be called when a remote node unsubscribes from the specified key. */
+  onDisconnect(key: string, callback: DisconnectCallback): void;
 }
 
 export interface IRemoteNode {
   id: number;
-  keys: { [key: string]: Array<string> };
+  key: string;
   page: GitHubElectron.WebContents;
 }
 
+class Node implements IMainDispatcherNode {
+  private _keyCallbacks = new Array<[/*key:*/string, [ConnectCallback, DisconnectCallback]]>();
+
+  constructor(
+    private _sub: (key: string, node: Node) => void,
+    private _unsub: (key: string, node: Node) => void
+  ) {
+  }
+
+  dispose(): void {
+    for (let [key] of this._keyCallbacks) {
+      this._unsub(key, this);
+    }
+    this._keyCallbacks = null;
+  }
+
+  onConnect(key: string, connectCallback: null | ConnectCallback): void {
+    // replace the previously set callback (if any)
+    for (let i = 0; i < this._keyCallbacks.length; ++i) {
+      if (this._keyCallbacks[i][0] === key) {
+        const callbacks = this._keyCallbacks[i][1];
+        const disconnectCallback = callbacks[1];
+        // when both the connect and disconnect callbacks are set to null let the dispatcher know
+        // that the node no longer needs to be notified about connection events for this key
+        if ((connectCallback === null) && (disconnectCallback === null)) {
+          this._unsub(key, this);
+          this._keyCallbacks.splice(i, 1);
+        } else {
+          callbacks[0] = connectCallback;
+        }
+        return;
+      }
+    }
+    this._keyCallbacks.push([key, [connectCallback, null]]);
+    this._sub(key, this);
+  }
+
+  onDisconnect(key: string, disconnectCallback: null | DisconnectCallback): void {
+    // replace the previously set callback (if any)
+    for (let i = 0; i < this._keyCallbacks.length; ++i) {
+      if (this._keyCallbacks[i][0] === key) {
+        const callbacks = this._keyCallbacks[i][1];
+        const connectCallback = callbacks[0];
+        if ((disconnectCallback === null) && (connectCallback === null)) {
+          this._unsub(key, this);
+          this._keyCallbacks.splice(i, 1);
+        } else {
+          callbacks[1] = disconnectCallback;
+        }
+        return;
+      }
+    }
+    this._keyCallbacks.push([key, [null, disconnectCallback]]);
+    this._sub(key, this);
+  }
+
+  connect(key: string, node: IRemoteNode): void {
+    for (let [currentKey, callbacks] of this._keyCallbacks) {
+      if (currentKey === key) {
+        if (callbacks[0]) {
+          callbacks[0](key, node);
+        }
+        break;
+      }
+    }
+  }
+
+  disconnect(key: string, nodeId: number): void {
+    for (let [currentKey, callbacks] of this._keyCallbacks) {
+      if (currentKey === key) {
+        if (callbacks[1]) {
+          callbacks[1](key, nodeId);
+        }
+        break;
+      }
+    }
+  }
+}
+
+/** Used to keep track of the number of remote nodes on a page. */
+type PageInfo = [/*page:*/GitHubElectron.WebContents, /*remoteNodeCount:*/number];
+
 /**
- * Sends requests and messages to nodes that live in one or more renderer processes.
+ * Sends requests and messages to remote nodes that in one or more renderer processes.
  *
  * A request is expected to return a response, whereas a message is not.
+ * See also [[RendererIPCDispatcher]].
  */
 export class MainIPCDispatcher {
-  private _keyToChannelsMap = new Map</*key:*/string, Map</*channel:*/string, Array<[GitHubElectron.WebContents, number]>>>();
-  private _keyToNodesMap = new Map</*key:*/string, Array<INode>>();
+  /** Tracks the number of remote nodes subscribed to each key on a per page basis. */
+  private _keyToPagesMap = new Map</*key:*/string, Array<PageInfo>>();
+  /** Tracks the local nodes subscribed each key. */
+  private _keyToNodesMap = new Map</*key:*/string, Array<Node>>();
   private _pendingRequests: IPendingRequest[] = [];
   private _nextRequestId = 1;
   private _defaultTimeOut = 60000; // 1 minute
 
   constructor() {
+    this._subscribeNode = this._subscribeNode.bind(this);
+    this._unsubscribeNode = this._unsubscribeNode.bind(this);
     this._onConnect = this._onConnect.bind(this);
     this._onDisconnect = this._onDisconnect.bind(this);
     this._onResponse = this._onResponse.bind(this);
 
-    ipcMain.on(IPC_CONNECT, this._onConnect);
-    ipcMain.on(IPC_DISCONNECT, this._onDisconnect);
-    ipcMain.on(IPC_MESSAGE, this._onResponse);
-  }
-
-  dispose(): void {
-    this._pendingRequests.forEach(request => request.cancel());
-
-    ipcMain.removeListener(IPC_CONNECT, this._onConnect);
-    ipcMain.removeListener(IPC_DISCONNECT, this._onDisconnect);
-    ipcMain.removeListener(IPC_MESSAGE, this._onResponse);
+    ipcMain.on(ipcChannels.CONNECT, this._onConnect);
+    ipcMain.on(ipcChannels.DISCONNECT, this._onDisconnect);
+    ipcMain.on(ipcChannels.MESSAGE, this._onResponse);
   }
 
   /**
-   * @return A callback that can be invoked to unregister the node.
+   * Should be called when the dispatcher is no longer needed.
+   * Any pending requests will be cancelled.
    */
-  registerNode(node: INode): MainIPCDispatcher.UnregisterNodeCallback {
-    for (const key of Object.keys(node.keys)) {
-      const nodes = this._keyToNodesMap.get(key);
-      if (nodes) {
-        nodes.push(node);
-      } else {
-        this._keyToNodesMap.set(key, [node]);
-      }
-    }
-    return () => this._unregisterNode(node);
+  dispose(): void {
+    this._pendingRequests.forEach(request => request.cancel());
+
+    ipcMain.removeListener(ipcChannels.CONNECT, this._onConnect);
+    ipcMain.removeListener(ipcChannels.DISCONNECT, this._onDisconnect);
+    ipcMain.removeListener(ipcChannels.MESSAGE, this._onResponse);
   }
 
-  private _unregisterNode(node: INode): void {
-    for (const key of Object.keys(node.keys)) {
-      const nodes = this._keyToNodesMap.get(key);
-      if (nodes.length > 1) {
-        nodes.splice(nodes.indexOf(node), 1);
-      } else {
-        this._keyToNodesMap.delete(key);
-      }
+  /**
+   * Create a new local node that can be notified when remote nodes subscribe to or unsubscribe
+   * from certain keys.
+   */
+  createNode(): IMainDispatcherNode {
+    return new Node(this._subscribeNode, this._unsubscribeNode);
+  }
+
+  /** Called when a local node subscribes to a key. */
+  private _subscribeNode(key: string, node: Node): void {
+    const nodes = this._keyToNodesMap.get(key);
+    if (nodes) {
+      nodes.push(node);
+    } else {
+      this._keyToNodesMap.set(key, [node]);
+    }
+  }
+
+  /** Called when a local node unsubscribes from a key. */
+  private _unsubscribeNode(key: string, node: Node): void {
+    const nodes = this._keyToNodesMap.get(key);
+    if (nodes.length > 1) {
+      nodes.splice(nodes.indexOf(node), 1);
+    } else {
+      this._keyToNodesMap.delete(key);
     }
   }
 
   /** Send a message to multiple remote nodes. */
   broadcastMessage<T>(key: string, channel: string, payload: T): void {
-    const channelToPagesMap = this._keyToChannelsMap.get(key);
-    const pages = channelToPagesMap.get(channel);
-    for (const [page, nodeCount] of pages) {
+    const pages = this._keyToPagesMap.get(key);
+    for (const [page] of pages) {
       const msg: ISimpleMessage = { key, channel, kind: MessageKind.Simple, payload };
-      page.send(IPC_MESSAGE, msg);
+      page.send(ipcChannels.MESSAGE, msg);
     }
   }
 
@@ -104,22 +200,18 @@ export class MainIPCDispatcher {
     const msg: ISimpleMessage = {
       nodeId: node.id, key, channel, kind: MessageKind.Simple, payload
     };
-    node.page.send(IPC_MESSAGE, msg);
+    node.page.send(ipcChannels.MESSAGE, msg);
   }
 
   /** Send a request to a remote node and return the response. */
   sendRequest<TRequest, TResponse>(key: string, channel: string, payload: TRequest): Promise<TResponse> {
     return new Promise<TResponse>((resolve, reject) => {
-      const channelToPagesMap = this._keyToChannelsMap.get(key);
-      if (!channelToPagesMap) {
-        throw new Error(`No nodes are registered for the '${key}' key.`);
-      }
-
-      const pages = channelToPagesMap.get(channel);
+      const pages = this._keyToPagesMap.get(key);
       if (!pages) {
-        throw new Error(`No nodes are registered for the '${channel}' channel.`);
+        throw new Error(`No remote nodes for the '${key}' key found.`);
       }
-
+      // for now just send the request to the first page that was added, first come first served,
+      // should probably provide a way to control this at some point
       const page = pages[pages.length - 1][0];
       const requestId = this._generateRequestId();
       const timeoutTimer = setTimeout(() => {
@@ -147,76 +239,65 @@ export class MainIPCDispatcher {
       });
 
       const msg: IRequest = { key, channel, id: requestId, kind: MessageKind.Request, payload };
-      page.send(IPC_MESSAGE, msg);
+      page.send(ipcChannels.MESSAGE, msg);
     });
   }
 
+  /** Called when a remote node subscribes to a key. */
   private _onConnect(e: GitHubElectron.IMainIPCEvent, request: IConnectMessage): void {
     const remoteNode: IRemoteNode = {
       id: request.nodeId,
-      keys: request.keys,
+      key: request.key,
       page: e.sender
     };
-    for (const key of Object.keys(remoteNode.keys)) {
-      const channelToPagesMap = this._keyToChannelsMap.get(key) || new Map<string, Array<[GitHubElectron.WebContents, number]>>();
-      for (const channel of remoteNode.keys[key]) {
-        const pages = channelToPagesMap.get(channel);
-        if (pages) {
-          for (let i = 0; i < pages.length; ++i) {
-            if (pages[i][0] === remoteNode.page) {
-              const page = pages[i];
-              if (page) {
-                ++page[1];
-              } else {
-                pages.push([remoteNode.page, 1]);
-              }
-              break;
-            }
-          }
-        } else {
-          channelToPagesMap.set(channel, [[remoteNode.page, 1]]);
+
+    const pages = this._keyToPagesMap.get(remoteNode.key);
+    if (pages) {
+      let existingPageInfo: [GitHubElectron.WebContents, number];
+      for (let pageInfo of pages) {
+        if (pageInfo[0] === remoteNode.page) {
+          existingPageInfo = pageInfo;
+          break;
         }
       }
-      this._keyToChannelsMap.set(key, channelToPagesMap);
+      if (existingPageInfo) {
+        ++existingPageInfo[1];
+      } else {
+        pages.push([remoteNode.page, 1]);
+      }
+    } else {
+      this._keyToPagesMap.set(remoteNode.key, [[remoteNode.page, 1]]);
+    }
 
-      const nodes = this._keyToNodesMap.get(key);
-      if (nodes) {
-        for (const node of nodes) {
-          if (node.onConnect) {
-            node.onConnect(key, remoteNode);
-          }
-        }
+    const nodes = this._keyToNodesMap.get(remoteNode.key);
+    if (nodes) {
+      for (const node of nodes) {
+        node.connect(remoteNode.key, remoteNode);
       }
     }
   }
 
+  /** Called when a remote node unsubscribes from a key. */
   private _onDisconnect(e: GitHubElectron.IMainIPCEvent, msg: IDisconnectMessage): void {
-    for (const key of Object.keys(msg.keys)) {
-      const channelToPagesMap = this._keyToChannelsMap.get(key);
-      for (const channel of msg.keys[key]) {
-        const pages = channelToPagesMap.get(channel);
-        for (let i = 0; i < pages.length; ++i) {
-          if (pages[i][0] === e.sender) {
-            const [page, nodeCount] = pages[i];
-            if (nodeCount > 1) {
-              pages[i][1] = nodeCount - 1;
-            } else if (pages.length > 1) {
-              pages.splice(i, 1);
-            } else {
-              channelToPagesMap.delete(channel);
-            }
-            break;
-          }
+    const pages = this._keyToPagesMap.get(msg.key);
+    for (let i = 0; i < pages.length; ++i) {
+      if (pages[i][0] === e.sender) {
+        const [page, remoteNodeCount] = pages[i];
+        if (remoteNodeCount > 1) {
+          pages[i][1] = remoteNodeCount - 1;
+        } else if (pages.length > 1) {
+          pages.splice(i, 1);
+        } else {
+          this._keyToPagesMap.delete(msg.key);
         }
+        break;
       }
+    }
 
-      const nodes = this._keyToNodesMap.get(key);
-      if (nodes) {
-        for (const node of nodes) {
-          if (node.onDisconnect) {
-            node.onDisconnect(key, msg.nodeId);
-          }
-        }
+    const nodes = this._keyToNodesMap.get(msg.key);
+    if (nodes) {
+      for (const node of nodes) {
+        node.disconnect(msg.key, msg.nodeId);
       }
     }
   }
@@ -239,8 +320,4 @@ export class MainIPCDispatcher {
     }
     return this._nextRequestId++;
   }
-}
-
-export namespace MainIPCDispatcher {
-  export type UnregisterNodeCallback = () => void;
 }

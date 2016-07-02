@@ -1,22 +1,32 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-export const IPC_CONNECT = 'ipc-node:connect';
-export const IPC_DISCONNECT = 'ipc-node:disconnect';
-export const IPC_MESSAGE = 'ipc-node:msg';
+export const ipcChannels = {
+  CONNECT: 'ipc-node:connect',
+  DISCONNECT: 'ipc-node:disconnect',
+  MESSAGE: 'ipc-node:msg',
+};
 
+/**
+ * Sent by [[RendererIPCDispatcher]] to [[MainIPCDispatcher]] when a node in the renderer process
+ * subscribes to a key.
+ */
 export interface IConnectMessage {
   /** Identifier of the remote node that has come online. */
   nodeId: number;
-  /** The keys and channels the remote node will use to communicate. */
-  keys: { [key: string]: Array</*channel:*/string> };
+  /** The key the remote node will use to communicate. */
+  key: string;
 }
 
+/**
+ * Sent by [[RendererIPCDispatcher]] to [[MainIPCDispatcher]] when a node in the renderer process
+ * unsubscribes from a key.
+ */
 export interface IDisconnectMessage {
   /** Identifier of the remote node that has gone offline. */
   nodeId: number;
-  /** The keys and channels the remote node used to communicate. */
-  keys: { [key: string]: Array</*channel:*/string> };
+  /** The key the remote node used to communicate. */
+  key: string;
 }
 
 export enum MessageKind {
