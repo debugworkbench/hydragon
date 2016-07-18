@@ -10,9 +10,7 @@
     <div id="mocha"></div>
 
     <script type="text/javascript" charset="utf-8">
-      (() => {
-        require('../lib/common/loader');
-      })();
+      window.onload = () => require('../lib/common/loader');
     </script>
   </body>
 </html>

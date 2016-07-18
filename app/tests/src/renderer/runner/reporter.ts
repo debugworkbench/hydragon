@@ -3,7 +3,7 @@
 
 import { ipcRenderer } from 'electron';
 import * as Mocha from 'mocha';
-import { channels, ISuite, ITest } from '../common/mocha-ipc';
+import { channels, ISuite, ITest } from '../../common/mocha-ipc';
 
 /**
  * Mocha reporter that forwards test run progress to the main process.

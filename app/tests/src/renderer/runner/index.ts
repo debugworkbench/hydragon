@@ -5,11 +5,8 @@ import { ipcRenderer } from 'electron';
 import * as Mocha from 'mocha';
 import * as walkDir from 'walkdir';
 import * as path from 'path';
-import { ReportGenerator } from './report-generator';
-import { MochaIPCBridge } from './mocha-ipc-bridge';
 import { RemoteReporter } from './reporter';
-import { channels, ITestRunOptions } from '../common/mocha-ipc';
-import { decodeFromUriComponent, IWindowConfig } from '../common/window-config';
+import { channels, ITestRunOptions } from '../../common/mocha-ipc';
 
 declare global {
   interface Mocha {
@@ -17,22 +14,15 @@ declare global {
   }
 }
 
-const windowConfig = decodeFromUriComponent(window.location.hash.substr(1));
-
-if (windowConfig.isReporter) {
-  const reportGenerator = new ReportGenerator();
-  const mochaBridge = new MochaIPCBridge(reportGenerator);
-} else {
-  ipcRenderer.on(channels.RENDERER_MOCHA_RUN,
-    (event: GitHubElectron.IRendererIPCEvent, options: ITestRunOptions) => {
-      runTests(options)
-      .then(failureCount => ipcRenderer.send(channels.RENDERER_MOCHA_RUN_END, failureCount))
-      .catch(error => {
-        throw error;
-      });
-    }
-  );
-}
+ipcRenderer.on(channels.RENDERER_MOCHA_RUN,
+  (event: GitHubElectron.IRendererIPCEvent, options: ITestRunOptions) => {
+    runTests(options)
+    .then(failureCount => ipcRenderer.send(channels.RENDERER_MOCHA_RUN_END, failureCount))
+    .catch(error => {
+      throw error;
+    });
+  }
+);
 
 function addFile(mocha: Mocha, file: string): void {
   // clear out the test file from the require cache to work around a Mocha "feature" where it

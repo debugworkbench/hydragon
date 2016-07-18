@@ -3,6 +3,7 @@
 
 import { Module } from 'module';
 import * as path from 'path';
+import { decodeFromUriComponent } from './window-config';
 
 // Remap module paths of the form `app/**` to `../../../lib/**` so that imports in the test modules
 // can be written more concisely. This monkey patch takes care of the module resolution at runtime,
@@ -20,7 +21,12 @@ Module._resolveFilename = function (request: string, ...rest: any[]) {
 if (process.type === 'browser') {
   require('../main');
 } else if (process.type === 'renderer') {
-  require('../renderer');
+  const windowConfig = decodeFromUriComponent(window.location.hash.substr(1));
+  if (windowConfig.isReporter) {
+    require('../renderer/reporter');
+  } else {
+    require('../renderer/runner');
+  }
 } else {
   throw new Error('This module must be loaded by Electron!');
 }

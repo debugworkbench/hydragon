@@ -21,7 +21,8 @@
         "../../../typings/github-electron/github-electron.d.ts",
         "../../../typings/github-electron/github-electron-renderer.d.ts",
         "../../../typings/walkdir/walkdir.d.ts",
-        "index.ts"
+        "reporter/index.ts",
+        "runner/index.ts"
     ],
     "include": [
         "suites/**/*.ts"

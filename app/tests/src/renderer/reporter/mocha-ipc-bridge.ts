@@ -3,7 +3,7 @@
 
 import { ipcRenderer } from 'electron';
 import { ReportGenerator } from './report-generator';
-import { channels, ITest, ISuite, IError } from '../common/mocha-ipc';
+import { channels, ITest, ISuite, IError } from '../../common/mocha-ipc';
 
 /**
  * Displays the progress of Mocha tests that are running in the main and renderer processes in the

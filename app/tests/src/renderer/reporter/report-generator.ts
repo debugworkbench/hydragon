@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import * as ipc from '../common/mocha-ipc';
+import * as ipc from '../../common/mocha-ipc';
 
 const symbols = {
   OK: '✓',
