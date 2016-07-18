@@ -3,11 +3,12 @@
 ## Overview
 
 The current test harness is designed to support both unit and integration tests, the latter can
-span across multiple processes. The main process runs a set of Mocha tests, some of which can
-request that the renderer process runs some Mocha tests. Test progress is piped from the main
-process to the renderer process where it is merged with the test progress of the renderer-side
-tests and displayed in the DevTools console (hopefully the console reporter will be replaced by a
-much nicer HTML reporter at some point in the future).
+span across multiple processes. The main process creates a reporter window to display all test
+results, and separate windows to run renderer-side Mocha tests. Tests in the main process can run
+subsets of the renderer-side Mocha tests in one of the windows created by the test harness. Test
+progress is piped from the main process (and from the other windows through the main process) to the
+reporter window and displayed in the DevTools console (hopefully the console reporter will be
+replaced by a much nicer HTML reporter at some point in the future).
 
 ## Directory Layout
 
@@ -23,3 +24,9 @@ much nicer HTML reporter at some point in the future).
 Tests can be built and launched from the project root directory using the `npm run build:test` and
 `npm test` commands respectively. To enable debugging of tests running in the main process use
 `npm run test:debug`, the main process will be paused until `node-inspector` is attached to it.
+
+## Writing Tests
+
+Titles of unit tests (or any test that doesn't rely on multiple processes) should contain the
+`@unit` tag, these tests will generally run first before the more complicated multi-process
+integration tests.

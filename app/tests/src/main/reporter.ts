@@ -4,7 +4,13 @@
 import { ipcMain } from 'electron';
 import { channels, ISuite, ITest } from '../common/mocha-ipc';
 
+/**
+ * Mocha reporter that forwards test run progress from the main process to the reporter page.
+ */
 class RemoteReporter {
+  /**
+   * @param page The reporter page which should be used to display test run progress.
+   */
   constructor(page: GitHubElectron.WebContents, runner: any) {
     runner.on('start', () => page.send(channels.MOCHA_START));
     runner.on('end', () => page.send(channels.MOCHA_END));

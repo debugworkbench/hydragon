@@ -11,7 +11,7 @@ import {
   DISPATCHER_IPC_KEY, dispatcherChannels, ipcChannels, ITestPayload
 } from '../../common/ipc-dispatcher';
 import { channels as mochaChannels, ITestRunOptions } from '../../common/mocha-ipc';
-import { runRendererTests } from '../utils';
+import { TestEnvironment } from '../test-environment';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -19,6 +19,8 @@ const expect = chai.expect;
 const RENDERER_TESTS_FILE = path.resolve(__dirname, '../../renderer/suites/ipc-dispatcher.js');
 
 describe('MainIPCDispatcher', function () {
+  const testEnv = TestEnvironment.instance;
+  // probably just temporary, prevents tests from timing out while poking around with the debugger
   this.timeout(0);
 
   it('cleans up IPC listeners when disposed', () => {
@@ -57,7 +59,7 @@ describe('MainIPCDispatcher', function () {
           }
         });
       });
-      return runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitBroadcast/ })
+      return testEnv.runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitBroadcast/ })
       .then(() => broadcastWhenRendererReady);
     });
 
@@ -77,7 +79,7 @@ describe('MainIPCDispatcher', function () {
           }
         });
       });
-      return runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitMessage/ })
+      return testEnv.runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitMessage/ })
       .then(() => sendMsgWhenRendererReady)
       .then(() => node.dispose());
     });
@@ -92,7 +94,7 @@ describe('MainIPCDispatcher', function () {
           }).then(resolve, reject);
         });
       });
-      return runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitRequest/ })
+      return testEnv.runRendererTests({ file: RENDERER_TESTS_FILE, grep: /@awaitRequest/ })
       .then(() => sendRequestWhenRendererReady);
     });
   });

@@ -46,12 +46,12 @@ export class ReportGenerator {
       console.log(`%c${this._pendingCount} pending`, styles.pending);
     }
     for (let i = 0; i < this._failures.length; ++i) {
-      ReportGenerator._printErrorInfo(i + 1, this._failures[i].title, this._failures[i].err);
+      printErrorInfo(i + 1, this._failures[i].title, this._failures[i].err);
     }
   }
 
   printSuiteHeader(source: string, title: string): void {
-    console.group(`[${source}] %c${title}`, styles.bold);
+    console.group(`[${source}] %c${getDisplayTitle(title)}`, styles.bold);
   }
 
   printSuiteFooter(): void {
@@ -59,38 +59,39 @@ export class ReportGenerator {
   }
 
   printTestPass(source: string, title: string): void {
-    const displayTitle = ReportGenerator._getDisplayTitle(title);
+    const displayTitle = getDisplayTitle(title);
     console.log(`[${source}] %c${symbols.OK} ${displayTitle}`, styles.success);
     this._passCount++;
   }
 
   printFailedTest(source: string, title: string, err: ipc.IError): void {
     this._failures.push({ title, err });
-    const displayTitle = ReportGenerator._getDisplayTitle(title);
+    const displayTitle = getDisplayTitle(title);
     console.log(
       `[${source}] %c${this._failures.length}) ${symbols.ERR} ${displayTitle}`, styles.fail
     );
   }
 
   printPendingTest(source: string, title: string): void {
-    const displayTitle = ReportGenerator._getDisplayTitle(title);
+    const displayTitle = getDisplayTitle(title);
     console.log(`[${source}] %c- ${displayTitle}`, styles.pending);
     this._pendingCount++;
   }
+}
 
-  /** Strip out any tags from the title. */
-  private static _getDisplayTitle(title: string): string {
-    return title.replace(/@\w+/, '');
-  }
+/** Strip out any tags from the title. */
+function getDisplayTitle(title: string): string {
+  return title.replace(/@\w+/, '');
+}
 
-  private static _printErrorInfo(id: number, testTitle: string, err: ipc.IError): void {
-    const message = err.message || '';
-    if (err.stack) {
-      console.groupCollapsed(`%c${id}) ${testTitle}`, styles.fail);
-      console.log('%c' + err.stack, styles.fail);
-      console.groupEnd();
-    } else {
-      console.error(`%c${id}) ${testTitle}\n%c${message}`, styles.fail, styles.bold);
-    }
+function printErrorInfo(id: number, testTitle: string, err: ipc.IError): void {
+  const message = err.message || '';
+  const displayTitle = getDisplayTitle(testTitle);
+  if (err.stack) {
+    console.groupCollapsed(`%c${id}) ${displayTitle}`, styles.fail);
+    console.log('%c' + err.stack, styles.fail);
+    console.groupEnd();
+  } else {
+    console.error(`%c${id}) ${displayTitle}\n%c${message}`, styles.fail, styles.bold);
   }
 }

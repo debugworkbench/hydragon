@@ -6,27 +6,15 @@ import { ReportGenerator } from './report-generator';
 import { channels, ITest, ISuite, IError } from '../common/mocha-ipc';
 
 /**
- * Receives the results of a Mocha test run from the main process and displays them in the DevTools
- * console of the renderer process.
+ * Displays the progress of Mocha tests that are running in the main and renderer processes in the
+ * DevTools console.
  */
 export class MochaIPCBridge {
   constructor(reportGenerator: ReportGenerator) {
     const SOURCE = 'M';
 
-    ipcRenderer.once(channels.MOCHA_START, () => reportGenerator.printHeader());
-
-    ipcRenderer.once(channels.MOCHA_END, () => {
-      reportGenerator.printFooter();
-      [
-        channels.MOCHA_SUITE_START,
-        channels.MOCHA_SUITE_END,
-        channels.MOCHA_TEST_START,
-        channels.MOCHA_TEST_END,
-        channels.MOCHA_PASS,
-        channels.MOCHA_FAIL,
-        channels.MOCHA_PENDING
-      ].forEach(event => ipcRenderer.removeAllListeners(event));
-    });
+    ipcRenderer.on(channels.MOCHA_START, () => reportGenerator.printHeader());
+    ipcRenderer.on(channels.MOCHA_END, () => reportGenerator.printFooter());
 
     ipcRenderer.on(channels.MOCHA_SUITE_START,
       (event: GitHubElectron.IRendererIPCEvent, suite: ISuite) => {
