@@ -5,14 +5,7 @@ import { ipcRenderer } from 'electron';
 import * as Mocha from 'mocha';
 import * as walkDir from 'walkdir';
 import * as path from 'path';
-import { RemoteReporter } from './reporter';
-import { channels, ITestRunOptions } from '../../common/mocha-ipc';
-
-declare global {
-  interface Mocha {
-    reporter(reporter: RemoteReporter): Mocha;
-  }
-}
+import { channels, ITestRunOptions, TestRunnerIPC } from '../../common/mocha-ipc';
 
 ipcRenderer.on(channels.RENDERER_MOCHA_RUN,
   (event: GitHubElectron.IRendererIPCEvent, options: ITestRunOptions) => {
@@ -61,11 +54,27 @@ function findFiles(options: ITestRunOptions): Promise<Array<string>> {
 function runTests(options: ITestRunOptions): Promise<number> {
   return findFiles(options)
   .then(files => new Promise<number>((resolve, reject) => {
+    const reporterConstructor = getReporterConstructor(
+      ipcRenderer.send.bind(ipcRenderer)
+    );
     const mocha = new Mocha();
     files.forEach(file => addFile(mocha, file));
     mocha
     .grep(new RegExp(options.grep, options.grepFlags))
-    .reporter(RemoteReporter)
+    .reporter(reporterConstructor)
     .run(resolve);
   }));
+}
+
+function getReporterConstructor(
+  send: (channel: string, args: any) => void
+): (runner: any) => void {
+  return reporterConsructor.bind(null, send);
+}
+
+function reporterConsructor(
+  send: (channel: string, args: any) => void,
+  runner: any
+): void {
+  this._remoteReporter = new TestRunnerIPC(runner, send);
 }

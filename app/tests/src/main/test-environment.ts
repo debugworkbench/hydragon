@@ -7,9 +7,10 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as walkDir from 'walkdir';
 import { encodeToUriComponent, IWindowConfig } from '../common/window-config';
-import { MochaIPCBridge } from './mocha-ipc-bridge';
-import { getReporterConstructor } from './reporter';
-import { channels as mochaChannels, ITestRunOptions } from '../common/mocha-ipc';
+import { RendererRunnerIPC } from './renderer-runner-ipc';
+import {
+  channels as mochaChannels, ITestRunOptions, ITestStartEventArgs, TestRunnerIPC
+} from '../common/mocha-ipc';
 
 export type PageId = '1st' | '2nd';
 
@@ -29,11 +30,15 @@ export class TestEnvironment {
   private _testRunnerWindows: GitHubElectron.BrowserWindow[] = [];
   /** Promise that will be resolved when the test environment has been initialized. */
   private _ready: Promise<void>;
+  private _rendererRunnerIPC: RendererRunnerIPC;
 
   constructor() {
     TestEnvironment.instance = this;
     this._ready = createReporterWindow()
-    .then(wnd => this._reporterWindow = wnd);
+    .then(wnd => {
+      this._reporterWindow = wnd;
+      this._rendererRunnerIPC = new RendererRunnerIPC(wnd.webContents);
+    });
   }
 
   /** Add a callback to be invoked when the test environment is ready to run tests. */
@@ -104,7 +109,9 @@ export class TestEnvironment {
    */
   runBrowserTests(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      const reporterConstructor = getReporterConstructor(this._reporterWindow.webContents);
+      const reporterConstructor = getReporterConstructor(
+        this._sendBrowserTestRunnerEvent.bind(this)
+      );
       const mocha = new Mocha();
 
       // read in all test files
@@ -126,6 +133,13 @@ export class TestEnvironment {
         .run(failureCount => resolve());
       });
     });
+  }
+
+  private _sendBrowserTestRunnerEvent(channel: string, args: any): void {
+    if (channel === mochaChannels.MOCHA_TEST_START) {
+      this._rendererRunnerIPC.currentBrowserTestId = (<ITestStartEventArgs> args).testId;
+    }
+    this._reporterWindow.webContents.send(channel, args);
   }
 
   /**
@@ -169,8 +183,6 @@ function createWindow(windowConfig: IWindowConfig): GitHubElectron.BrowserWindow
 function createReporterWindow(): Promise<GitHubElectron.BrowserWindow> {
   return new Promise<GitHubElectron.BrowserWindow>((resolve, reject) => {
     const wnd = createWindow({ isReporter: true });
-    // pipe test run progress from the test runner windows to the reporter window
-    new MochaIPCBridge(wnd.webContents);
     // test run progress and results are displayed in the DevTools console
     wnd.webContents.once('devtools-opened', () => {
       // give the DevTools window a bit of time to get its act together to ensure the debugger
@@ -192,4 +204,17 @@ function createTestRunnerWindow(): Promise<GitHubElectron.BrowserWindow> {
     });
     wnd.webContents.openDevTools();
   });
+}
+
+function getReporterConstructor(
+  send: (channel: string, args: any) => void
+): (runner: any) => void {
+  return reporterConsructor.bind(null, send);
+}
+
+function reporterConsructor(
+  send: (channel: string, args: any) => void,
+  runner: any
+): void {
+  this._remoteReporter = new TestRunnerIPC(runner, send);
 }

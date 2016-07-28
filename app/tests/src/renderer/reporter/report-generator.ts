@@ -1,97 +1,116 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+import { ipcRenderer } from 'electron';
 import * as ipc from '../../common/mocha-ipc';
-
-const symbols = {
-  OK: '✓',
-  ERR: '✖'
-};
-
-const styles = {
-  bold: 'font-weight:bold;',
-  normal: 'font-weight:normal;',
-  success: 'color:green;',
-  pending: 'color:blue;',
-  fail: 'color:red;'
-};
-
-// augment the Console type definition that is shipped with TypeScript
-declare global {
-  interface Console {
-    group(groupTitle?: string, ...optionalParams: any[]): void;
-    groupCollapsed(groupTitle?: string, ...optionalParams: any[]): void;
-  }
-}
+import { ReportModel, TestRun, Suite, Test } from './report-model';
 
 /**
- * Outputs the results of a Mocha test run to the DevTools console.
+ * Consolidates Mocha test run data from multiple processes into a single observable model.
  */
 export class ReportGenerator {
-  private _passCount = 0;
-  private _pendingCount = 0;
-  private _failures: Array<{ title: string; err: ipc.IError }> = [];
+  report: ReportModel = new ReportModel();
 
-  printHeader(): void {
-    console.time('Tests Duration');
+  constructor() {
+    ipcRenderer.on(ipc.channels.MOCHA_START, this._onTestRunStart.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_END, this._onTestRunEnd.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_SUITE_START, this._onSuiteStart.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_SUITE_END, this._onSuiteEnd.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_TEST_START, this._onTestStart.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_TEST_END, this._onTestEnd.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_PASS, this._onTestPass.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_FAIL, this._onTestFail.bind(this));
+    ipcRenderer.on(ipc.channels.MOCHA_PENDING, this._onTestPending.bind(this));
   }
 
-  printFooter(): void {
-    console.timeEnd('Tests Duration');
-    console.log(`%c${this._passCount} passed`, styles.success);
-    if (this._failures.length > 0) {
-      console.log(`%c${this._failures.length} failed`, styles.fail);
+  private _onTestRunStart(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestRunStartEventArgs
+  ): void {
+    // a test run in the main process can launch multiple test runs in renderer processes,
+    // in that case the test run in the main process is considered to be the parent of the test runs
+    // in the renderer processes
+    const parent = this.report.activeTestRun;
+    const testRun = new TestRun(args.testRunId, args.testRunTitle, parent);
+    testRun.isActive = true;
+    if (parent) {
+      parent.testRuns.push(testRun);
+    } else {
+      this.report.testRuns.push(testRun);
     }
-    if (this._pendingCount > 0) {
-      console.log(`%c${this._pendingCount} pending`, styles.pending);
+  }
+
+  private _onTestRunEnd(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestRunEndEventArgs
+  ): void {
+    const testRun = this.report.getTestRunById(args.testRunId);
+    testRun.isActive = false;
+  }
+
+  private _onSuiteStart(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ISuiteStartEventArgs
+  ): void {
+    const testRun = this.report.getTestRunById(args.suiteId.testRun);
+    const parent = args.suiteParentId ? testRun.getSuiteById(args.suiteParentId) : null;
+    const suite = new Suite(args.suiteId.suite, getDisplayTitle(args.suiteTitle), parent);
+    suite.isActive = true;
+    if (parent) {
+      parent.suites.push(suite);
+    } else {
+      testRun.suites.push(suite);
     }
-    for (let i = 0; i < this._failures.length; ++i) {
-      printErrorInfo(i + 1, this._failures[i].title, this._failures[i].err);
+  }
+
+  private _onSuiteEnd(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ISuiteEndEventArgs
+  ): void {
+    const suite = this.report.getSuiteById(args.suiteId);
+    suite.isActive = false;
+  }
+
+  private _onTestStart(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestStartEventArgs
+  ): void {
+    const suite = this.report.getSuiteById(args.testId);
+    const test = new Test(args.testId.test, getDisplayTitle(args.testTitle), suite);
+    test.isActive = true;
+    suite.tests.push(test);
+    const outerTest = args.outerTestId ? this.report.getTestById(args.outerTestId) : null;
+    if (outerTest) {
+      outerTest.tests.push(test);
     }
   }
 
-  printSuiteHeader(source: string, title: string): void {
-    console.group(`[${source}] %c${getDisplayTitle(title)}`, styles.bold);
+  private _onTestEnd(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestEndEventArgs
+  ): void {
+    const test = this.report.getTestById(args.testId);
+    test.isActive = false;
   }
 
-  printSuiteFooter(): void {
-    console.groupEnd();
+  private _onTestPass(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestStatusEventArgs
+  ): void {
+    const test = this.report.getTestById(args.testId);
+    test.status = 'passed';
   }
 
-  printTestPass(source: string, title: string): void {
-    const displayTitle = getDisplayTitle(title);
-    console.log(`[${source}] %c${symbols.OK} ${displayTitle}`, styles.success);
-    this._passCount++;
+  private _onTestFail(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestFailedEventArgs
+  ): void {
+    const test = this.report.getTestById(args.testId);
+    test.status = 'failed';
+    test.error = args.error;
   }
 
-  printFailedTest(source: string, title: string, err: ipc.IError): void {
-    this._failures.push({ title, err });
-    const displayTitle = getDisplayTitle(title);
-    console.log(
-      `[${source}] %c${this._failures.length}) ${symbols.ERR} ${displayTitle}`, styles.fail
-    );
-  }
-
-  printPendingTest(source: string, title: string): void {
-    const displayTitle = getDisplayTitle(title);
-    console.log(`[${source}] %c- ${displayTitle}`, styles.pending);
-    this._pendingCount++;
+  private _onTestPending(
+    event: GitHubElectron.IRendererIPCEvent, args: ipc.ITestStatusEventArgs
+  ): void {
+    const test = this.report.getTestById(args.testId);
+    test.status = 'pending';
   }
 }
 
 /** Strip out any tags from the title. */
 function getDisplayTitle(title: string): string {
   return title.replace(/@\w+/, '');
-}
-
-function printErrorInfo(id: number, testTitle: string, err: ipc.IError): void {
-  const message = err.message || '';
-  const displayTitle = getDisplayTitle(testTitle);
-  if (err.stack) {
-    console.groupCollapsed(`%c${id}) ${displayTitle}`, styles.fail);
-    console.log('%c' + err.stack, styles.fail);
-    console.groupEnd();
-  } else {
-    console.error(`%c${id}) ${displayTitle}\n%c${message}`, styles.fail, styles.bold);
-  }
 }

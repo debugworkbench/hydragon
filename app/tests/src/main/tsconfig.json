@@ -13,7 +13,12 @@
         "baseUrl": ".",
         "paths": {
             "app/*": ["../../../lib/*"]
-        }
+        },
+        "typeRoots": [
+            "../../../typings/@types",
+            "../../../node_modules/@types",
+            "../../../../node_modules/@types"
+        ]
     },
     "files": [
         "../../../typings/github-electron/node.d.ts",

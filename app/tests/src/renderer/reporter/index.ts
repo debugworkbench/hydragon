@@ -1,8 +1,25 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+import MobxDevToolsComponent from 'mobx-react-devtools';
+import * as ReactFreeStyle from 'react-free-style';
 import { ReportGenerator } from './report-generator';
-import { MochaIPCBridge } from './mocha-ipc-bridge';
+import { ReportView } from './report-view';
 
 const reportGenerator = new ReportGenerator();
-const mochaBridge = new MochaIPCBridge(reportGenerator);
+
+const styleRegistry = ReactFreeStyle.create();
+const rootContainer = document.createElement('div');
+rootContainer.className = 'root-container';
+const rootComponent = styleRegistry.component(React.createClass({
+  render: () => React.createElement(
+    'div', null,
+    React.createElement(ReportView, { report: reportGenerator.report }),
+    React.createElement(styleRegistry.Element),
+    React.createElement(MobxDevToolsComponent)
+  )
+}));
+ReactDOM.render(React.createElement(rootComponent), rootContainer);
+document.body.appendChild(rootContainer);

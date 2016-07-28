@@ -1,3 +1,6 @@
+// Copyright (c) 2016 Vadim Macagon
+// MIT License, see LICENSE file for full terms.
+
 /**
  * Reporter/Runner window configuration passed from the main process to renderer processes.
  */
