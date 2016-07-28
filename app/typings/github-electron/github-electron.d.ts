@@ -3,7 +3,7 @@
 // Definitions by: jedmao <https://github.com/jedmao/>, Vadim Macagon <https://github.com/enlight/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../node/node.d.ts" />
+/// <reference types="node" />
 
 // NOTE: Some parts have been updated for Electron v0.35.4, and have been marked as such,
 //       others may be somewhat outdated. The API docs for v0.35.4 can be found at
@@ -106,14 +106,16 @@ declare module GitHubElectron {
 	 * You can also create a window without chrome by using Frameless Window API.
 	 */
 	class BrowserWindow implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): WebContents;
-		on(event: string, listener: Function): WebContents;
-		once(event: string, listener: Function): WebContents;
-		removeListener(event: string, listener: Function): WebContents;
-		removeAllListeners(event?: string): WebContents;
-		setMaxListeners(n: number): void;
+		addListener(event: string, listener: Function): this;
+		on(event: string, listener: Function): this;
+		once(event: string, listener: Function): this;
+		removeListener(event: string, listener: Function): this;
+		removeAllListeners(event?: string): this;
+		setMaxListeners(n: number): this;
+		getMaxListeners(): number;
 		listeners(event: string): Function[];
 		emit(event: string, ...args: any[]): boolean;
+		listenerCount(type: string): number;
 
 		constructor(options?: BrowserWindowOptions);
 		/**
@@ -1318,14 +1320,16 @@ declare module GitHubElectron {
 	 * usually there's also context menu associated with it.
 	 */
 	class Tray implements NodeJS.EventEmitter {
-		addListener(event: string, listener: Function): Tray;
-		on(event: string, listener: Function): Tray;
-		once(event: string, listener: Function): Tray;
-		removeListener(event: string, listener: Function): Tray;
-		removeAllListeners(event?: string): Tray;
-		setMaxListeners(n: number): void;
+		addListener(event: string, listener: Function): this;
+		on(event: string, listener: Function): this;
+		once(event: string, listener: Function): this;
+		removeListener(event: string, listener: Function): this;
+		removeAllListeners(event?: string): this;
+		setMaxListeners(n: number): this;
+		getMaxListeners(): number;
 		listeners(event: string): Function[];
 		emit(event: string, ...args: any[]): boolean;
+		listenerCount(type: string): number;
 		/**
 		 * Creates a new tray icon associated with the image.
 		 */

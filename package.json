@@ -39,6 +39,7 @@
     "@types/chai": "^3.4.22-alpha",
     "@types/chai-as-promised": "0.0.22-alpha",
     "@types/mocha": "^2.2.21-alpha",
+    "@types/node": "^4.0.30",
     "babel-cli": "^6.8.0",
     "babel-plugin-transform-polymer-base": "github:enlight/babel-plugin-transform-polymer-base",
     "chai": "^3.5.0",
@@ -55,8 +56,8 @@
     "rimraf": "^2.5.2",
     "shelljs": "^0.6.0",
     "ts-node": "^0.7.3",
-    "tslint": "^3.12.0-dev.2",
-    "typescript": "^2.0.0-dev.20160630",
+    "tslint": "^3.13.0-dev.0",
+    "typescript": "^2.1.0-dev.20160721",
     "typings": "^0.8.1",
     "vulcanize": "^1.14.8",
     "yargs": "^4.7.0"
