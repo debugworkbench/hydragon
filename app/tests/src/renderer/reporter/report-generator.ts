@@ -30,7 +30,7 @@ export class ReportGenerator {
     // in that case the test run in the main process is considered to be the parent of the test runs
     // in the renderer processes
     const parent = this.report.activeTestRun;
-    const testRun = new TestRun(args.testRunId, args.testRunTitle, parent);
+    const testRun = new TestRun(args.testRunId, args.testRunTitle, args.totalTestCount, parent);
     testRun.isActive = true;
     if (parent) {
       parent.testRuns.push(testRun);
@@ -51,7 +51,9 @@ export class ReportGenerator {
   ): void {
     const testRun = this.report.getTestRunById(args.suiteId.testRun);
     const parent = args.suiteParentId ? testRun.getSuiteById(args.suiteParentId) : null;
-    const suite = new Suite(args.suiteId.suite, getDisplayTitle(args.suiteTitle), parent);
+    const suite = new Suite(
+      args.suiteId.suite, getDisplayTitle(args.suiteTitle), args.totalTestCount, parent
+    );
     suite.isActive = true;
     if (parent) {
       parent.suites.push(suite);

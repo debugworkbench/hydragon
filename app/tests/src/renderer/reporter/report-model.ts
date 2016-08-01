@@ -75,7 +75,12 @@ export class TestRun {
     return this.getTestCountByStatus('passed');
   }
 
-  constructor(public id: string, public title: string, public parent: TestRun | null) {
+  constructor(
+    public id: string,
+    public title: string,
+    public totalTestCount: number,
+    public parent: TestRun | null
+  ) {
   }
 
   /** Count the number tests in the test run that have the given status. */
@@ -155,7 +160,12 @@ export class Suite {
     return this.getTestCountByStatus('passed');
   }
 
-  constructor(public id: number, public title: string, public parent: Suite | null) {
+  constructor(
+    public id: number,
+    public title: string,
+    public totalTestCount: number,
+    public parent: Suite | null
+  ) {
   }
 
   /** Count the number tests in the suite that have the given status. */

@@ -33,6 +33,11 @@ export interface ITestRunStartEventArgs {
   testRunId: string;
   /** Test run title. */
   testRunTitle?: string;
+  /**
+   * Total number of tests in the test run, if the grep option was specified this number will only
+   * include tests that matched the regexp.
+   */
+  totalTestCount: number;
 }
 
 export interface ITestRunEndEventArgs {
@@ -43,6 +48,11 @@ export interface ITestRunEndEventArgs {
 export interface ISuiteStartEventArgs {
   suiteId: ICompositeSuiteId;
   suiteTitle: string;
+  /**
+   * Total number of tests in the suite, this number includes tests that will not actually run
+   * because they didn't match the grep regexp (if one was provided for the test run).
+   */
+  totalTestCount: number;
   suiteParentId?: number;
 }
 
@@ -85,6 +95,16 @@ export interface ITestRunOptions {
   grepFlags?: string;
 }
 
+// FIXME: This needs to be integrated into the Mocha typings in DefinitelyTyped
+declare global {
+  namespace Mocha {
+    interface ISuite {
+      /** @return The total number of tests in this suite. */
+      total(): number;
+    }
+  }
+}
+
 /**
  * Forwards Mocha test runner events to a user defined function.
  */
@@ -108,7 +128,8 @@ export class TestRunnerIPC {
       this._testToIdMap.clear();
 
       const args: ITestRunStartEventArgs = {
-        testRunId: this._testRunId
+        testRunId: this._testRunId,
+        totalTestCount: runner.total
       };
       send(channels.MOCHA_START, args);
     });
@@ -131,6 +152,7 @@ export class TestRunnerIPC {
             suite: id
           },
           suiteTitle: suite.title,
+          totalTestCount: suite.total(),
           suiteParentId: this._suiteToIdMap.get(suite.parent)
         };
         send(channels.MOCHA_SUITE_START, args);
@@ -138,6 +160,7 @@ export class TestRunnerIPC {
     });
 
     runner.on('suite end', (suite: Mocha.ISuite) => {
+      // skip the root suite
       if (suite.parent) {
         const args: ISuiteEndEventArgs = {
           suiteId: {
