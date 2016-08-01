@@ -9,7 +9,11 @@
         "noLib": false,
         "outDir": "../../lib",
         "rootDir": "../",
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "typeRoots": [
+            "../../typings/@types",
+            "../../node_modules/@types"
+        ]
     },
     "files": [
         "../../typings/codemirror/codemirror.d.ts",

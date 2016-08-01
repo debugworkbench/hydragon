@@ -3,10 +3,12 @@
 
 import * as electron from 'electron';
 import * as url from 'url';
+import installDevToolsExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { RendererContext } from './renderer-context';
 import * as AppWindowConfig from '../common/app-window-config';
 
 window.onload = (e: Event) => {
+  installDevToolsExtension(REACT_DEVELOPER_TOOLS);
   const config = AppWindowConfig.decodeFromUriComponent(window.location.hash.substr(1));
   RendererContext.create(config)
   .then(rendererContext => {
