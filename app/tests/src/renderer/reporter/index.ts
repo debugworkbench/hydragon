@@ -5,8 +5,11 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import MobxDevToolsComponent from 'mobx-react-devtools';
 import * as ReactFreeStyle from 'react-free-style';
+import installDevToolsExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { ReportGenerator } from './report-generator';
 import { ReportView } from './report-view';
+
+installDevToolsExtension(REACT_DEVELOPER_TOOLS);
 
 const reportGenerator = new ReportGenerator();
 
