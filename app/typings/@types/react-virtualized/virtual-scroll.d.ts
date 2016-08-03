@@ -7,7 +7,7 @@ import * as React from 'react';
 /**
  * Renders a virtualized list of elements with either fixed or dynamic heights.
  */
-export class VirtualScroll extends React.Component<VirtualScroll.IProps, {}, {}> {
+export class VirtualScroll extends React.Component<VirtualScroll.IProps, {}> {
   /**
    * Pre-measure all rows.
    * Typically rows are only measured as needed and estimated heights are used for cells that have

@@ -21,19 +21,34 @@ shell.cp(
   'app/node_modules/mobx-react-devtools/index.d.ts'
 );
 
-// Replace the typings in the react-free-style package with ones that are compatible with the
-// tweaked React typings used in this project.
+// Replace the typings in the react-free-style package with ones that work with React 15.3.0.
 shell.cp(
-  'app/typings/react-free-style/react-free-style.d.ts',
+  'app/typings/@types/react-free-style/index.d.ts',
   'app/node_modules/react-free-style/dist/react-free-style.d.ts'
 );
 
-// Inject typings into the react-virtualized package.
+// Copy typings for untyped NPM packages to somewhere the TypeScript compiler can find
+// them automatically without having to manually reference the type definitions.
+// It should be possible to avoid this entirely by using the `typeRoots` compiler option,
+// but `typeRoots` doesn't seem to work as expected at the moment (nor is it properly documented).
+
+// electron-devtools-installer
+shell.mkdir('-p', 'app/node_modules/@types/electron-devtools-installer');
 shell.cp(
-  'app/typings/react-virtualized/*.d.ts',
-  'app/node_modules/react-virtualized/dist/commonjs'
+  'app/typings/@types/electron-devtools-installer/index.d.ts',
+  'app/node_modules/@types/electron-devtools-installer'
 );
-const pkgFilename = path.join(__dirname, '../app/node_modules/react-virtualized/package.json');
-const pkg = require(pkgFilename);
-pkg.typings = 'dist/commonjs/index.d.ts';
-fs.writeFileSync(pkgFilename, JSON.stringify(pkg, null, 2), 'utf8');
+
+// react-virtualized
+shell.mkdir('-p', 'app/node_modules/@types/react-virtualized');
+shell.cp(
+  'app/typings/@types/react-virtualized/*.d.ts',
+  'app/node_modules/@types/react-virtualized'
+);
+
+// uuid
+shell.mkdir('-p', 'app/node_modules/@types/uuid');
+shell.cp(
+  'app/typings/@types/uuid/index.d.ts',
+  'app/node_modules/@types/uuid'
+);

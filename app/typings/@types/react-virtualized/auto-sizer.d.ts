@@ -4,7 +4,7 @@
 
 import * as React from 'react';
 
-export class AutoSizer extends React.Component<AutoSizer.IProps, {}, {}> {
+export class AutoSizer extends React.Component<AutoSizer.IProps, {}> {
 }
 
 export namespace AutoSizer {

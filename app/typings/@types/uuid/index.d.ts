@@ -5,14 +5,7 @@
 
 /// <reference types="node" />
 
-// FIXME: In theory this statement should eliminate the need to wrap everything with
-// "declare module x", but it doesn't seem to work (yet?).
-//export as namespace uuid;
-
-declare module 'uuid' {
-
 export interface UUIDOptions {
-
     /**
      * Node id as Array of 6 bytes (per 4.1.6).
      * Default: Randomly generated ID. See note 1.
@@ -51,5 +44,3 @@ export function parse(id: string, buffer?: Buffer, offset?: number): Buffer;
 
 export function unparse(buffer: number[], offset?: number): string;
 export function unparse(buffer: Buffer, offset?: number): string;
-
-}

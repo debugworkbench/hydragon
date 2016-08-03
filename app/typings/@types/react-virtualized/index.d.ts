@@ -4,3 +4,8 @@
 
 export { AutoSizer } from './auto-sizer';
 export { VirtualScroll } from './virtual-scroll';
+
+//declare module 'react-virtualized' {
+//  var AutoSizer: AutoSizer;
+//  var VirtualScroll: VirtualScroll;
+//}

@@ -7,11 +7,7 @@
         "declaration": true,
         "noLib": false,
         "outDir": "../../lib",
-        "rootDir": "../",
-        "typeRoots": [
-            "../../typings/@types",
-            "../../node_modules/@types"
-        ]
+        "rootDir": "../"
     },
     "files": [
         "../../typings/github-electron/node.d.ts",
