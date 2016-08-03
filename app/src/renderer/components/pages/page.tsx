@@ -7,13 +7,14 @@ import { PageModel } from './page-model';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { PaperIconButtonComponent, PaperToolbarComponent } from '../paper';
+import { ContextComponent } from '../context';
 
 /**
  * Page component that displays some arbitrary content in a PageSet component.
  */
 @observer
 @stylable
-export class PageComponent extends React.Component<PageComponent.IProps, {}, PageComponent.IContext> {
+export class PageComponent extends ContextComponent<PageComponent.IProps, void, stylable.IContext> {
   styleId: string;
   className: string;
 

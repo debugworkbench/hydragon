@@ -7,13 +7,14 @@ import { DirectoryTreeItemModel } from './directory-tree-model';
 import { stylable } from '../decorators';
 import { IronFlexLayout } from '../styles';
 import { PaperIconButtonComponent } from '../paper';
+import { ContextComponent } from '../context';
 
 /**
  * React component that represents a directory entry in a [[DirectoryTreeComponent]].
  */
 @stylable
 export class DirectoryTreeItemComponent
-       extends React.Component<DirectoryTreeItemComponent.IProps, {}, stylable.IContext> {
+       extends ContextComponent<DirectoryTreeItemComponent.IProps, void, stylable.IContext> {
 
   private _styleId: string;
   private _className: string;
@@ -50,7 +51,7 @@ export class DirectoryTreeItemComponent
     this._className = `hydragon-dir-tree-item ${this._styleId}`;
   }
 
-  private _onClick(e: React.MouseEvent): void {
+  private _onClick(e: React.MouseEvent<HTMLDivElement>): void {
     const model = this.props.model;
     model.isExpanded ? this.props.onCollapse(model) : this.props.onExpand(model);
   }

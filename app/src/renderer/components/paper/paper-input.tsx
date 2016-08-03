@@ -9,7 +9,7 @@ import { omitOwnProps } from '../../../common/utils';
  * React component that wraps a Polymer paper-input custom element.
  */
 export class PaperInputComponent
-       extends PolymerComponent<PolymerElements.PaperInput, PaperInputComponent.IProps, {}> {
+       extends PolymerComponent<PolymerElements.PaperInput, PaperInputComponent.IProps> {
 
   protected get cssVars() {
     const styles = this.props.styles;

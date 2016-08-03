@@ -9,7 +9,7 @@ import { omitOwnProps } from '../../../common/utils';
  * React component that wraps a Polymer paper-dialog custom element.
  */
 export class PaperDialogComponent
-       extends PolymerComponent<PolymerElements.PaperDialog, PaperDialogComponent.IProps, {}> {
+       extends PolymerComponent<PolymerElements.PaperDialog, PaperDialogComponent.IProps> {
 
   protected elementRefDidChange(ref: PolymerElements.PaperDialog): void {
     this.syncState();

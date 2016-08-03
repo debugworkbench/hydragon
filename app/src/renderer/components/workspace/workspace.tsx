@@ -11,6 +11,7 @@ import { stylable } from '../decorators';
 import { Cursor } from '../../renderer-context';
 import { ElementFactory } from '../element-factory';
 import { darkWorkspaceTheme, IWorkspaceTheme } from './workspace-theme';
+import { ContextComponent } from '../context';
 
 /**
  * Chief UI wrangler component.
@@ -18,7 +19,7 @@ import { darkWorkspaceTheme, IWorkspaceTheme } from './workspace-theme';
 @observer
 @stylable
 export class WorkspaceComponent
-       extends React.Component<WorkspaceComponent.IProps, {}, WorkspaceComponent.IContext> {
+       extends ContextComponent<WorkspaceComponent.IProps, void, WorkspaceComponent.IContext> {
 
   private styleId: string;
   private className: string;

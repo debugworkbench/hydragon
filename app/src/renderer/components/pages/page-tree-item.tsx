@@ -7,6 +7,7 @@ import { PageModel } from './page-model';
 import { IronFlexLayout, PaperStyles } from '../styles';
 import { stylable } from '../decorators';
 import { PaperIconButtonComponent } from '../paper';
+import { ContextComponent } from '../context';
 
 const STYLE_CLASS_SELECTED = 'selected';
 
@@ -15,12 +16,13 @@ const STYLE_CLASS_SELECTED = 'selected';
  */
 @stylable
 export class PageTreeItemComponent
-       extends React.Component<PageTreeItemComponent.IProps, {}, PageTreeItemComponent.IContext> {
+       extends ContextComponent<
+         PageTreeItemComponent.IProps, void, PageTreeItemComponent.IContext> {
 
   styleId: string;
   className: string;
 
-  onDidClick = (e: React.SyntheticEvent) => this.props.onDidClick(this);
+  onDidClick = () => this.props.onDidClick(this);
   onDidTapCloseButton = (e: polymer.TapEvent) => {
     e.stopPropagation();
     this.props.model.close();

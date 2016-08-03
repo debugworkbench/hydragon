@@ -7,6 +7,7 @@ import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { PaperInputComponent, PaperButtonComponent } from '../paper';
 import { FileInputModel } from './file-input-model';
+import { ContextComponent } from '../context';
 
 /**
  * A component that consists of an input field containing a file/directory path and a button that
@@ -16,7 +17,7 @@ import { FileInputModel } from './file-input-model';
 @observer
 @stylable
 export class FileInputComponent
-       extends React.Component<FileInputComponent.IProps, {}, FileInputComponent.IContext> {
+       extends ContextComponent<FileInputComponent.IProps, void, stylable.IContext> {
 
   private styleId: string;
 

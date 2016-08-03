@@ -8,6 +8,7 @@ import { EventSubscription, EventSubscriptionSet } from '../../../common/events'
 import { DirectoryTreeModel, DirectoryTreeItemModel } from './directory-tree-model';
 import { DirectoryTreeItemComponent } from './directory-tree-item';
 import { stylable, themable } from '../decorators';
+import { ContextComponent } from '../context';
 
 // These components have to be transformed into observers in order for re-rendering to work
 // when the tree changes
@@ -21,7 +22,8 @@ const VirtualScrollComponent = mobxReact.observer(VirtualScroll);
 @themable
 @mobxReact.observer
 export class DirectoryTreeComponent
-       extends React.Component<DirectoryTreeComponent.IProps, {}, DirectoryTreeComponent.IContext> {
+       extends ContextComponent<
+         DirectoryTreeComponent.IProps, void, DirectoryTreeComponent.IContext> {
 
   private _styleId: string;
   private _className: string;
@@ -56,7 +58,7 @@ export class DirectoryTreeComponent
     this.props.model.collapseItem(item);
   }
 
-  private _onContextMenu(event: React.MouseEvent): void {
+  private _onContextMenu(event: React.MouseEvent<HTMLDivElement>): void {
     event.preventDefault();
     event.stopPropagation();
     this.props.model.showContextMenu();

@@ -6,9 +6,10 @@ import * as mobxReact from 'mobx-react';
 import { stylable } from 'app/renderer/components/decorators';
 import { IronFlexLayout } from 'app/renderer/components/styles';
 import { ReportModel, TestRun, Suite, Test } from './report-model';
+import { ContextComponent } from 'app/renderer/components/context';
 
 @mobxReact.observer
-export class ReportView extends React.Component<ReportView.IProps, {}, {}> {
+export class ReportView extends React.Component<ReportView.IProps, void> {
   render() {
     const report = this.props.report;
 
@@ -29,7 +30,7 @@ export namespace ReportView {
 }
 
 @mobxReact.observer
-export class TestRunView extends React.Component<TestRunView.IProps, {}, {}> {
+export class TestRunView extends React.Component<TestRunView.IProps, void> {
   render() {
     const suites = this.props.testRun.suites;
 
@@ -54,7 +55,7 @@ export namespace TestRunView {
 
 @stylable
 @mobxReact.observer
-export class SuiteView extends React.Component<SuiteView.IProps, {}, stylable.IContext> {
+export class SuiteView extends ContextComponent<SuiteView.IProps, void, stylable.IContext> {
   private static _style = Object.assign(
     {
       boxSizing: 'border-box',
@@ -120,7 +121,7 @@ export namespace SuiteView {
 
 @stylable
 @mobxReact.observer
-export class TestView extends React.Component<TestView.IProps, {}, stylable.IContext> {
+export class TestView extends ContextComponent<TestView.IProps, void, stylable.IContext> {
   private static _style = Object.assign(
     {
       boxSizing: 'border-box',
@@ -186,7 +187,7 @@ export namespace TestView {
 }
 
 @mobxReact.observer
-export class TestRunSummaryView extends React.Component<TestRunSummaryView.IProps, {}, {}> {
+export class TestRunSummaryView extends React.Component<TestRunSummaryView.IProps, void> {
   render() {
     const testRun = this.props.testRun;
 

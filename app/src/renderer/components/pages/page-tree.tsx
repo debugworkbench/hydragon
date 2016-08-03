@@ -10,6 +10,7 @@ import { IronFlexLayout } from '../styles';
 import { PageTreeItemComponent } from './page-tree-item';
 import { makeFocusable, IFocusableState } from '../focusable';
 import { stylable, themable } from '../decorators';
+import { ContextComponent } from '../context';
 
 export interface IProps extends React.Props<PageTreeComponentImpl> {
   model: PageTreeModel;
@@ -27,7 +28,7 @@ const FOCUSED = 'focused';
 @observer
 @stylable
 @themable
-export class PageTreeComponentImpl extends React.Component<IProps, IFocusableState, IContext> {
+export class PageTreeComponentImpl extends ContextComponent<IProps, IFocusableState, IContext> {
   inlineStyle: {
     width?: string;
     height?: string;

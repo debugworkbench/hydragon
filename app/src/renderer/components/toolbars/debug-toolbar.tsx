@@ -8,6 +8,7 @@ import {
   PaperDropdownMenuComponent, PaperIconButtonComponent, PaperToolbarComponent, PaperMenuComponent
 } from '../paper';
 import { stylable } from '../decorators';
+import { ContextComponent } from '../context';
 
 /**
  * Toolbar component that provides access to frequently used debugging features.
@@ -15,7 +16,8 @@ import { stylable } from '../decorators';
 @observer
 @stylable
 export class DebugToolbarComponent
-       extends React.Component<DebugToolbarComponent.IProps, {}, DebugToolbarComponent.IContext> {
+       extends ContextComponent<
+         DebugToolbarComponent.IProps, void, DebugToolbarComponent.IContext> {
 
   private className: string;
   private debugConfigDropdown: PaperDropdownMenuComponent;

@@ -9,13 +9,15 @@ import { IronFlexLayout } from '../styles';
 import { PageComponent } from './page';
 import { ICodeMirrorEditorElement } from '../../elements/code-mirror-editor/code-mirror-editor';
 import { stylable } from '../decorators';
+import { ContextComponent } from '../context';
 
 /**
  * Page component that contains a Code Mirror editor element.
  */
 @stylable
 export class CodeMirrorEditorPageComponent
-       extends React.Component<CodeMirrorEditorPageComponent.IProps, {}, CodeMirrorEditorPageComponent.IContext> {
+       extends ContextComponent<
+         CodeMirrorEditorPageComponent.IProps, void, CodeMirrorEditorPageComponent.IContext> {
 
   styleId: string;
   className: string;

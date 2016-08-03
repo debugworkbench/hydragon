@@ -54,9 +54,7 @@ export interface IRequiresElementFactoryContext {
  * Decorator for React component classes that adds an `elementFactory` property to the context of
  * the component.
  */
-export function requiresElementFactory(
-  componentClass: React.ComponentClass<any, any, IRequiresElementFactoryContext>
-) {
+export function requiresElementFactory(componentClass: React.ComponentClass<any>) {
   // make sure React doesn't discard the elementFactory property from the context
   componentClass.contextTypes = componentClass.contextTypes || {};
   componentClass.contextTypes['elementFactory'] = React.PropTypes.object.isRequired;

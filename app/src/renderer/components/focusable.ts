@@ -16,20 +16,24 @@ export interface IFocusableState {
  * to determine whether they have focus or not.
  */
 export function makeFocusable<P, S extends IFocusableState, C>(
-  InputClass: React.ComponentClass<P, S, C>
+  InputClass: React.ComponentClass<P>
 ): typeof InputClass {
   return class extends InputClass {
+    state: {
+      isFocused?: boolean;
+    };
+
     private element: Element;
 
     private onFocusOrBlur = (e: FocusEvent) => {
       if (e.target === this.element) {
-        this.setState(<any>{ isFocused: e.type === 'focus' });
+        this.setState({ isFocused: e.type === 'focus' });
       }
     };
 
     constructor(props: P, context: C) {
       super(props, context);
-      this.state = this.state || <any>{};
+      this.state = this.state || {};
       this.state.isFocused = false;
     }
 

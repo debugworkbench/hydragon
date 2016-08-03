@@ -13,9 +13,8 @@ import { updatePolymerCSSVars } from '../../elements/utils';
  */
 export abstract class PolymerComponent<
                         TPolymerElement extends polymer.Base<any>,
-                        TComponentProps extends PolymerComponent.IProps,
-                        TComponentContext>
-                extends React.Component<TComponentProps, {}, TComponentContext> {
+                        TComponentProps extends PolymerComponent.IProps>
+                extends React.Component<TComponentProps, void> {
 
   /** The underlying Polymer custom element instance. */
   protected element: TPolymerElement;

@@ -14,7 +14,7 @@ import { omitOwnProps } from '../../../common/utils';
  * Example: <PaperCheckboxComponent checked>Label</PaperCheckboxComponent>
  */
 export class PaperCheckboxComponent
-       extends PolymerComponent<PolymerElements.PaperCheckbox, PaperCheckboxComponent.IProps, {}> {
+       extends PolymerComponent<PolymerElements.PaperCheckbox, PaperCheckboxComponent.IProps> {
 
   protected get cssVars() {
     const styles = this.props.styles;

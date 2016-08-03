@@ -10,6 +10,7 @@ import { ILayoutComponentProps, ILayoutComponent } from './layout-container';
 import { IRequiresElementFactoryContext, requiresElementFactory } from '../element-factory';
 import { PanelModel } from './panel-model';
 import { PaperToolbarComponent } from '../paper';
+import { ContextComponent } from '../context';
 
 /**
  * Container component that displays its content with an optional header.
@@ -19,7 +20,7 @@ import { PaperToolbarComponent } from '../paper';
 @themable
 @requiresElementFactory
 export class PanelComponent
-       extends React.Component<PanelComponent.IProps, {}, PanelComponent.IContext>
+       extends ContextComponent<PanelComponent.IProps, void, PanelComponent.IContext>
        implements ILayoutComponent {
 
   private styleId: string;
@@ -27,7 +28,7 @@ export class PanelComponent
   private element: HTMLDivElement;
 
   private _onSetRef = (ref: HTMLDivElement) => this.element = ref;
-  private _onContextMenu = (event: React.MouseEvent) => this.props.model.showContextMenu();
+  private _onContextMenu = () => this.props.model.showContextMenu();
 
   get id(): string {
     return this.props.model.id;

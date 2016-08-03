@@ -28,6 +28,8 @@
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-beta.2",
+    "@types/react": "^0.14.27",
+    "@types/react-dom": "^0.14.14",
     "ajv": "^4.0.5",
     "codemirror": "^5.8.0",
     "debug-engine": "github:debugworkbench/debug-engine",

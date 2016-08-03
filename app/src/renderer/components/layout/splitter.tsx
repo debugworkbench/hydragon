@@ -6,13 +6,14 @@ import { Observable, Subscription } from '@reactivex/rxjs';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { SplitterModel } from './splitter-model';
+import { ContextComponent } from '../context';
 
 /**
  * Component that resizes its sibling elements when the user drags it with the primary mouse button.
  */
 @stylable
 export class SplitterComponent
-       extends React.Component<SplitterComponent.IProps, void, SplitterComponent.IContext> {
+       extends ContextComponent<SplitterComponent.IProps, void, SplitterComponent.IContext> {
 
   private styleId: string;
   private className: string;

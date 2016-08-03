@@ -12,6 +12,7 @@ import {
 } from '../paper';
 import { FileInputComponent } from '../file-input/file-input';
 import { stylable } from '../decorators';
+import { ContextComponent } from '../context';
 
 /**
  * Page component that displays a debug configuration form.
@@ -19,8 +20,8 @@ import { stylable } from '../decorators';
 @stylable
 @observer
 export class GdbMiDebugConfigPageComponent
-       extends React.Component<
-                 GdbMiDebugConfigPageComponent.IProps, {}, GdbMiDebugConfigPageComponent.IContext> {
+       extends ContextComponent<
+         GdbMiDebugConfigPageComponent.IProps, void, GdbMiDebugConfigPageComponent.IContext> {
 
   private styleId: string;
   private className: string;

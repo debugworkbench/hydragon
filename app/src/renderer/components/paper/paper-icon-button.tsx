@@ -10,7 +10,7 @@ import { omitOwnProps } from '../../../common/utils';
  */
 export class PaperIconButtonComponent
        extends PolymerComponent<
-                 PolymerElements.PaperIconButton, PaperIconButtonComponent.IProps, {}> {
+                 PolymerElements.PaperIconButton, PaperIconButtonComponent.IProps> {
 
   protected get cssVars() {
     const styles = this.props.styles;

@@ -16,7 +16,7 @@ import {
  */
 @observer
 export class NewDebugConfigDialogComponent
-       extends React.Component<NewDebugConfigDialogComponent.IProps, {}, {}> {
+       extends React.Component<NewDebugConfigDialogComponent.IProps, void> {
 
   private configNameInput: PaperInputComponent;
   private engineDropdown: PaperDropdownMenuComponent;

@@ -1,5 +1,6 @@
-import React = require('react');
+import * as React from 'react';
 export import FreeStyle = require('free-style');
+
 /**
  * Create a specialized free style instance.
  */
@@ -13,12 +14,12 @@ export declare class ReactFreeStyle extends FreeStyle.FreeStyle {
      * required for methods on the user component to continue working once
      * wrapped with the style functionality.
      */
-    component(Component: React.ComponentClass<any, any, any>): React.ComponentClass<any, any, any>;
+    component(Component: React.ComponentClass<any>): React.ComponentClass<any>;
 }
 /**
  * Create the <style /> element.
  */
-export declare class StyleElement extends React.Component<{}, {}, {}> {
+export declare class StyleElement extends React.Component<{}, {}> {
     static displayName: string;
     static contextTypes: React.ValidationMap<any>;
     onChange: () => void;

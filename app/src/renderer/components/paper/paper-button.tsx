@@ -9,7 +9,7 @@ import { omitOwnProps } from '../../../common/utils';
  * React component that wraps a Polymer paper-button custom element.
  */
 export class PaperButtonComponent
-       extends PolymerComponent<PolymerElements.PaperButton, PaperButtonComponent.IProps, {}> {
+       extends PolymerComponent<PolymerElements.PaperButton, PaperButtonComponent.IProps> {
 
   protected get cssVars() {
     const styles = this.props.styles;

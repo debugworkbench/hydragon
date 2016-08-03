@@ -15,6 +15,7 @@ import { LayoutItemModel } from './layout-item-model';
 import {
   requiresElementFactory, IRequiresElementFactoryContext, ElementFactory
 } from '../element-factory';
+import { ContextComponent } from '../context';
 
 export interface ILayoutComponentProps<T> extends React.Props<T> {
   resizable?: boolean;
@@ -36,7 +37,8 @@ export interface ILayoutComponent {
 @stylable
 @requiresElementFactory
 export class LayoutContainerComponent
-       extends React.Component<LayoutContainerComponent.IProps, {}, LayoutContainerComponent.IContext>
+       extends ContextComponent<
+         LayoutContainerComponent.IProps, void, LayoutContainerComponent.IContext>
        implements ILayoutComponent {
 
   private styleId: string;

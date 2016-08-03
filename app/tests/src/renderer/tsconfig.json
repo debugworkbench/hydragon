@@ -19,8 +19,6 @@
         "../../../typings/github-electron/node.d.ts",
         "../../../typings/github-electron/github-electron.d.ts",
         "../../../typings/github-electron/github-electron-renderer.d.ts",
-        "../../../typings/globals/react/index.d.ts",
-        "../../../typings/globals/react-dom/index.d.ts",
         "../../../typings/walkdir/walkdir.d.ts",
         "reporter/index.ts",
         "runner/index.ts"

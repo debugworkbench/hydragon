@@ -9,7 +9,7 @@ import { omitOwnProps } from '../../../common/utils';
  * React component that wraps a Polymer paper-menu custom element.
  */
 export class PaperMenuComponent
-       extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps, {}> {
+       extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps> {
 
   protected get cssVars() {
     const styles = this.props.styles;

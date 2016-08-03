@@ -9,6 +9,7 @@ import { PageSetModel } from './page-set-model';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
 import { requiresElementFactory, IRequiresElementFactoryContext } from '../element-factory';
+import { ContextComponent } from '../context';
 
 export interface IProps extends React.Props<PageSetComponent> {
   model: PageSetModel;
@@ -23,7 +24,7 @@ export interface IContext extends stylable.IContext, IRequiresElementFactoryCont
 @observer
 @stylable
 @requiresElementFactory
-export class PageSetComponent extends React.Component<IProps, {}, IContext> {
+export class PageSetComponent extends ContextComponent<IProps, void, IContext> {
   inlineStyle: {
     width?: string;
     height?: string;

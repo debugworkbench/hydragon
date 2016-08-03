@@ -11,8 +11,7 @@ import { omitOwnProps } from '../../../common/utils';
 export class PaperDropdownMenuComponent
        extends PolymerComponent<
                  PolymerElements.PaperDropdownMenu,
-                 PaperDropdownMenuComponent.IProps,
-                 {}> {
+                 PaperDropdownMenuComponent.IProps> {
 
   /**
    * The derived "label" of the currently selected item.
