@@ -85,8 +85,7 @@ export class TestRun {
 
   /** Count the number tests in the test run that have the given status. */
   getTestCountByStatus(status: TestStatus): number {
-    return this.suites.reduce((count, suite) => count + suite.getTestCountByStatus(status), 0)
-      + this.testRuns.reduce((count, run) => count + run.getTestCountByStatus(status), 0);
+    return this.suites.reduce((count, suite) => count + suite.getTestCountByStatus(status), 0);
   }
 
   /**
