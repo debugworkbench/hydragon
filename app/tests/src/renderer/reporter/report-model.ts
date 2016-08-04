@@ -79,6 +79,7 @@ export class TestRun {
     public id: string,
     public title: string,
     public totalTestCount: number,
+    public process: string,
     public parent: TestRun | null
   ) {
   }
@@ -163,6 +164,7 @@ export class Suite {
     public id: number,
     public title: string,
     public totalTestCount: number,
+    public process: string,
     public parent: Suite | null
   ) {
   }
@@ -227,6 +229,10 @@ export class Test {
   tests: Test[] = [];
 
   error: IError | null = null;
+
+  get process(): string {
+    return this.parent.process;
+  }
 
   constructor(public id: number, public title: string, public parent: Suite | null) {
   }

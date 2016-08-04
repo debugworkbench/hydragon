@@ -9,7 +9,8 @@ import * as walkDir from 'walkdir';
 import { encodeToUriComponent, IWindowConfig } from '../common/window-config';
 import { RendererRunnerIPC } from './renderer-runner-ipc';
 import {
-  channels as mochaChannels, ITestRunOptions, ITestStartEventArgs, TestRunnerIPC
+  channels as mochaChannels, ITestRunOptions, ITestStartEventArgs, TestRunnerIPC,
+  ITestRunStartEventArgs
 } from '../common/mocha-ipc';
 
 export type PageId = '1st' | '2nd';
@@ -93,7 +94,9 @@ export class TestEnvironment {
         }
       );
 
+      const pageId = options.page || '1st';
       const runOptions: ITestRunOptions = {
+        process: `${pageId} Page`,
         title: options.title,
         file: options.file,
         dir: options.dir,
@@ -101,7 +104,7 @@ export class TestEnvironment {
         grepFlags: options.grep ? options.grep.flags : undefined
       };
 
-      this._ensurePageExists(options.page || '1st')
+      this._ensurePageExists(pageId)
       .then(page => page.send(mochaChannels.RENDERER_MOCHA_RUN, runOptions));
     });
   }
@@ -138,7 +141,9 @@ export class TestEnvironment {
   }
 
   private _sendBrowserTestRunnerEvent(channel: string, args: any): void {
-    if (channel === mochaChannels.MOCHA_TEST_START) {
+    if (channel === mochaChannels.MOCHA_START) {
+      (<ITestRunStartEventArgs> args).process = 'browser';
+    } else if (channel === mochaChannels.MOCHA_TEST_START) {
       this._rendererRunnerIPC.currentBrowserTestId = (<ITestStartEventArgs> args).testId;
     }
     this._reporterWindow.webContents.send(channel, args);

@@ -38,6 +38,8 @@ export interface ITestRunStartEventArgs {
    * include tests that matched the regexp.
    */
   totalTestCount: number;
+  /** Label of the process in which the tests will run. */
+  process?: string;
 }
 
 export interface ITestRunEndEventArgs {
@@ -87,6 +89,9 @@ export interface IError {
 
 /** Payload sent by the main process to the renderer process via [[IPC_RENDERER_MOCHA_RUN]]. */
 export interface ITestRunOptions {
+  /** Label of the process in which the tests will run. */
+  process?: string;
+  /** Title for this test run. */
   title?: string;
   file?: string;
   dir?: string;

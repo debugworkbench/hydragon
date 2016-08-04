@@ -59,7 +59,9 @@ function runTests(options: ITestRunOptions): Promise<number> {
     const reporterConstructor = getReporterConstructor(
       (channel: string, args: any) => {
         if (channel === channels.MOCHA_START) {
-          (<ITestRunStartEventArgs> args).testRunTitle = options.title;
+          const eventArgs = <ITestRunStartEventArgs> args;
+          eventArgs.testRunTitle = options.title;
+          eventArgs.process = options.process || 'renderer';
         }
         ipcRenderer.send(channel, args);
       }

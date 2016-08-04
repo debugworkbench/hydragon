@@ -38,8 +38,8 @@ export class TestRunView extends ContextComponent<TestRunView.IProps, void, styl
     position: 'relative',
     outline: 'none',
     overflow: 'hidden',
-    '.test-run-summary': {
-      marginBottom: '10px'
+    '> .test-run-summary': {
+      marginBottom: '2em'
     }
   };
 
@@ -54,14 +54,15 @@ export class TestRunView extends ContextComponent<TestRunView.IProps, void, styl
   render() {
     const testRun = this.props.testRun;
     const suites = testRun.suites;
+    const processType = (testRun.process !== 'browser') ? 'renderer' : 'browser';
 
     return (
       <div className={this._classList}>
-        <Card title={testRun.title}>
+        <Card title={`[${processType}] ${testRun.title || ''}`}>
           <TestRunSummaryView testRun={this.props.testRun} />
           {
             suites.map(suite =>
-              <SuiteView key={suite.id} suite={suite} indent={10} />
+              <SuiteView key={suite.id} suite={suite} />
             )
           }
         </Card>
@@ -117,6 +118,7 @@ export class SuiteView extends ContextComponent<SuiteView.IProps, void, stylable
       ),
       '> div:last-child': Object.assign(
         {
+          marginLeft: '1em',
           flex: '1 0 auto'
         },
         IronFlexLayout.vertical
@@ -133,18 +135,18 @@ export class SuiteView extends ContextComponent<SuiteView.IProps, void, stylable
   }
 
   render() {
-    const { suite, indent } = this.props;
+    const { suite } = this.props;
     const innerSuites: JSX.Element[] = suite.suites.map(s =>
-      <SuiteView key={s.id} suite={s} indent={indent} />
+      <SuiteView key={s.id} suite={s} />
     );
     const tests = suite.tests.map(t =>
-      <TestView key={t.id} test={t} indent={indent} />
+      <TestView key={t.id} test={t} />
     );
 
     const status: TestStatus = (suite.failedTestCount > 0) ? 'failed' : null;
 
     return (
-      <div className={this._classList} style={{ paddingLeft: `${indent}px` }}>
+      <div className={this._classList}>
         <div>
           <span className="title">{`${getTestStatusSymbol(status)}${suite.title}`}</span>
         </div>
@@ -157,7 +159,6 @@ export class SuiteView extends ContextComponent<SuiteView.IProps, void, stylable
 export namespace SuiteView {
   export interface IProps {
     suite: Suite;
-    indent: number;
   }
 }
 
@@ -176,6 +177,12 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
       '> div:first-child': Object.assign(
         {
           flex: '1 0 auto',
+          '.status': {
+            marginRight: '0.5em'
+          },
+          '.process': {
+            marginRight: '0.25em'
+          },
           '.title': {
             flex: '1 0 auto'
           }
@@ -185,6 +192,7 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
       ),
       '> div:last-child': Object.assign(
         {
+          marginLeft: '1em',
           flex: '1 0 auto'
         },
         IronFlexLayout.vertical
@@ -201,19 +209,21 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
   }
 
   render(): JSX.Element {
-    const { test, indent } = this.props;
+    const { test, displayProcess } = this.props;
     // nested tested may come from disparate suites so they might have the same id,
     // but React will complain if the children of a component have duplicate keys
     // so instead of using the ids as keys just use the index
     let idx = 0;
     const innerTests = test.tests.map(innerTest =>
-      <TestView key={idx++} test={innerTest} indent={indent} />
+      <TestView key={idx++} test={innerTest} displayProcess />
     );
 
     return (
-      <div className={this._classList} style={{ paddingLeft: `${indent}px` }}>
+      <div className={this._classList}>
         <div>
-          <span className="title">{`${getTestStatusSymbol(test.status)}${test.title}`}</span>
+          <span className="status">{getTestStatusSymbol(test.status)}</span>
+          { displayProcess ? (<span className="process">{test.process}</span>) : null }
+          <span className="title">{test.title}</span>
         </div>
         <div>{ (innerTests.length > 0) ? innerTests : null }</div>
       </div>
@@ -224,7 +234,8 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
 export namespace TestView {
   export interface IProps {
     test: Test;
-    indent: number;
+    /** If `true` then the label of the process in which the test runs in will be displayed. */
+    displayProcess?: boolean;
   }
 }
 
@@ -243,7 +254,7 @@ export class TestRunSummaryView
     IronFlexLayout.horizontal,
     {
       '> ul': {
-        paddingLeft: '10px'
+        marginLeft: '1em'
       }
     }
   );
