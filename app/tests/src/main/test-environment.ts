@@ -64,6 +64,7 @@ export class TestEnvironment {
 
     // run the renderer unit tests first, since they should be quick and simple
     await this.runRendererTests({
+      title: 'Unit Tests',
       dir: path.resolve(__dirname, '../renderer/suites'),
       grep: /(\s|^)@unit\b/
     });
@@ -81,7 +82,7 @@ export class TestEnvironment {
    * @return A promise that will be resolved when the test run ends.
    */
   runRendererTests(
-    options: { page?: PageId, file?: string; dir?: string, grep?: RegExp }
+    options: { title?: string, page?: PageId, file?: string; dir?: string, grep?: RegExp }
   ): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       ipcMain.once(mochaChannels.RENDERER_MOCHA_RUN_END,
@@ -93,6 +94,7 @@ export class TestEnvironment {
       );
 
       const runOptions: ITestRunOptions = {
+        title: options.title,
         file: options.file,
         dir: options.dir,
         grep: options.grep ? options.grep.source : undefined,

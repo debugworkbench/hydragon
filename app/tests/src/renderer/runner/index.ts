@@ -5,7 +5,9 @@ import { ipcRenderer } from 'electron';
 import * as Mocha from 'mocha';
 import * as walkDir from 'walkdir';
 import * as path from 'path';
-import { channels, ITestRunOptions, TestRunnerIPC } from '../../common/mocha-ipc';
+import {
+  channels, ITestRunOptions, TestRunnerIPC, ITestRunStartEventArgs
+} from '../../common/mocha-ipc';
 
 ipcRenderer.on(channels.RENDERER_MOCHA_RUN,
   (event: GitHubElectron.IRendererIPCEvent, options: ITestRunOptions) => {
@@ -55,7 +57,12 @@ function runTests(options: ITestRunOptions): Promise<number> {
   return findFiles(options)
   .then(files => new Promise<number>((resolve, reject) => {
     const reporterConstructor = getReporterConstructor(
-      ipcRenderer.send.bind(ipcRenderer)
+      (channel: string, args: any) => {
+        if (channel === channels.MOCHA_START) {
+          (<ITestRunStartEventArgs> args).testRunTitle = options.title;
+        }
+        ipcRenderer.send(channel, args);
+      }
     );
     const mocha = new Mocha();
     files.forEach(file => addFile(mocha, file));

@@ -87,6 +87,7 @@ export interface IError {
 
 /** Payload sent by the main process to the renderer process via [[IPC_RENDERER_MOCHA_RUN]]. */
 export interface ITestRunOptions {
+  title?: string;
   file?: string;
   dir?: string;
   /** If set then only tests whose titles match the provided regular expression will be run. */
