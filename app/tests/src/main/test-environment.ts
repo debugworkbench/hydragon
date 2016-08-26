@@ -61,15 +61,24 @@ export class TestEnvironment {
    * Run all the tests.
    */
   async runTests(): Promise<void> {
-    // FIXME: run browser unit tests first since they don't require spinning up renderer processes
-
-    // run the renderer unit tests first, since they should be quick and simple
+    const unitTestTag = /(\s|^)@unit\b/;
+    // run browser unit tests first since they don't require spinning up renderer processes
+    await this.runBrowserTests({
+      title: 'Unit Tests',
+      grep: unitTestTag
+    });
+    // run the renderer unit tests next, since they should be quick and simple
     await this.runRendererTests({
       title: 'Unit Tests',
       dir: path.resolve(__dirname, '../renderer/suites'),
-      grep: /(\s|^)@unit\b/
+      grep: unitTestTag
     });
-    await this.runBrowserTests();
+    // now run the rest of the tests
+    await this.runBrowserTests({
+      title: "Integration Tests",
+      grep: unitTestTag,
+      invertGrep: true
+    });
   }
 
   /**
@@ -112,10 +121,21 @@ export class TestEnvironment {
   /**
    * Run Mocha tests in the main/browser process.
    */
-  runBrowserTests(): Promise<void> {
+  runBrowserTests(options: { title?: string, grep?: RegExp, invertGrep?: boolean }): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const reporterConstructor = getReporterConstructor(
-        this._sendBrowserTestRunnerEvent.bind(this)
+        (channel: string, args: any) => {
+          if (channel === mochaChannels.MOCHA_START) {
+            const eventArgs: ITestRunStartEventArgs = args;
+            eventArgs.process = 'browser';
+            if (options.title) {
+              eventArgs.testRunTitle = options.title;
+            }
+          } else if (channel === mochaChannels.MOCHA_TEST_START) {
+            this._rendererRunnerIPC.currentBrowserTestId = (<ITestStartEventArgs> args).testId;
+          }
+          this._reporterWindow.webContents.send(channel, args);
+        }
       );
       const mocha = new Mocha();
 
@@ -127,11 +147,21 @@ export class TestEnvironment {
 
       dirWalker.on('file', (filePath: string) => {
         if (/\.js$/.test(filePath)) {
+          // clear out the test file from the require cache to work around a Mocha "feature" where it
+          // skips running tests from a file that was previously loaded by any other Mocha instance in
+          // this process
+          delete require.cache[filePath];
           mocha.addFile(filePath);
         }
       });
 
       dirWalker.on('end', () => {
+        if (options.grep) {
+          mocha.grep(options.grep);
+        }
+        if (options.invertGrep) {
+          mocha.invert();
+        }
         mocha
         .ui('bdd')
         .reporter(reporterConstructor)
