@@ -73,3 +73,7 @@ export function isRequest(msg: IMessage): msg is IRequest {
 export function isResponse(msg: IMessage): msg is IResponse {
   return msg.kind === MessageKind.Response;
 }
+
+export function isErrorResponse(msg: IMessage): msg is IErrorResponse {
+  return msg.kind === MessageKind.Error;
+}
