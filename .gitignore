@@ -13,3 +13,4 @@ app/typings/browser/*
 /typings/browser.d.ts
 /typings/browser/*
 app/tests/lib/
+.vscode/.BROWSE.VC.DB*
