@@ -8,21 +8,26 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { RendererIPCDispatcher, IRendererDispatcherNode } from 'app/renderer/ipc-dispatcher';
 import { ipcChannels as dispatcherIpcChannels } from 'app/common/ipc/ipc-node';
 import {
-  DISPATCHER_IPC_KEY, dispatcherChannels, ipcChannels, ITestPayload
+  DISPATCHER_IPC_KEY, dispatcherChannels, ipcChannels as ipcTestChannels, ITestPayload
 } from '../../common/ipc-dispatcher';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe('RendererIPCDispatcher', function () {
-  it('cleans up IPC listeners when disposed', () => {
-    const dispatcher = new RendererIPCDispatcher();
-    expect(ipcRenderer.listeners(dispatcherIpcChannels.MESSAGE)).to.have.lengthOf(1);
-    dispatcher.dispose();
-    expect(ipcRenderer.listeners(dispatcherIpcChannels.MESSAGE)).to.have.lengthOf(0);
+  const requestPayload: ITestPayload = { title: 'This is a request' };
+  const responsePayload: ITestPayload = { title: 'This is a response' };
+
+  describe('#dispose()', () => {
+    it('cleans up IPC listeners @unit', () => {
+      const dispatcher = new RendererIPCDispatcher();
+      expect(ipcRenderer.listeners(dispatcherIpcChannels.MESSAGE)).to.have.lengthOf(1);
+      dispatcher.dispose();
+      expect(ipcRenderer.listeners(dispatcherIpcChannels.MESSAGE)).to.have.lengthOf(0);
+    });
   });
 
-  describe('Messages', () => {
+  describe('#sendRequest()', () => {
     let dispatcher: RendererIPCDispatcher;
 
     beforeEach(() => {
@@ -33,54 +38,111 @@ describe('RendererIPCDispatcher', function () {
       dispatcher.dispose();
     });
 
-    it('receives a broadcast message @awaitBroadcast', () => {
+    it('returns a response from another renderer process @awaitSendRequest', () => {
       let node: IRendererDispatcherNode;
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<ITestPayload>((resolve, reject) => {
         node = dispatcher.createNode();
-        node.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.BROADCAST, msg => {
-          try {
-            expect(msg.title).to.equal('This is a broadcast');
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
+        // wait for the main process to start the second renderer process
+        node.onMessage(DISPATCHER_IPC_KEY, 'sendRequest', () => {
+          resolve(dispatcher.sendRequest<ITestPayload, ITestPayload>(
+            DISPATCHER_IPC_KEY, dispatcherChannels.REQUEST, requestPayload
+          ));
         });
-        ipcRenderer.send(ipcChannels.TEST_BROADCAST_MSG);
-      }).then(() => node.dispose());
+      })
+      .then(response => {
+        expect(response.title).to.equal(responsePayload.title);
+        node.dispose();
+      });
     });
 
-    it('receives a message @awaitMessage', () => {
-      let node: IRendererDispatcherNode;
-      return new Promise<void>((resolve, reject) => {
-        node = dispatcher.createNode();
-        node.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, msg => {
+    it('returns a response from the same renderer process @unit', async () => {
+      const node = dispatcher.createNode();
+      node.onRequest<ITestPayload, ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.REQUEST,
+        request => {
           try {
-            expect(msg.title).to.equal('This is a message');
-            resolve();
+            expect(request.title).to.equal(requestPayload.title);
           } catch (err) {
-            reject(err);
+            return Promise.reject(err);
           }
-        });
-      }).then(() => node.dispose());
+          return Promise.resolve(responsePayload);
+        }
+      );
+      const response = await dispatcher.sendRequest<ITestPayload, ITestPayload>(
+        DISPATCHER_IPC_KEY, dispatcherChannels.REQUEST, requestPayload
+      );
+      expect(response.title).to.equal(responsePayload.title);
+      node.dispose();
+    });
+  });
+
+  describe('Node', () => {
+    let dispatcher: RendererIPCDispatcher;
+
+    beforeEach(() => {
+      dispatcher = new RendererIPCDispatcher();
     });
 
-    it('receives a request and sends a response @awaitRequest', () => {
-      let node: IRendererDispatcherNode;
-      return new Promise<void>((resolve, reject) => {
-        node = dispatcher.createNode();
-        node.onRequest<ITestPayload, ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.REQUEST,
-          msg => {
+    afterEach(() => {
+      dispatcher.dispose();
+    });
+
+    describe('#onMessage()', () => {
+      it('invokes callback for a message broadcast from the main process @awaitBroadcast', () => {
+        let node: IRendererDispatcherNode;
+        return new Promise<void>((resolve, reject) => {
+          node = dispatcher.createNode();
+          node.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.BROADCAST, msg => {
             try {
-              expect(msg.title).to.equal('This is a request');
+              expect(msg.title).to.equal('This is a broadcast');
               resolve();
-              return Promise.resolve({ title: 'This is a response'});
             } catch (err) {
               reject(err);
             }
-          }
-        );
-        ipcRenderer.send(ipcChannels.TEST_SEND_REQUEST);
-      }).then(() => node.dispose());
+          });
+          // get the main process to broadcast the test message
+          ipcRenderer.send(ipcTestChannels.TEST_BROADCAST_MSG);
+        })
+        .then(() => node.dispose());
+      });
+
+      it('invokes callback for a message sent from the main process @awaitMessage', () => {
+        let node: IRendererDispatcherNode;
+        return new Promise<void>((resolve, reject) => {
+          node = dispatcher.createNode();
+          node.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, msg => {
+            try {
+              expect(msg.title).to.equal('This is a message');
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          });
+        })
+        .then(() => node.dispose());
+      });
+    });
+
+    describe('#onRequest()', () => {
+      it('invokes callback for a request sent from the main process @awaitRequest', () => {
+        let node: IRendererDispatcherNode;
+        return new Promise<void>((resolve, reject) => {
+          node = dispatcher.createNode();
+          node.onRequest<ITestPayload, ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.REQUEST,
+            msg => {
+              try {
+                expect(msg.title).to.equal('This is a request');
+                resolve();
+                return Promise.resolve({ title: 'This is a response'});
+              } catch (err) {
+                reject(err);
+              }
+            }
+          );
+          // get the main process to send the test request
+          ipcRenderer.send(ipcTestChannels.TEST_SEND_REQUEST);
+        })
+        .then(() => node.dispose());
+      });
     });
   });
 });

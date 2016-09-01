@@ -4,12 +4,13 @@
 import { ipcMain } from 'electron';
 import {
   ipcChannels, ISimpleMessage, IRequest, MessageKind, IConnectMessage, IDisconnectMessage, IMessage,
-  IResponse
+  IResponse, IErrorResponse, isSimpleMessage, isRequest, isResponse, isErrorResponse
 } from '../common/ipc/ipc-node';
 
 interface IPendingRequest {
   id: number;
   onResponse<T>(response: T): void;
+  onError(error: { name: string, message: string, stack: string }): void;
   cancel(): void;
 }
 
@@ -31,6 +32,13 @@ export interface IRemoteNode {
   page: GitHubElectron.WebContents;
 }
 
+/**
+ * Browser-side dispatcher nodes are notified when a renderer-side node connects or disconnects
+ * with one or more keys, currently to ensure this works as expected the browser-side node must be
+ * created before any of the renderer-side nodes it wishes to be notified about. A browser-side node
+ * can send messages and requests to renderer-side nodes via the dispatcher, but browser-side nodes
+ * cannot communicate with each other.
+ */
 class Node implements IMainDispatcherNode {
   private _keyCallbacks = new Array<[/*key:*/string, [ConnectCallback, DisconnectCallback]]>();
 
@@ -87,6 +95,7 @@ class Node implements IMainDispatcherNode {
     this._sub(key, this);
   }
 
+  /** Invoke the connect callback associated with the given key (if any). */
   connect(key: string, node: IRemoteNode): void {
     for (let [currentKey, callbacks] of this._keyCallbacks) {
       if (currentKey === key) {
@@ -98,6 +107,7 @@ class Node implements IMainDispatcherNode {
     }
   }
 
+  /** Invoke the disconnect callback associated with the given key (if any). */
   disconnect(key: string, nodeId: number): void {
     for (let [currentKey, callbacks] of this._keyCallbacks) {
       if (currentKey === key) {
@@ -111,17 +121,22 @@ class Node implements IMainDispatcherNode {
 }
 
 /** Used to keep track of the number of remote nodes on a page. */
-type PageInfo = [/*page:*/GitHubElectron.WebContents, /*remoteNodeCount:*/number];
+interface IPageInfo {
+  /** Every page in Electron runs in its own renderer process. */
+  page: GitHubElectron.WebContents;
+  /** Each renderer process can contain multiple nodes. */
+  remoteNodeCount: number;
+}
 
 /**
- * Sends requests and messages to remote nodes that in one or more renderer processes.
+ * Dispatches requests and messages from in-process nodes to out-of-process nodes, and vice versa.
  *
  * A request is expected to return a response, whereas a message is not.
  * See also [[RendererIPCDispatcher]].
  */
 export class MainIPCDispatcher {
   /** Tracks the number of remote nodes subscribed to each key on a per page basis. */
-  private _keyToPagesMap = new Map</*key:*/string, Array<PageInfo>>();
+  private _keyToPagesMap = new Map</*key:*/string, Array<IPageInfo>>();
   /** Tracks the local nodes subscribed each key. */
   private _keyToNodesMap = new Map</*key:*/string, Array<Node>>();
   private _pendingRequests: IPendingRequest[] = [];
@@ -133,11 +148,11 @@ export class MainIPCDispatcher {
     this._unsubscribeNode = this._unsubscribeNode.bind(this);
     this._onConnect = this._onConnect.bind(this);
     this._onDisconnect = this._onDisconnect.bind(this);
-    this._onResponse = this._onResponse.bind(this);
+    this._onMessage = this._onMessage.bind(this);
 
     ipcMain.on(ipcChannels.CONNECT, this._onConnect);
     ipcMain.on(ipcChannels.DISCONNECT, this._onDisconnect);
-    ipcMain.on(ipcChannels.MESSAGE, this._onResponse);
+    ipcMain.on(ipcChannels.MESSAGE, this._onMessage);
   }
 
   /**
@@ -149,18 +164,18 @@ export class MainIPCDispatcher {
 
     ipcMain.removeListener(ipcChannels.CONNECT, this._onConnect);
     ipcMain.removeListener(ipcChannels.DISCONNECT, this._onDisconnect);
-    ipcMain.removeListener(ipcChannels.MESSAGE, this._onResponse);
+    ipcMain.removeListener(ipcChannels.MESSAGE, this._onMessage);
   }
 
   /**
-   * Create a new local node that can be notified when remote nodes subscribe to or unsubscribe
-   * from certain keys.
+   * Create a new in-process node that can be notified when out-of-process nodes subscribe to or
+   * unsubscribe from certain keys.
    */
   createNode(): IMainDispatcherNode {
     return new Node(this._subscribeNode, this._unsubscribeNode);
   }
 
-  /** Called when a local node subscribes to a key. */
+  /** Called when an in-process node subscribes to a key. */
   private _subscribeNode(key: string, node: Node): void {
     const nodes = this._keyToNodesMap.get(key);
     if (nodes) {
@@ -170,7 +185,7 @@ export class MainIPCDispatcher {
     }
   }
 
-  /** Called when a local node unsubscribes from a key. */
+  /** Called when an in-process node unsubscribes from a key. */
   private _unsubscribeNode(key: string, node: Node): void {
     const nodes = this._keyToNodesMap.get(key);
     if (nodes.length > 1) {
@@ -180,19 +195,20 @@ export class MainIPCDispatcher {
     }
   }
 
-  /** Send a message to multiple remote nodes. */
+  /** Send a message to all out-of-process nodes subscribed to the given key. */
   broadcastMessage<T>(key: string, channel: string, payload: T): void {
     const pages = this._keyToPagesMap.get(key);
-    for (const [page] of pages) {
+    for (const pageInfo of pages) {
       const msg: ISimpleMessage = { key, channel, kind: MessageKind.Simple, payload };
-      page.send(ipcChannels.MESSAGE, msg);
+      pageInfo.page.send(ipcChannels.MESSAGE, msg);
     }
   }
 
   /**
-   * Send a message to a remote node.
+   * Send a message to an out-of-process node.
    *
    * @param node The remote node the message should be sent to.
+   * @param key The key to associate with the message.
    * @param channel The channel the message should be sent on.
    * @param payload Arbitrary JSON serializable data.
    */
@@ -203,16 +219,26 @@ export class MainIPCDispatcher {
     node.page.send(ipcChannels.MESSAGE, msg);
   }
 
-  /** Send a request to a remote node and return the response. */
-  sendRequest<TRequest, TResponse>(key: string, channel: string, payload: TRequest): Promise<TResponse> {
+  /**
+   * Send a request to an out-of-process node and return the response.
+   *
+   * @param sender The page the request originates from (if any), if provided the dispatcher will
+   *               not send the request to the sender.
+   */
+  sendRequest<TRequest, TResponse>(
+    key: string, channel: string, payload: TRequest, sender?: GitHubElectron.WebContents
+  ): Promise<TResponse> {
     return new Promise<TResponse>((resolve, reject) => {
-      const pages = this._keyToPagesMap.get(key);
-      if (!pages) {
+      let pages = this._keyToPagesMap.get(key);
+      if (sender) {
+        pages = pages.filter(pageInfo => pageInfo.page !== sender);
+      }
+      if (!pages || (pages.length === 0)) {
         throw new Error(`No remote nodes for the '${key}' key found.`);
       }
-      // for now just send the request to the first page that was added, first come first served,
-      // should probably provide a way to control this at some point
-      const page = pages[pages.length - 1][0];
+      // NOTE: for now just send the request to the first page that was added, first come first
+      //       served, should probably provide a way to control this at some point
+      const page = pages[0].page;
       const requestId = this._generateRequestId();
       const timeoutTimer = setTimeout(() => {
         const idx = this._pendingRequests.findIndex(request => request.id === requestId);
@@ -227,6 +253,10 @@ export class MainIPCDispatcher {
         onResponse: (response: TResponse) => {
           clearTimeout(timeoutTimer);
           resolve(response);
+        },
+        onError: (error: { name: string, message: string, stack: string }) => {
+          clearTimeout(timeoutTimer);
+          reject(error);
         },
         cancel: () => {
           clearTimeout(timeoutTimer);
@@ -243,7 +273,10 @@ export class MainIPCDispatcher {
     });
   }
 
-  /** Called when a remote node subscribes to a key. */
+  /**
+   * Called when an out-of-process node subscribes to a key, notifies all in-process nodes
+   * subscribed to that key.
+   */
   private _onConnect(e: GitHubElectron.IMainIPCEvent, request: IConnectMessage): void {
     const remoteNode: IRemoteNode = {
       id: request.nodeId,
@@ -253,20 +286,20 @@ export class MainIPCDispatcher {
 
     const pages = this._keyToPagesMap.get(remoteNode.key);
     if (pages) {
-      let existingPageInfo: [GitHubElectron.WebContents, number];
+      let existingPageInfo: IPageInfo;
       for (let pageInfo of pages) {
-        if (pageInfo[0] === remoteNode.page) {
+        if (pageInfo.page === remoteNode.page) {
           existingPageInfo = pageInfo;
           break;
         }
       }
       if (existingPageInfo) {
-        ++existingPageInfo[1];
+        ++existingPageInfo.remoteNodeCount;
       } else {
-        pages.push([remoteNode.page, 1]);
+        pages.push({ page: remoteNode.page, remoteNodeCount: 1 });
       }
     } else {
-      this._keyToPagesMap.set(remoteNode.key, [[remoteNode.page, 1]]);
+      this._keyToPagesMap.set(remoteNode.key, [{ page: remoteNode.page, remoteNodeCount: 1 }]);
     }
 
     const nodes = this._keyToNodesMap.get(remoteNode.key);
@@ -277,14 +310,17 @@ export class MainIPCDispatcher {
     }
   }
 
-  /** Called when a remote node unsubscribes from a key. */
+  /**
+   * Called when an out-of-process node unsubscribes from a key, notifies all in-process nodes
+   * subscribed to that key.
+   */
   private _onDisconnect(e: GitHubElectron.IMainIPCEvent, msg: IDisconnectMessage): void {
     const pages = this._keyToPagesMap.get(msg.key);
     for (let i = 0; i < pages.length; ++i) {
-      if (pages[i][0] === e.sender) {
-        const [page, remoteNodeCount] = pages[i];
+      if (pages[i].page === e.sender) {
+        const { page, remoteNodeCount } = pages[i];
         if (remoteNodeCount > 1) {
-          pages[i][1] = remoteNodeCount - 1;
+          --pages[i].remoteNodeCount;
         } else if (pages.length > 1) {
           pages.splice(i, 1);
         } else {
@@ -302,14 +338,74 @@ export class MainIPCDispatcher {
     }
   }
 
-  private _onResponse(e: GitHubElectron.IMainIPCEvent, response: IResponse): void {
-    for (let i = 0; i < this._pendingRequests.length; ++i) {
-      const request = this._pendingRequests[i];
-      if (request.id === response.requestId) {
-        this._pendingRequests.splice(i, 1);
-        request.onResponse(response.payload);
+  /** Process a message from a renderer-side dispatcher. */
+  private _onMessage(e: GitHubElectron.IMainIPCEvent, msg: IMessage): void {
+    if (isSimpleMessage(msg)) {
+      // forward the message to any page that has any nodes subscribed to the relevant key,
+      // except the page from which the message originated (it is assumed the dispatcher in the
+      // originating process will send the message to the relevant nodes in that process)
+      const pages = this._keyToPagesMap.get(msg.key);
+      for (let pageInfo of pages) {
+        if (pageInfo.page !== e.sender) {
+          pageInfo.page.send(ipcChannels.MESSAGE, msg);
+        }
+      }
+    } else if (isRequest(msg)) {
+      this._forwardRequest(msg, e.sender);
+    } else if (isResponse(msg)) {
+      for (let i = 0; i < this._pendingRequests.length; ++i) {
+        const request = this._pendingRequests[i];
+        if (request.id === msg.requestId) {
+          this._pendingRequests.splice(i, 1);
+          request.onResponse(msg.payload);
+          break;
+        }
+      }
+    } else if (isErrorResponse(msg)) {
+      for (let i = 0; i < this._pendingRequests.length; ++i) {
+        const request = this._pendingRequests[i];
+        if (request.id === msg.requestId) {
+          this._pendingRequests.splice(i, 1);
+          request.onError({ name: msg.name, message: msg.message, stack: msg.stack });
+          break;
+        }
       }
     }
+  }
+
+  /**
+   * Forward a request from one page to another, then forward the response back to the page that
+   * sent the request.
+   *
+   * @param request The request to be forwarded.
+   * @param sender The page from which the request was sent.
+   * @return A promise that will be resolved after a response for the request is sent back to
+   *         the sender.
+   */
+  private _forwardRequest(
+    request: IRequest, sender: GitHubElectron.WebContents
+  ): Promise<void> {
+    return this.sendRequest(request.key, request.channel, request.payload, sender)
+    .then(response => {
+      const msg: IResponse = {
+        kind: MessageKind.Response,
+        requestId: request.id,
+        payload: response
+      };
+      sender.send(ipcChannels.MESSAGE, msg);
+    })
+    .catch(error => {
+      const msg: IErrorResponse = {
+        kind: MessageKind.Error,
+        key: request.key,
+        channel: request.channel,
+        requestId: request.id,
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      };
+      sender.send(ipcChannels.MESSAGE, msg);
+    });
   }
 
   private _generateRequestId(): number {
