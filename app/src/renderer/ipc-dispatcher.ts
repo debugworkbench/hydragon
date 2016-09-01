@@ -3,8 +3,8 @@
 
 import { ipcRenderer } from 'electron';
 import {
-  ipcChannels, isSimpleMessage, isRequest, isResponse, isErrorResponse, MessageKind,
-  IConnectMessage, IDisconnectMessage, IMessage, ISimpleMessage, IRequest, IResponse, IErrorResponse
+  ipcChannels, IConnectMessage, IDisconnectMessage, ISimpleMessage, IRequest, IResponse,
+  IErrorResponse, MessageKind, Message
 } from '../common/ipc/ipc-node';
 
 export type MessageCallback<TMessage> = (message: TMessage) => void;
@@ -289,40 +289,48 @@ export class RendererIPCDispatcher {
     });
   }
 
-  private _onMessage(e: GitHubElectron.IRendererIPCEvent, msg: IMessage): void {
-    if (isSimpleMessage(msg) || isRequest(msg)) {
-      const nodes = this._keyToNodesMap.get(msg.key);
-      if (!nodes) {
-        throw new Error(`No nodes are registered for the '${msg.key}' key.`);
+  private _onMessage(e: GitHubElectron.IRendererIPCEvent, msg: Message): void {
+    switch (msg.kind) {
+      case MessageKind.Simple:
+      case MessageKind.Request: {
+        const nodes = this._keyToNodesMap.get(msg.key);
+        if (!nodes) {
+          throw new Error(`No nodes are registered for the '${msg.key}' key.`);
+        }
+
+        if (msg.kind === MessageKind.Simple) {
+          for (const node of nodes) {
+            node.handleMessage(msg.key, msg.channel, msg.payload);
+          }
+        } else if (msg.kind === MessageKind.Request) {
+          for (const node of nodes) {
+            this._handleRequest(node, msg);
+          }
+        }
+        break;
       }
 
-      if (isSimpleMessage(msg)) {
-        for (const node of nodes) {
-          node.handleMessage(msg.key, msg.channel, msg.payload);
+      case MessageKind.Response:
+        for (let i = 0; i < this._pendingRequests.length; ++i) {
+          const request = this._pendingRequests[i];
+          if (request.id === msg.requestId) {
+            this._pendingRequests.splice(i, 1);
+            request.onResponse(msg.payload);
+            break;
+          }
         }
-      } else if (isRequest(msg)) {
-        for (const node of nodes) {
-          this._handleRequest(node, msg);
+        break;
+
+      case MessageKind.Error:
+        for (let i = 0; i < this._pendingRequests.length; ++i) {
+          const request = this._pendingRequests[i];
+          if (request.id === msg.requestId) {
+            this._pendingRequests.splice(i, 1);
+            request.onError({ name: msg.name, message: msg.message, stack: msg.stack });
+            break;
+          }
         }
-      }
-    } else if (isResponse(msg)) {
-      for (let i = 0; i < this._pendingRequests.length; ++i) {
-        const request = this._pendingRequests[i];
-        if (request.id === msg.requestId) {
-          this._pendingRequests.splice(i, 1);
-          request.onResponse(msg.payload);
-          break;
-        }
-      }
-    } else if (isErrorResponse(msg)) {
-      for (let i = 0; i < this._pendingRequests.length; ++i) {
-        const request = this._pendingRequests[i];
-        if (request.id === msg.requestId) {
-          this._pendingRequests.splice(i, 1);
-          request.onError({ name: msg.name, message: msg.message, stack: msg.stack });
-          break;
-        }
-      }
+        break;
     }
   }
 

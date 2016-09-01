@@ -3,8 +3,8 @@
 
 import { ipcMain } from 'electron';
 import {
-  ipcChannels, ISimpleMessage, IRequest, MessageKind, IConnectMessage, IDisconnectMessage, IMessage,
-  IResponse, IErrorResponse, isSimpleMessage, isRequest, isResponse, isErrorResponse
+  ipcChannels, ISimpleMessage, IRequest, IConnectMessage, IDisconnectMessage, IResponse,
+  IErrorResponse, MessageKind, Message
 } from '../common/ipc/ipc-node';
 
 interface IPendingRequest {
@@ -339,37 +339,46 @@ export class MainIPCDispatcher {
   }
 
   /** Process a message from a renderer-side dispatcher. */
-  private _onMessage(e: GitHubElectron.IMainIPCEvent, msg: IMessage): void {
-    if (isSimpleMessage(msg)) {
-      // forward the message to any page that has any nodes subscribed to the relevant key,
-      // except the page from which the message originated (it is assumed the dispatcher in the
-      // originating process will send the message to the relevant nodes in that process)
-      const pages = this._keyToPagesMap.get(msg.key);
-      for (let pageInfo of pages) {
-        if (pageInfo.page !== e.sender) {
-          pageInfo.page.send(ipcChannels.MESSAGE, msg);
+  private _onMessage(e: GitHubElectron.IMainIPCEvent, msg: Message): void {
+    switch (msg.kind) {
+      case MessageKind.Simple: {
+        // forward the message to any page that has any nodes subscribed to the relevant key,
+        // except the page from which the message originated (it is assumed the dispatcher in the
+        // originating process will send the message to the relevant nodes in that process)
+        const pages = this._keyToPagesMap.get(msg.key);
+        for (let pageInfo of pages) {
+          if (pageInfo.page !== e.sender) {
+            pageInfo.page.send(ipcChannels.MESSAGE, msg);
+          }
         }
+        break;
       }
-    } else if (isRequest(msg)) {
-      this._forwardRequest(msg, e.sender);
-    } else if (isResponse(msg)) {
-      for (let i = 0; i < this._pendingRequests.length; ++i) {
-        const request = this._pendingRequests[i];
-        if (request.id === msg.requestId) {
-          this._pendingRequests.splice(i, 1);
-          request.onResponse(msg.payload);
-          break;
+
+      case MessageKind.Request:
+        this._forwardRequest(msg, e.sender);
+        break;
+
+      case MessageKind.Response:
+        for (let i = 0; i < this._pendingRequests.length; ++i) {
+          const request = this._pendingRequests[i];
+          if (request.id === msg.requestId) {
+            this._pendingRequests.splice(i, 1);
+            request.onResponse(msg.payload);
+            break;
+          }
         }
-      }
-    } else if (isErrorResponse(msg)) {
-      for (let i = 0; i < this._pendingRequests.length; ++i) {
-        const request = this._pendingRequests[i];
-        if (request.id === msg.requestId) {
-          this._pendingRequests.splice(i, 1);
-          request.onError({ name: msg.name, message: msg.message, stack: msg.stack });
-          break;
+        break;
+
+      case MessageKind.Error:
+        for (let i = 0; i < this._pendingRequests.length; ++i) {
+          const request = this._pendingRequests[i];
+          if (request.id === msg.requestId) {
+            this._pendingRequests.splice(i, 1);
+            request.onError({ name: msg.name, message: msg.message, stack: msg.stack });
+            break;
+          }
         }
-      }
+        break;
     }
   }
 

@@ -36,44 +36,37 @@ export enum MessageKind {
   Error
 }
 
-export interface IMessage {
-  kind: MessageKind;
-  payload?: any;
-}
-
-export interface ISimpleMessage extends IMessage {
+export interface ISimpleMessage {
+  kind: MessageKind.Simple;
   key: string;
   channel: string;
+  payload?: any;
   /** Identifier of the remote node the message is destined for. */
   nodeId?: number;
 }
 
-export interface IRequest extends ISimpleMessage {
+export interface IRequest {
+  kind: MessageKind.Request;
+  key: string;
+  channel: string;
   id: number;
+  payload?: any;
 }
 
-export interface IResponse extends IMessage {
+export interface IResponse {
+  kind: MessageKind.Response;
   requestId: number;
+  payload?: any;
 }
 
-export interface IErrorResponse extends IResponse, ISimpleMessage {
+export interface IErrorResponse {
+  kind: MessageKind.Error;
+  key: string;
+  channel: string;
+  requestId: number;
   name: string;
   message: string;
   stack?: string;
 }
 
-export function isSimpleMessage(msg: IMessage): msg is ISimpleMessage {
-  return msg.kind === MessageKind.Simple;
-}
-
-export function isRequest(msg: IMessage): msg is IRequest {
-  return msg.kind === MessageKind.Request;
-}
-
-export function isResponse(msg: IMessage): msg is IResponse {
-  return msg.kind === MessageKind.Response;
-}
-
-export function isErrorResponse(msg: IMessage): msg is IErrorResponse {
-  return msg.kind === MessageKind.Error;
-}
+export type Message = ISimpleMessage | IRequest | IResponse | IErrorResponse;
