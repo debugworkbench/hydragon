@@ -131,6 +131,8 @@ export class TestEnvironment {
             if (options.title) {
               eventArgs.testRunTitle = options.title;
             }
+          } else if (channel === mochaChannels.MOCHA_END) {
+            this._rendererRunnerIPC.currentBrowserTestId = null;
           } else if (channel === mochaChannels.MOCHA_TEST_START) {
             this._rendererRunnerIPC.currentBrowserTestId = (<ITestStartEventArgs> args).testId;
           }
@@ -168,15 +170,6 @@ export class TestEnvironment {
         .run(failureCount => resolve());
       });
     });
-  }
-
-  private _sendBrowserTestRunnerEvent(channel: string, args: any): void {
-    if (channel === mochaChannels.MOCHA_START) {
-      (<ITestRunStartEventArgs> args).process = 'browser';
-    } else if (channel === mochaChannels.MOCHA_TEST_START) {
-      this._rendererRunnerIPC.currentBrowserTestId = (<ITestStartEventArgs> args).testId;
-    }
-    this._reporterWindow.webContents.send(channel, args);
   }
 
   /**
