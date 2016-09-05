@@ -228,7 +228,23 @@ export class Test {
   @mobx.observable
   tests: Test[] = [];
 
+  @mobx.observable
   error: IError | null = null;
+
+  @mobx.computed
+  get errorStack(): string[] {
+    if (this.error.stack) {
+      const msgIdx = this.error.stack.indexOf(this.error.message);
+      const stack = (msgIdx === -1)
+        ? this.error.stack
+        : this.error.stack.substr(this.error.message.length + msgIdx);
+      const lines = stack.split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+      return lines;
+    }
+    return [];
+  }
 
   get process(): string {
     return this.parent.process;

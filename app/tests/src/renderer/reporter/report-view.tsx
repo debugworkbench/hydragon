@@ -164,7 +164,7 @@ export namespace SuiteView {
 
 @stylable
 @mobxReact.observer
-export class TestView extends ContextComponent<TestView.IProps, void, stylable.IContext> {
+export class TestView extends ContextComponent<TestView.IProps, TestView.IState, stylable.IContext> {
   private static _style = Object.assign(
     {
       boxSizing: 'border-box',
@@ -190,6 +190,9 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
         IronFlexLayout.horizontal,
         IronFlexLayout.center
       ),
+      '> .error': {
+        marginLeft: '3em'
+      },
       '> div:last-child': Object.assign(
         {
           marginLeft: '1em',
@@ -202,10 +205,19 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
 
   private _classList: string;
 
+  private _onClickError = (e: React.MouseEvent<HTMLDivElement>): void => {
+    this.setState({ isErrorExpanded: !this.state.isErrorExpanded });
+  }
+
+  constructor(props: TestView.IProps) {
+    super(props);
+    this.state = { isErrorExpanded: false };
+  }
+
   componentWillMount(): void {
     const clazz = (this.constructor as typeof TestView);
     const styleId = this.context.freeStyle.registerStyle(clazz._style);
-    this._classList = `suite ${styleId}`;
+    this._classList = `test ${styleId}`;
   }
 
   render(): JSX.Element {
@@ -225,6 +237,15 @@ export class TestView extends ContextComponent<TestView.IProps, void, stylable.I
           { displayProcess ? (<span className="process">{test.process}</span>) : null }
           <span className="title">{test.title}</span>
         </div>
+        {
+          test.error
+            ? <ErrorView
+                name={test.error.name} message={test.error.message}
+                stack={test.errorStack}
+                isExpanded={this.state.isErrorExpanded}
+                onClick={this._onClickError} />
+            : null
+        }
         <div>{ (innerTests.length > 0) ? innerTests : null }</div>
       </div>
     );
@@ -236,6 +257,73 @@ export namespace TestView {
     test: Test;
     /** If `true` then the label of the process in which the test runs in will be displayed. */
     displayProcess?: boolean;
+  }
+  export interface IState {
+    isErrorExpanded?: boolean;
+  }
+}
+
+@stylable
+class ErrorView extends ContextComponent<ErrorView.IProps, void, stylable.IContext> {
+  private static _style =
+    {
+      boxSizing: 'border-box',
+      position: 'relative',
+      outline: 'none',
+      overflow: 'hidden',
+      '.error-type': {
+        marginRight: '0.3em',
+        color: 'red',
+        fontWeight: 'bold',
+        cursor: 'pointer'
+      },
+      '.error-msg': {
+        fontWeight: 'bold',
+        cursor: 'pointer'
+      },
+      '.error-stack': {
+        marginLeft: '1em',
+        display: 'none'
+      },
+      '.error-stack.expanded': {
+        display: 'block'
+      }
+    };
+
+  private _classList: string;
+
+  componentWillMount(): void {
+    const clazz = (this.constructor as typeof ErrorView);
+    const styleId = this.context.freeStyle.registerStyle(clazz._style);
+    this._classList = `error ${styleId}`;
+  }
+
+  render() {
+    const { name, message, stack, isExpanded, onClick } = this.props;
+    let lineId = 0;
+    const stackLines = stack.map(line => <div key={lineId++}>{line}</div>);
+    const stackClassList = 'error-stack' + (isExpanded ? ' expanded' : '');
+    return (
+      <div className={this._classList}>
+        <span className="error-type" onClick={onClick}>{name}:</span>
+        <span className="error-msg" onClick={onClick}>{message}</span>
+        {
+          (stackLines.length > 0)
+            ? (<div className={stackClassList}>{stackLines}</div>)
+            : null
+        }
+      </div>
+    );
+  }
+}
+
+export namespace ErrorView {
+  export interface IProps {
+    name: string;
+    message: string;
+    stack?: string[];
+    isExpanded?: boolean;
+    onClick(e: React.MouseEvent<HTMLDivElement>): void;
   }
 }
 
