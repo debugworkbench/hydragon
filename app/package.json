@@ -23,7 +23,6 @@
     "antd": "^1.7.0",
     "devtron": "^1.1.2",
     "electron-devtools-installer": "^2.0.0",
-    "node-inspector": "^0.12.8",
     "uuid": "^2.0.2",
     "walkdir": "0.0.11"
   },
