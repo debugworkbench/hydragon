@@ -115,7 +115,7 @@ export abstract class PolymerComponent<
       // `className` needs to be renamed to `class` before being passed through because React won't
       // do so when rendering custom elements,
       // listeners are bound by this component so there's no need to pass them through either
-      omitOwnProps(this.props, ['cssVars', 'className'].concat(this.listeners)),
+      omitOwnProps(this.props, ['ref', 'cssVars', 'className'].concat(this.listeners)),
       {
         ref: this.onSetRef,
         class: this.props.className
