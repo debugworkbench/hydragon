@@ -14,6 +14,7 @@ import { CommandTable } from '../common/command-table';
 import * as cmds from '../common/command-ids';
 import { SourceDirRegistry } from './source-dir-registry';
 import { OpenSourceDirCommand } from './commands';
+import { MainIPCDispatcher } from './ipc-dispatcher';
 
 export interface IApplicationArgs {
   /** Path to the root directory of the application. */
@@ -21,6 +22,7 @@ export interface IApplicationArgs {
 }
 
 export class Application {
+  private _ipcDispatcher: MainIPCDispatcher;
   private _devTools: DevTools;
   private _window: ApplicationWindow;
   private _appProtocolHandler: AppProtocolHandler;
@@ -31,11 +33,12 @@ export class Application {
   private _sourceDirRegistry: SourceDirRegistry;
 
   run(args: IApplicationArgs): void {
+    this._ipcDispatcher = new MainIPCDispatcher();
     this._devTools = new DevTools();
     const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
-    this._sourceDirRegistry = new SourceDirRegistry();
+    this._sourceDirRegistry = new SourceDirRegistry(this._ipcDispatcher);
     this._commands = new CommandTable();
     this.registerCommands();
     this._windowMenuManager = new WindowMenuManager(this._commands);

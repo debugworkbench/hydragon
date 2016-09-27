@@ -32,6 +32,7 @@ import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
 import * as cmds from '../common/command-ids';
 import { RendererSourceDirRegistry } from './source-dir-registry';
+import { RendererIPCDispatcher } from './ipc-dispatcher';
 
 export const enum Cursor {
   HorizontalResize,
@@ -53,6 +54,7 @@ export class RendererContext {
   private devTools: RendererDevTools;
   private _sourceDirRegistry: RendererSourceDirRegistry;
   private _dirTree: DirectoryTreeModel;
+  private _ipcDispatcher: RendererIPCDispatcher;
 
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
@@ -63,6 +65,7 @@ export class RendererContext {
 
   constructor(config: IAppWindowConfig) {
     this.rootPath = config.rootPath;
+    this._ipcDispatcher = new RendererIPCDispatcher();
     this.devTools = new RendererDevTools();
   }
 
@@ -83,7 +86,7 @@ export class RendererContext {
     this.elementFactory = new ElementFactory(this.elementRegistry);
     this.reactElementFactory = this._createReactElementFactory();
     this.windowMenu = this.createWindowMenu();
-    this._sourceDirRegistry = new RendererSourceDirRegistry();
+    this._sourceDirRegistry = new RendererSourceDirRegistry(this._ipcDispatcher);
 
     const userDataDir = electron.remote.app.getPath('userData');
     const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');

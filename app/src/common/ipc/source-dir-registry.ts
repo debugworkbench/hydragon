@@ -1,15 +1,14 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-export const IPC_CONNECT = 'source-dir-registry:connect';
-export const IPC_DISCONNECT = 'source-dir-registry:disconnect';
-export const IPC_UPDATE = 'source-dir-registry:update';
+export const IPC_SYNC = 'sync';
+export const IPC_UPDATE = 'update';
 
-export interface IConnectResponse {
+export interface ISyncMessage {
   dirPaths: string[];
 }
 
-export interface IUpdateRequest {
+export interface IUpdateMessage {
   kind: 'add';
   dirPaths: string[];
 }
