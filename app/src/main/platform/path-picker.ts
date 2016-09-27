@@ -43,7 +43,7 @@ export class PathPicker {
    */
   promptForPath({
     parentWindow, title = 'Open File', defaultPath, pathKind = 'file'
-  }: PathPicker.IPathPromptOptions): Promise<string> {
+  }: PathPicker.IPathPromptOptions): Promise<string | null> {
     return new Promise<string>((resolve, reject) => {
       const properties: GitHubElectron.Dialog.OpenDialogProperty[] = [];
       if (pathKind === 'file') {
@@ -59,12 +59,12 @@ export class PathPicker {
         properties
       };
       // Apparently on OS X the open dialog shouldn't have a parent window
-      if (process.platform !== 'darwin') {
+      if (process.platform === 'darwin') {
         parentWindow = null;
       }
-      dialog.showOpenDialog(parentWindow, options, (fileNames: string[]) =>
-        (fileNames && (fileNames.length > 0)) ? resolve(fileNames[0]) : resolve(null)
-      );
+      dialog.showOpenDialog(parentWindow, options, (fileNames: string[]) => {
+        (fileNames && (fileNames.length > 0)) ? resolve(fileNames[0]) : resolve(null);
+      });
     });
   }
 }
