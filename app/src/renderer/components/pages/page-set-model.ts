@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { observable, autorun, Lambda, transaction } from 'mobx';
+import * as mobx from 'mobx';
 import { Subject, Observable, Subscription } from '@reactivex/rxjs';
 import { PageModel } from './page-model';
 import { PanelModel, IPanelItem } from '../layout/panel-model';
@@ -18,10 +18,10 @@ export class PageSetModel implements IPanelItem {
   height: string;
   didResizeStream = new Subject<void>();
 
-  @observable
+  @mobx.observable
   pages: PageModel[] = [];
 
-  @observable
+  @mobx.observable
   activePage: PageModel = null;
 
   // FIXME: these three subjects aren't actually used by anything right now, consider removing them
@@ -38,22 +38,22 @@ export class PageSetModel implements IPanelItem {
     this.height = height;
   }
 
+  @mobx.action
   addPage(page: PageModel): void {
-    transaction(() => {
-      this.pages.push(page);
-      page.onDidAttachToPageSet(this);
-      const sub = page.didCloseStream.subscribe(page => {
-        this.removePage(page);
-        sub.unsubscribe();
-      });
-      this.didAddPageStream.next(page);
-
-      if (!this.activePage) {
-        this.activatePage(page);
-      }
+    this.pages.push(page);
+    page.pageSet = this;
+    const sub = page.didCloseStream.subscribe(page => {
+      this.removePage(page);
+      sub.unsubscribe();
     });
+    this.didAddPageStream.next(page);
+
+    if (!this.activePage) {
+      this.activatePage(page);
+    }
   }
 
+  @mobx.action
   removePage(page: PageModel): void {
     // if the active page is being removed figure out which page should be activated afterwards,
     // generally the previous page should be activated, unless there is no previous page (in which
@@ -70,7 +70,7 @@ export class PageSetModel implements IPanelItem {
     }
 
     this.pages.splice(removedPageIdx, 1);
-    page.onDidDetachFromPageSet();
+    page.pageSet = null;
 
     if (shouldUpdateActivePage) {
       this.activatePageAtIndex(nextActivePageIdx);
@@ -78,6 +78,7 @@ export class PageSetModel implements IPanelItem {
     this.didRemovePageStream.next(page);
   }
 
+  @mobx.action
   activatePage(page: PageModel): void {
     this.activatePageAtIndex(this.pages.indexOf(page));
   }
