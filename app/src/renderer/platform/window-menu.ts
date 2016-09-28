@@ -283,7 +283,7 @@ export namespace WindowMenu {
    */
   export class CheckedItem extends Item {
     @mobx.observable
-    isChecked: boolean | mobx.IObservableValue<boolean>;
+    isChecked: boolean | mobx.IObservableValue<boolean> | mobx.IComputedValue<boolean>;
 
     constructor(
       id: string, label: string, options?: CheckedItem.IOptions
@@ -307,7 +307,7 @@ export namespace WindowMenu {
 
   export namespace CheckedItem {
     export interface IOptions extends Item.IOptions {
-      isChecked?: boolean | mobx.IObservableValue<boolean>;
+      isChecked?: boolean | mobx.IObservableValue<boolean> | mobx.IComputedValue<boolean>;
       action?: (item: CheckedItem) => void;
     }
   }
