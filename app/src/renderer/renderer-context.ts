@@ -32,6 +32,7 @@ import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
 import * as cmds from '../common/command-ids';
 import { RendererSourceDirRegistry } from './source-dir-registry';
+import { SourceFilePresenter } from './source-file-presenter';
 import { RendererIPCDispatcher } from './ipc-dispatcher';
 
 export const enum Cursor {
@@ -54,6 +55,7 @@ export class RendererContext {
   private devTools: RendererDevTools;
   private _sourceDirRegistry: RendererSourceDirRegistry;
   private _dirTree: DirectoryTreeModel;
+  private _sourceFilePresenter: SourceFilePresenter;
   private _ipcDispatcher: RendererIPCDispatcher;
 
   /** Create the renderer context for the current process. */
@@ -75,6 +77,9 @@ export class RendererContext {
     }
     if (this._sourceDirRegistry) {
       this._sourceDirRegistry.dispose();
+    }
+    if (this._sourceFilePresenter) {
+      this._sourceFilePresenter.dispose();
     }
   }
 
@@ -104,12 +109,16 @@ export class RendererContext {
       workspace: workspaceModel,
       pathPicker
     });
+    this._sourceFilePresenter = new SourceFilePresenter({
+      pagePresenter, ipcDispatcher: this._ipcDispatcher
+    });
 
     const mainPageSet = new PageSetModel({ id: 'main-page-set', height: '100%' });
     const pageTree = new PageTreeModel({ id: 'page-tree', height: '100%' });
     const debugToolbar = new DebugToolbarModel({ id: 'debug-toolbar', debugConfigManager, debugConfigPresenter });
     this._dirTree = new DirectoryTreeModel({
-      id: 'explorer', displayRoot: false, dirPaths: this._sourceDirRegistry.dirPaths
+      id: 'explorer', displayRoot: false, srcDirRegistry: this._sourceDirRegistry,
+      ipcDispatcher: this._ipcDispatcher
     });
 
     workspaceModel.createDefaultLayout({
@@ -121,6 +130,7 @@ export class RendererContext {
     const styleRegistry = ReactFreeStyle.create();
     const overrideCursor = this.overrideCursor.bind(this);
     const resetCursor = this.resetCursor.bind(this);
+
     const rootComponent = styleRegistry.component(React.createClass({
       render: () => React.createElement(
         'div', null,
@@ -138,6 +148,7 @@ export class RendererContext {
 
     // TODO: these editor elements are only here for mockup purposes, they should be removed once
     // source files can be opened from the directory tree element
+/*
     pagePresenter.openPage('test-page', () => {
       const page = new CodeMirrorEditorPageModel({ id: 'SourceFile1' });
       page.title = 'Page 1';
@@ -147,6 +158,7 @@ export class RendererContext {
       };
       return page;
     });
+
     pagePresenter.openPage('test-page2', () => {
       const page = new CodeMirrorEditorPageModel({ id: 'SourceFile2' });
       page.title = 'Page 2';
@@ -158,6 +170,7 @@ export class RendererContext {
     });
 
     this._dirTree.addDirectory(__dirname);
+*/
   }
 
   showWindow(): void {

@@ -1,8 +1,8 @@
 // Copyright (c) 2016 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
+import * as mobx from 'mobx';
 import { WorkspaceModel, PageSetModel, PageModel } from './components/models';
-import { autorun, Lambda, transaction } from 'mobx';
 
 /**
  * Creates and activates page elements.
@@ -10,12 +10,14 @@ import { autorun, Lambda, transaction } from 'mobx';
 export class PagePresenter {
   private pageIdToModelMap = new Map</*pageId:*/string, { page: PageModel, pageSet: PageSetModel }>();
   private lastActivePageSet: PageSetModel;
-  private disposeObserver: Lambda;
+  private disposeObserver: mobx.Lambda;
 
   // TODO: Need to watch out for page sets being created and destroyed and update
   //       pageIdToElementMap accordingly.
   constructor(private workspace: WorkspaceModel) {
-    this.disposeObserver = autorun(() => this.lastActivePageSet = this.workspace.activePageSet);
+    this.disposeObserver = mobx.autorun(() => {
+      this.lastActivePageSet = this.workspace.activePageSet;
+    });
   }
 
   dispose(): void {
@@ -35,17 +37,18 @@ export class PagePresenter {
    * @param createPage Callback that returns the content of the new page, this callback is only
    *                   invoked when a new page is created.
    */
-  openPage(pageId: string, createPage: () => PageModel): void {
+  @mobx.action
+  async openPage(pageId: string, createPage: () => Promise<PageModel>): Promise<void> {
     const entry = this.pageIdToModelMap.get(pageId);
     if (entry) {
       entry.pageSet.activatePage(entry.page);
     } else {
-      const page = createPage();
+      const page = await createPage();
       const sub = page.didCloseStream.subscribe(page => {
         this.pageIdToModelMap.delete(pageId);
         sub.unsubscribe();
       });
-      transaction(() => {
+      mobx.runInAction('add page to most recently active page-set', () => {
         this.lastActivePageSet.addPage(page);
         this.pageIdToModelMap.set(pageId, { page, pageSet: this.lastActivePageSet });
         this.lastActivePageSet.activatePage(page);

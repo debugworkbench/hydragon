@@ -13,7 +13,7 @@ import { ContextMenuManager } from './platform/context-menu-manager';
 import { CommandTable } from '../common/command-table';
 import * as cmds from '../common/command-ids';
 import { SourceDirRegistry } from './source-dir-registry';
-import { OpenSourceDirCommand } from './commands';
+import { OpenSourceDirCommand, OpenSourceFileCommand } from './commands';
 import { MainIPCDispatcher } from './ipc-dispatcher';
 
 export interface IApplicationArgs {
@@ -56,6 +56,9 @@ export class Application {
   registerCommands(): void {
     this._commands.add(cmds.OPEN_SRC_DIR, new OpenSourceDirCommand({
       pathPicker: this._pathPicker, sourceDirRegistry: this._sourceDirRegistry
+    }));
+    this._commands.add(cmds.OPEN_SRC_FILE, new OpenSourceFileCommand({
+      project: this._sourceDirRegistry
     }));
     this._commands.add(cmds.QUIT_APP, { execute: () => app.quit() });
   }

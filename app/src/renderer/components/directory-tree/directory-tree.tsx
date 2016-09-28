@@ -32,6 +32,7 @@ export class DirectoryTreeComponent
     super();
     this._onExpandItem = this._onExpandItem.bind(this);
     this._onCollapseItem = this._onCollapseItem.bind(this);
+    this._onOpenFile = this._onOpenFile.bind(this);
     this._onContextMenu = this._onContextMenu.bind(this);
     this._renderItems = this._renderItems.bind(this);
     this._renderRow = this._renderRow.bind(this);
@@ -56,6 +57,10 @@ export class DirectoryTreeComponent
 
   private _onCollapseItem(item: DirectoryTreeItemModel): void {
     this.props.model.collapseItem(item);
+  }
+
+  private _onOpenFile(item: DirectoryTreeItemModel): void {
+    this.props.model.openFile(item);
   }
 
   private _onContextMenu(event: React.MouseEvent<HTMLDivElement>): void {
@@ -101,7 +106,8 @@ export class DirectoryTreeComponent
         model={model}
         indent={indent}
         onExpand={this._onExpandItem}
-        onCollapse={this._onCollapseItem} />
+        onCollapse={this._onCollapseItem}
+        onDoubleClick={!model.isExpandable ? this._onOpenFile : null} />
     );
   }
 }

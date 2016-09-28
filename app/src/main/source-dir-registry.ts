@@ -43,4 +43,10 @@ export class SourceDirRegistry {
       PROJECT_IPC_KEY, ipc.IPC_UPDATE, { kind: 'add', dirPaths: sourceDirPaths }
     );
   }
+
+  openSourceFile(sourceFilePath: string): Promise<void> {
+    return this._ipcDispatcher.sendRequest<ipc.IOpenSourceFileRequest, void>(
+      PROJECT_IPC_KEY, ipc.IPC_OPEN_SRC_FILE, { file: sourceFilePath }
+    );
+  }
 }

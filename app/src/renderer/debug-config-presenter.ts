@@ -56,24 +56,21 @@ export class DebugConfigPresenter {
    *                   the user will be prompted to create a new configuration that will
    *                   then be displayed for editing.
    */
-  openDebugConfig(configName?: string): Promise<void> {
-    return this.getDebugConfig(configName)
-    .then(debugConfig => {
-      if (debugConfig) {
-        this.pagePresenter.openPage(
-          `debug-config:${debugConfig.name}`,
-          () => {
-            const page = new GdbMiDebugConfigPageModel({
-              id: `debug-config:${debugConfig.name}`,
-              debugConfig,
-              debugConfigManager: this.debugConfigManager,
-              pathPicker: this.pathPicker
-            });
-            return page;
-          }
-        );
-      }
-    });
+  async openDebugConfig(configName?: string): Promise<void> {
+    const debugConfig = await this.getDebugConfig(configName);
+    if (debugConfig) {
+      this.pagePresenter.openPage(`debug-config:${debugConfig.name}`,
+        async () => {
+          const page = new GdbMiDebugConfigPageModel({
+            id: `debug-config:${debugConfig.name}`,
+            debugConfig,
+            debugConfigManager: this.debugConfigManager,
+            pathPicker: this.pathPicker
+          });
+          return page;
+        }
+      );
+    }
   }
 }
 

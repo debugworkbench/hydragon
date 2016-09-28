@@ -7,18 +7,10 @@ import * as mobx from 'mobx';
 import { PanelModel, IPanelItem } from '../layout/panel-model';
 import { ContextMenu } from '../../platform/context-menu';
 import * as cmds from '../../../common/command-ids';
-
-function isArrayChange(change: mobx.IArrayChange<any> | mobx.IArraySplice<any>): change is mobx.IArrayChange<any> {
-  return change.type === 'update';
-}
-
-function isArraySplice(change: mobx.IArrayChange<any> | mobx.IArraySplice<any>): change is mobx.IArraySplice<any> {
-  return change.type === 'splice';
-}
-
-function isObservableArray<T>(array: T[]): array is mobx.IObservableArray<T> {
-  return mobx.isObservableArray(array);
-}
+import { RendererSourceDirRegistry } from '../../source-dir-registry';
+import { RendererIPCDispatcher } from '../../ipc-dispatcher';
+import { IPC_OPEN_SRC_FILE, IOpenSourceFileRequest } from '../../../common/ipc/source-dir-registry';
+import { PROJECT_IPC_KEY } from '../../../common/ipc/keys';
 
 // FIXME: Watch directories in the tree for changes, and update the children of any expanded items
 export class DirectoryTreeModel implements IPanelItem {
@@ -33,11 +25,15 @@ export class DirectoryTreeModel implements IPanelItem {
   private _indentPerLevel: number;
   private _itemIndices = new Map<DirectoryTreeItemModel, /*index:*/number>();
   private _contextMenu: ContextMenu;
+  private _srcDirRegistry: RendererSourceDirRegistry;
+  private _disposeDirPathsObserver: mobx.Lambda;
+  private _ipcDispatcher: RendererIPCDispatcher;
 
   constructor({
-    id, dirPaths, displayRoot = true, indentPerLevel = 25
+    id, srcDirRegistry, displayRoot = true, indentPerLevel = 25, ipcDispatcher
   }: DirectoryTreeModel.IConstructorParams) {
     this.id = id;
+    this._ipcDispatcher = ipcDispatcher;
     this._isRootExcluded = !displayRoot;
     this._indentPerLevel = indentPerLevel;
     this._root = new DirectoryTreeItemModel({
@@ -49,8 +45,11 @@ export class DirectoryTreeModel implements IPanelItem {
       this.items = [this._root];
       this._itemIndices.set(this._root, 0);
     }
-    if (isObservableArray(dirPaths)) {
-      dirPaths.observe(this._onDirsDidChange.bind(this), true);
+    this._srcDirRegistry = srcDirRegistry;
+    if (mobx.isObservableArray(srcDirRegistry.dirPaths)) {
+      this._disposeDirPathsObserver = srcDirRegistry.dirPaths.observe(
+        this._onDirsDidChange.bind(this), true
+      );
     }
   }
 
@@ -59,17 +58,23 @@ export class DirectoryTreeModel implements IPanelItem {
       this._contextMenu.dispose();
       this._contextMenu = null;
     }
+    if (this._disposeDirPathsObserver) {
+      this._disposeDirPathsObserver();
+      this._disposeDirPathsObserver = null;
+    }
   }
 
   @mobx.action
   private _onDirsDidChange(change: mobx.IArrayChange<string> | mobx.IArraySplice<string>): void {
-    if (isArraySplice(change)) {
+    if (change.type === 'splice') {
       change.added.forEach(dirPath => this.addDirectory(dirPath));
       change.removed.forEach(dirPath => this.removeDirectory(dirPath));
     }
   }
 
   async addDirectory(absolutePath: string): Promise<void> {
+    // FIXME: Shouldn't be poking around the file system at this point, that should've been done
+    // earlier and we should already know if the path is a directory or not.
     const dirStat = await fs.stat(absolutePath);
     if (!dirStat.isDirectory()) {
       throw new Error(`"${absolutePath}" is not a directory.`);
@@ -121,6 +126,13 @@ export class DirectoryTreeModel implements IPanelItem {
       }
       item.isExpanded = false;
     }
+  }
+
+  openFile(item: DirectoryTreeItemModel): void {
+    console.log(`Open ${item.path}`);
+    this._ipcDispatcher.sendRequest<IOpenSourceFileRequest, void>(
+      PROJECT_IPC_KEY, IPC_OPEN_SRC_FILE, { file: item.path }
+    );
   }
 
   computeItemIndent(item: DirectoryTreeItemModel): number {
@@ -201,11 +213,12 @@ export class DirectoryTreeModel implements IPanelItem {
 export namespace DirectoryTreeModel {
   export interface IConstructorParams {
     id: string;
-    dirPaths: string[];
+    srcDirRegistry: RendererSourceDirRegistry;
     /** Set to `false` to prevent the root item from being rendered, defaults to `true`. */
     displayRoot?: boolean;
     /** Number of pixels to indent each level of the tree by when the tree is rendered. */
     indentPerLevel?: number;
+    ipcDispatcher: RendererIPCDispatcher;
   }
 }
 
@@ -213,6 +226,7 @@ export namespace DirectoryTreeModel {
  * Find the last item (deepest and rightmost) in the given sub-tree.
  * Note that only the expanded sections of the sub-tree will be traversed, so any nodes in
  * collapsed sections of the sub-tree will be skipped.
+ *
  * @param rootItem The root of the sub-tree to traverse, or a leaf node.
  * @return The last item in the sub-tree, or [[rootItem]] if the sub-tree is empty and [[rootItem]]
  *         is actually just a leaf node.
