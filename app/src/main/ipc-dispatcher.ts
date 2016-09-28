@@ -17,7 +17,7 @@ interface IPendingRequest {
 export type ConnectCallback = (key: string, remoteNode: IRemoteNode) => void;
 export type DisconnectCallback = (key: string, remoteNodeId: number) => void;
 
-export interface IMainDispatcherNode {
+export interface IBrowserDispatcherNode {
   /** Should be called when the node is no longer needed. */
   dispose(): void;
   /** Set a function to be called when a remote node subscribes to the specified key. */
@@ -39,7 +39,7 @@ export interface IRemoteNode {
  * can send messages and requests to renderer-side nodes via the dispatcher, but browser-side nodes
  * cannot communicate with each other.
  */
-class Node implements IMainDispatcherNode {
+class Node implements IBrowserDispatcherNode {
   private _keyCallbacks = new Array<[/*key:*/string, [ConnectCallback, DisconnectCallback]]>();
 
   constructor(
@@ -171,7 +171,7 @@ export class MainIPCDispatcher {
    * Create a new in-process node that can be notified when out-of-process nodes subscribe to or
    * unsubscribe from certain keys.
    */
-  createNode(): IMainDispatcherNode {
+  createNode(): IBrowserDispatcherNode {
     return new Node(this._subscribeNode, this._unsubscribeNode);
   }
 

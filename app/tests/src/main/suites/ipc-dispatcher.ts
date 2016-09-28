@@ -5,7 +5,7 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { MainIPCDispatcher, IMainDispatcherNode, IRemoteNode } from 'app/main/ipc-dispatcher';
+import { MainIPCDispatcher, IBrowserDispatcherNode, IRemoteNode } from 'app/main/ipc-dispatcher';
 import { ipcChannels as dispatcherIpcChannels } from 'app/common/ipc/ipc-node';
 import {
   DISPATCHER_IPC_KEY, dispatcherChannels, ipcChannels as ipcTestChannels, ITestPayload
@@ -68,7 +68,7 @@ describe('MainIPCDispatcher', function () {
     });
 
     it('sends a message', () => {
-      let node: IMainDispatcherNode;
+      let node: IBrowserDispatcherNode;
       const sendMsgWhenRendererReady = new Promise<void>((resolve, reject) => {
         node = dispatcher.createNode();
         node.onConnect(DISPATCHER_IPC_KEY, (key, remoteNode) => {
@@ -104,7 +104,7 @@ describe('MainIPCDispatcher', function () {
     });
 
     it('forwards a request from one page to another', () => {
-      let node: IMainDispatcherNode;
+      let node: IBrowserDispatcherNode;
       // the remote node that will send the message that needs to be forwarded
       let senderNode: IRemoteNode;
       // this promise will be resolved when both pages are ready to go

@@ -4,7 +4,7 @@
 import { ipcMain } from 'electron';
 import * as ipc from '../common/ipc/source-dir-registry';
 import { PROJECT_IPC_KEY } from '../common/ipc/keys';
-import { MainIPCDispatcher, IMainDispatcherNode } from './ipc-dispatcher';
+import { MainIPCDispatcher, IBrowserDispatcherNode } from './ipc-dispatcher';
 
 /**
  * Maintains a list of all currently open source directories.
@@ -17,7 +17,7 @@ export class SourceDirRegistry {
   /** Absolute paths to source directories. */
   private _dirPaths: string[] = [];
   private _ipcDispatcher: MainIPCDispatcher;
-  private _dispatcherNode: IMainDispatcherNode;
+  private _dispatcherNode: IBrowserDispatcherNode;
 
   constructor(ipcDispatcher: MainIPCDispatcher) {
     this._ipcDispatcher = ipcDispatcher;
