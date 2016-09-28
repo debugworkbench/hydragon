@@ -2,13 +2,13 @@
 // MIT License, see LICENSE file for full terms.
 
 import { ICommand, ICommandArgs } from '../../common/command-table';
-import { SourceDirRegistry } from '../source-dir-registry';
+import { Project } from '../project';
 
 /**
  * Opens a source file and displays it on a page.
  */
 export class OpenSourceFileCommand implements ICommand {
-  private _project: SourceDirRegistry;
+  private _project: Project;
 
   constructor({ project }: OpenSourceFileCommand.IConstructorParams) {
     this._project = project;
@@ -24,7 +24,7 @@ export class OpenSourceFileCommand implements ICommand {
 
 export namespace OpenSourceFileCommand {
   export interface IConstructorParams {
-    project: SourceDirRegistry;
+    project: Project;
   }
 
   export interface IArgs extends ICommandArgs {

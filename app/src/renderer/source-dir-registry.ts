@@ -9,7 +9,7 @@ import { RendererIPCDispatcher, IRendererDispatcherNode } from './ipc-dispatcher
 /**
  * Provides access to the list of all currently open source directories.
  *
- * The list of source directories is actually managed by [[SourceDirRegistry]] in the main process,
+ * The list of source directories is actually managed by [[Project]] in the main process,
  * so to modify the list from a renderer process execute an [[OpenSourceDirCommand]].
  */
 export class RendererSourceDirRegistry {

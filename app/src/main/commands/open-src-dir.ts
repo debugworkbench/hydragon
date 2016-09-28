@@ -3,7 +3,7 @@
 
 import { ICommand, ICommandArgs } from '../../common/command-table';
 import { PathPicker } from '../platform/path-picker';
-import { SourceDirRegistry } from '../source-dir-registry';
+import { Project } from '../project';
 
 /**
  * Opens a source directory and displays it in the `Explorer` panel.
@@ -12,11 +12,11 @@ import { SourceDirRegistry } from '../source-dir-registry';
  */
 export class OpenSourceDirCommand implements ICommand {
   private _pathPicker: PathPicker;
-  private _sourceDirRegistry: SourceDirRegistry;
+  private _project: Project;
 
   constructor(params: OpenSourceDirCommand.IConstructorParams) {
     this._pathPicker = params.pathPicker;
-    this._sourceDirRegistry = params.sourceDirRegistry;
+    this._project = params.project;
   }
 
   /**
@@ -33,14 +33,14 @@ export class OpenSourceDirCommand implements ICommand {
         return;
       }
     }
-    this._sourceDirRegistry.add(dirPath);
+    this._project.addSourceDirs(dirPath);
   }
 }
 
 export namespace OpenSourceDirCommand {
   export interface IConstructorParams {
     pathPicker: PathPicker;
-    sourceDirRegistry: SourceDirRegistry;
+    project: Project;
   }
 
   export interface IArgs extends ICommandArgs {

@@ -12,7 +12,7 @@ import { WindowMenuManager } from './platform/window-menu-manager';
 import { ContextMenuManager } from './platform/context-menu-manager';
 import { CommandTable } from '../common/command-table';
 import * as cmds from '../common/command-ids';
-import { SourceDirRegistry } from './source-dir-registry';
+import { Project } from './project';
 import { OpenSourceDirCommand, OpenSourceFileCommand } from './commands';
 import { MainIPCDispatcher } from './ipc-dispatcher';
 
@@ -30,7 +30,7 @@ export class Application {
   private _windowMenuManager: WindowMenuManager;
   private _contextMenuManager: ContextMenuManager;
   private _commands: CommandTable;
-  private _sourceDirRegistry: SourceDirRegistry;
+  private _project: Project;
 
   run(args: IApplicationArgs): void {
     this._ipcDispatcher = new MainIPCDispatcher();
@@ -38,7 +38,7 @@ export class Application {
     const uriPathResolver = new UriPathResolver(args.rootPath);
     this._appProtocolHandler = new AppProtocolHandler(uriPathResolver);
     this._pathPicker = new PathPicker();
-    this._sourceDirRegistry = new SourceDirRegistry(this._ipcDispatcher);
+    this._project = new Project(this._ipcDispatcher);
     this._commands = new CommandTable();
     this.registerCommands();
     this._windowMenuManager = new WindowMenuManager(this._commands);
@@ -55,10 +55,10 @@ export class Application {
 
   registerCommands(): void {
     this._commands.add(cmds.OPEN_SRC_DIR, new OpenSourceDirCommand({
-      pathPicker: this._pathPicker, sourceDirRegistry: this._sourceDirRegistry
+      pathPicker: this._pathPicker, project: this._project
     }));
     this._commands.add(cmds.OPEN_SRC_FILE, new OpenSourceFileCommand({
-      project: this._sourceDirRegistry
+      project: this._project
     }));
     this._commands.add(cmds.QUIT_APP, { execute: () => app.quit() });
   }

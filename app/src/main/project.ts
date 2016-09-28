@@ -11,9 +11,9 @@ import { MainIPCDispatcher, IBrowserDispatcherNode } from './ipc-dispatcher';
  *
  * The list of source directories can be accessed in the renderer process via
  * [[RendererSourceDirRegistry]]. Any changes made to the list of source directories in
- * [[SourceDirRegistry]] will be propagated to all [[RendererSourceDirRegistry]] instances.
+ * [[Project]] will be propagated to all [[RendererSourceDirRegistry]] instances.
  */
-export class SourceDirRegistry {
+export class Project {
   /** Absolute paths to source directories. */
   private _dirPaths: string[] = [];
   private _ipcDispatcher: MainIPCDispatcher;
@@ -37,7 +37,7 @@ export class SourceDirRegistry {
     this._ipcDispatcher = null;
   }
 
-  add(...sourceDirPaths: string[]): void {
+  addSourceDirs(...sourceDirPaths: string[]): void {
     this._dirPaths.push(...sourceDirPaths);
     this._ipcDispatcher.broadcastMessage<ipc.IUpdateMessage>(
       PROJECT_IPC_KEY, ipc.IPC_UPDATE, { kind: 'add', dirPaths: sourceDirPaths }
