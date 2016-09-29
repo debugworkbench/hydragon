@@ -106,19 +106,27 @@ describe('RendererIPCDispatcher', function () {
       });
 
       it('invokes callback for a message sent from the main process @awaitMessage', () => {
-        let node: IRendererDispatcherNode;
+        // To ensure the test message is only sent to the node it's intended for (rather than
+        // all the nodes subscribed to the same key in this process) this test creates two
+        // nodes. The first node is the one that should receive the test message, the second node
+        // acts as a decoy and should not receive the test message.
         return new Promise<void>((resolve, reject) => {
-          node = dispatcher.createNode();
-          node.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, msg => {
+          let msgReceived = false;
+          const targetNode = dispatcher.createNode();
+          targetNode.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, msg => {
             try {
               expect(msg.title).to.equal('This is a message');
-              resolve();
+              // wait a bit in case the test message is also sent to the decoy node
+              setTimeout(resolve, 1000);
             } catch (err) {
               reject(err);
             }
           });
-        })
-        .then(() => node.dispose());
+          const decoyNode = dispatcher.createNode();
+          decoyNode.onMessage<ITestPayload>(DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE, msg => {
+            reject(new Error('Message sent to decoy node.'));
+          });
+        });
       });
     });
 

@@ -299,8 +299,17 @@ export class RendererIPCDispatcher {
         }
 
         if (msg.kind === MessageKind.Simple) {
-          for (const node of nodes) {
-            node.handleMessage(msg.key, msg.channel, msg.payload);
+          if (msg.nodeId !== undefined) {
+            for (const node of nodes) {
+              if (msg.nodeId === node.id) {
+                node.handleMessage(msg.key, msg.channel, msg.payload);
+                break;
+              }
+            }
+          } else {
+            for (const node of nodes) {
+              node.handleMessage(msg.key, msg.channel, msg.payload);
+            }
           }
         } else if (msg.kind === MessageKind.Request) {
           for (const node of nodes) {

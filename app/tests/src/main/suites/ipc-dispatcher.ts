@@ -70,16 +70,24 @@ describe('MainIPCDispatcher', function () {
     it('sends a message', () => {
       let node: IBrowserDispatcherNode;
       const sendMsgWhenRendererReady = new Promise<void>((resolve, reject) => {
+        let targetNode: IRemoteNode, decoyNode: IRemoteNode;
         node = dispatcher.createNode();
         node.onConnect(DISPATCHER_IPC_KEY, (key, remoteNode) => {
-          try {
-            dispatcher.sendMessage<ITestPayload>(
-              remoteNode, DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE,
-              { title: 'This is a message' }
-            );
-            resolve();
-          } catch (err) {
-            reject(err);
+          if (targetNode) {
+            decoyNode = remoteNode;
+          } else {
+            targetNode = remoteNode;
+          }
+          if (targetNode && decoyNode) {
+            try {
+              dispatcher.sendMessage<ITestPayload>(
+                targetNode, DISPATCHER_IPC_KEY, dispatcherChannels.MESSAGE,
+                { title: 'This is a message' }
+              );
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
           }
         });
       });
