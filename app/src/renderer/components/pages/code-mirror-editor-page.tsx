@@ -45,6 +45,9 @@ export class CodeMirrorEditorPageComponent
   }
 
   componentDidMount(): void {
+    if (this.editorElement) {
+      this.editorElement.config = this.props.model.editorConfig;
+    }
     // The editor element needs to know the actual width/height of its container in order to render
     // itself correctly. So, any time the container changes size (for example because the browser
     // window was resized) the editor element needs to be notified so it can rerender itself to fit
