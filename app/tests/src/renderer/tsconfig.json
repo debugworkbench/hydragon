@@ -10,6 +10,7 @@
         "outDir": "../../lib",
         "rootDir": "../",
         "experimentalDecorators": true,
+        "skipLibCheck": true,
         "baseUrl": ".",
         "paths": {
             "app/*": ["../../../lib/*"]
