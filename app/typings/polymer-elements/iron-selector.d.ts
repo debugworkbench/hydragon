@@ -22,6 +22,22 @@ declare namespace PolymerElements {
 		detail: IronActivateEventDetail;
 	}
 	
+	/** Custom event that's emitted by [[IronSelectableBehavior]] after an item is selected. */
+	interface IronSelectEvent extends CustomEvent {
+		detail: {
+			/** The item that was selected. */
+			item: HTMLElement;
+		};
+	}
+
+	/** Custom event that's emitted by [[IronSelectableBehavior]] after an item is deselected. */
+	interface IronDeselectEvent extends CustomEvent {
+		detail: {
+			/** The item that was deselected. */
+			item: HTMLElement;
+		};
+	}
+
 	interface IronSelectableBehavior {
 		// Properties that can be bound to
 		
