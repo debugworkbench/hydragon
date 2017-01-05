@@ -41,7 +41,8 @@ export class PaperDropdownMenuComponent
 
   protected get eventBindings() {
     return [
-      { event: 'iron-activate', listener: 'onWillSelectItem' }
+      { event: 'iron-activate', listener: 'onWillSelectItem' },
+      { event: 'iron-select', listener: 'onDidSelectItem' }
     ];
   }
 
@@ -63,5 +64,6 @@ export namespace PaperDropdownMenuComponent {
      * Call `e.preventDevault()` in the callback to prevent the item from being selected.
      */
     onWillSelectItem?: (e: PolymerElements.IronActivateEvent) => void;
+    onDidSelectItem?: (e: PolymerElements.IronSelectEvent) => void;
   }
 }
