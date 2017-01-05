@@ -11,6 +11,11 @@ import { omitOwnProps } from '../../../common/utils';
 export class PaperMenuComponent
        extends PolymerComponent<PolymerElements.PaperMenu, PaperMenuComponent.IProps> {
 
+  /** Returns the index of the given item. */
+  indexOf(item: PolymerElements.PaperItem): number {
+    return this.element.indexOf(item);
+  }
+
   protected get cssVars() {
     const styles = this.props.styles;
     const vars: any = {};
