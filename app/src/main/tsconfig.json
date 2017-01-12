@@ -4,21 +4,20 @@
         "target": "es6",
         "importHelpers": true,
         "noImplicitAny": true,
-        "sourceMap": false,
+        "experimentalDecorators": true,
+        "sourceMap": true,
         "declaration": true,
         "noLib": false,
         "outDir": "../../lib",
         "rootDir": "../",
-        "lib": ["es6"],
+        "lib": ["es6", "dom"],
         "types": ["node"]
     },
     "files": [
         "../../typings/github-electron/node.d.ts",
         "../../typings/github-electron/github-electron.d.ts",
         "../../typings/github-electron/github-electron-main.d.ts",
-        "application.ts",
-        "application-window.ts",
-        "main.ts",
-        "protocol-handlers.ts"
+        "../../typings/event-kit/event-kit.d.ts",
+        "main.ts"
     ]
 }

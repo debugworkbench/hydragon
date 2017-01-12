@@ -1,26 +1,22 @@
-// Copyright (c) 2016 Vadim Macagon
+// Copyright (c) 2016-2017 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { LayoutItemModel } from './layout-item-model';
+import { ComponentModel } from '../component-model';
 
 export type SplitterOrientation = 'vertical' | 'horizontal';
 
-export interface ISplitterParams {
-  id: string;
-  orientation: SplitterOrientation;
-  resizee: LayoutItemModel;
-}
+export class SplitterModel extends ComponentModel {
+  orientation: 'vertical' | 'horizontal';
+  /** Identifier of the component this splitter will resize. */
+  resizeeId: string;
 
-export class SplitterModel {
-  /** Unique identifier. */
-  id: string;
-  orientation: SplitterOrientation;
-  /** The item the splitter will be resizing. */
-  resizee: LayoutItemModel;
-
-  constructor({ id, orientation, resizee }: ISplitterParams) {
-    this.id = id;
+  constructor({ id, orientation, resizeeId }: {
+    id: string;
+    orientation: SplitterOrientation;
+    resizeeId: string;
+  }) {
+    super(id, null);
     this.orientation = orientation;
-    this.resizee = resizee;
+    this.resizeeId = resizeeId;
   }
 }

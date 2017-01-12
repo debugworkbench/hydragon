@@ -1,85 +1,59 @@
-// Copyright (c) 2016 Vadim Macagon
+// Copyright (c) 2016-2017 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
-import { Subject, Subscription } from '@reactivex/rxjs';
-import { LayoutContainerModel } from './layout-container-model';
-import { LayoutItemModel } from './layout-item-model';
-import { ContextMenu } from '../../platform/context-menu';
+import * as mobx from 'mobx';
+import { ILayoutItemModel } from './layout-item-model';
+import { ComponentModel } from '../component-model';
+import { WidgetPath } from '../../../display-server';
 
-/**
- * Items that are added to a panel must implement this interface.
- */
-export interface IPanelItem {
-  id: string;
-  /** Called after the item is added to a panel. */
-  onDidAttachToPanel?(panel: PanelModel): void;
-  /**
-   * Called before the panel context menu is shown.
-   * Panel items can implement this method to add menu items to the panel's context menu.
-   */
-  extendPanelContextMenu?(panelContextMenu: ContextMenu): void;
-}
-
-export class PanelModel extends LayoutItemModel {
+export class PanelModel extends ComponentModel implements ILayoutItemModel {
+  @mobx.observable
   title: string;
+  @mobx.observable
+  width: string;
+  @mobx.observable
+  height: string;
+  @mobx.observable
+  resizable: boolean;
+  @mobx.observable
   showHeader: boolean;
-  items: IPanelItem[] = [];
+  @mobx.observable
+  items: ComponentModel[];
 
-  private _contextMenu: ContextMenu;
+  //private _disposeItemsObserver: mobx.Lambda;
 
-  constructor({
-    id, title = undefined, width = undefined, height = undefined, resizable = false,
-    showHeader = false
-  }: PanelModel.IConstructorParams) {
-    super(id);
-    this.title = title;
-    this.width = width;
-    this.height = height;
-    this.resizable = resizable;
-    this.showHeader = showHeader;
-  }
-
-  dispose(): void {
-    if (this._contextMenu) {
-      this._contextMenu.dispose();
-      this._contextMenu = null;
-    }
-  }
-
-  add(...items: IPanelItem[]): void {
-    this.items.push(...items);
-    items.forEach(item => {
-      if (item.onDidAttachToPanel) {
-        item.onDidAttachToPanel(this);
-      }
-    });
-  }
-
-  /** Show the native context menu for this panel. */
-  showContextMenu(): void {
-    if (this._contextMenu) {
-      this._contextMenu.clear();
-    } else {
-      this._contextMenu = new ContextMenu();
-    }
-    this.items.forEach(item => {
-      if (item.extendPanelContextMenu) {
-        item.extendPanelContextMenu(this._contextMenu);
-      }
-    });
-    if (this._contextMenu.hasItems) {
-      this._contextMenu.show();
-    }
-  }
-}
-
-export namespace PanelModel {
-  export interface IConstructorParams {
+  constructor(params: {
     id: string;
+    widgetPath: WidgetPath;
     title?: string;
     width?: string;
     height?: string;
     resizable?: boolean;
     showHeader?: boolean;
+    items: ComponentModel[];
+  }) {
+    super(params.id, params.widgetPath);
+    this.title = (params.title !== undefined) ? params.title : null;
+    this.width = (params.width !== undefined) ? params.width : null;
+    this.height = (params.height !== undefined) ? params.height : null;
+    this.resizable = params.resizable === true;
+    this.showHeader = params.showHeader === true;
+    this.items = params.items || [];
+    /*
+    this._disposeItemsObserver = mobx.autorun(() => {
+      for (let i = 0; i < this.items.length; ++i) {
+        this.items[i].parent = this;
+        this.items[i].relativePath = ['items', i];
+      }
+    });
+    */
   }
+/*
+  dispose(): void {
+    if (this._disposeItemsObserver) {
+      this._disposeItemsObserver();
+      this._disposeItemsObserver = null;
+    }
+  }
+*/
 }

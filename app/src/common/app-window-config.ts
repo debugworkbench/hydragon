@@ -1,5 +1,6 @@
 export interface IAppWindowConfig {
   rootPath: string;
+  layout: any;
 }
 
 export function encodeToUriComponent(config: IAppWindowConfig): string {

@@ -1,21 +1,17 @@
-// Copyright (c) 2016 Vadim Macagon
+// Copyright (c) 2016-2017 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
+import * as mobx from 'mobx';
+import { Observable, Subject, Subscription } from '@reactivex/rxjs';
 import { observer } from 'mobx-react';
 import { IronFlexLayout } from '../styles';
 import { stylable } from '../decorators';
-import { SplitterComponent } from './splitter';
 import { PanelComponent } from './panel';
-import { Cursor } from '../../renderer-context';
 import { LayoutContainerModel } from './layout-container-model';
-import { SplitterModel } from './splitter-model';
 import { PanelModel } from './panel-model';
-import { LayoutItemModel } from './layout-item-model';
-import {
-  requiresElementFactory, IRequiresElementFactoryContext, ElementFactory
-} from '../element-factory';
 import { ContextComponent } from '../context';
+import { SplitterModel } from './splitter-model';
 
 export interface ILayoutComponentProps<T> extends React.Props<T> {
   resizable?: boolean;
@@ -33,37 +29,44 @@ export interface ILayoutComponent {
  * The container's children must either be containers or panels, splitter elements will be
  * automatically injected between resizable children.
  */
-@observer
 @stylable
-@requiresElementFactory
+@observer
 export class LayoutContainerComponent
        extends ContextComponent<
          LayoutContainerComponent.IProps, void, LayoutContainerComponent.IContext>
        implements ILayoutComponent {
 
-  private styleId: string;
-  private className: string;
-  private element: HTMLDivElement;
-  /** All child components that aren't splitters. */
-  private childComponents = new Map</*id:*/string, ILayoutComponent>();
+  static contextTypes = {
+    freeStyle: React.PropTypes.object.isRequired,
+    renderChild: React.PropTypes.func.isRequired
+  };
 
-  private onSetRef = (ref: HTMLDivElement) => {
-    this.element = ref;
+  private _styleId: string;
+  private _className: string;
+  private _element: HTMLDivElement;
+  /** All child components that aren't splitters. */
+  private _childComponents = new Map</*id:*/string, ILayoutComponent>();
+  /**
+   * Stream that will yield a `null` value whenever the size of the element bound to this model
+   * may have changed. Elements that perform some computation based on their actual size should
+   * rerun those computations whenever this stream yields a value to account for any change in size.
+   */
+  private _didResizeStream = new Subject<void>();
+  private _didResizeStreamSub: Subscription;
+
+  private _onSetRef = (ref: HTMLDivElement) => {
+    this._element = ref;
     if (this.props.onSetRef) {
       this.props.onSetRef(this.id, this);
     }
   }
 
-  private onSetChildRef = (id: string, ref: ILayoutComponent) => {
+  private _onSetChildRef = (id: string, ref: ILayoutComponent) => {
     if (ref) {
-      this.childComponents.set(id, ref);
+      this._childComponents.set(id, ref);
     } else {
-      this.childComponents.delete(id);
+      this._childComponents.delete(id);
     }
-  }
-
-  constructor(props: LayoutContainerComponent.IProps, context: LayoutContainerComponent.IContext) {
-    super(props, context);
   }
 
   get id(): string {
@@ -71,98 +74,83 @@ export class LayoutContainerComponent
   }
 
   getClientSize(): { width: number; height: number } {
-    if (this.element) {
-      return { width: this.element.clientWidth, height: this.element.clientHeight };
+    if (this._element) {
+      return { width: this._element.clientWidth, height: this._element.clientHeight };
     } else {
       throw new Error('Reference to DOM element not set.')
     }
   }
 
-  private onBeginSplitterResize = (): void => {
-    if (this.props.model.direction === 'vertical') {
-      this.props.overrideCursor(Cursor.VerticalResize);
-    } else {
-      this.props.overrideCursor(Cursor.HorizontalResize);
-    }
-  }
-
-  private onEndSplitterResize = (): void => {
-    this.props.resetCursor()
-  }
-
-  private adjustSiblingSize = (splitter: SplitterModel, delta: { width?: number; height?: number }): void => {
-    const resizeeComponent = this.childComponents.get(splitter.resizee.id);
-    if (resizeeComponent) {
+  @mobx.action
+  private _adjustElementSize = (id: string, delta: { width?: number; height?: number }): void => {
+    const resizeeComponent = this._childComponents.get(id);
+    const resizeeModel = this.props.model.items.find(item => item.id === id);
+    if (resizeeComponent && resizeeModel && !(resizeeModel instanceof SplitterModel)) {
       const { width, height } = resizeeComponent.getClientSize();
       if (this.props.model.direction === 'horizontal') {
-        this.props.model.resizeItem(splitter.resizee, `${width + delta.width}px`);
+        resizeeModel.width = `${width + delta.width}px`;
       } else {
-        this.props.model.resizeItem(splitter.resizee, `${height + delta.height}px`);
+        resizeeModel.height = `${height + delta.height}px`;
       }
+      this._didResizeStream.next(null);
     }
   }
 
   componentWillMount(): void {
-    this.styleId = this.context.freeStyle.registerStyle(Object.assign(
+    const { model } = this.props;
+    this._styleId = this.context.freeStyle.registerStyle(Object.assign(
       {
         boxSizing: 'border-box',
         overflow: 'hidden'
       },
-      this.props.model.direction === 'vertical' ? IronFlexLayout.vertical : IronFlexLayout.horizontal,
+      model.direction === 'vertical' ? IronFlexLayout.vertical : IronFlexLayout.horizontal,
       {
         '> *': IronFlexLayout.flex.auto,
         '> .hydragon-vertical-splitter, .hydragon-horizontal-splitter': IronFlexLayout.flex.none
       }
     ));
-    this.className = `hydragon-${this.props.model.direction}-container ${this.styleId}`;
+    this._className = `hydragon-${model.direction}-container ${this._styleId}`;
   }
 
-  private renderers = new Map<any, (model: LayoutItemModel | SplitterModel) => JSX.Element>([
-    [LayoutContainerModel, model => this.renderLayoutContainer(model as LayoutContainerModel)],
-    [PanelModel, model => this.renderPanel(model as PanelModel)],
-    [SplitterModel, model => this.renderSplitter(model as SplitterModel)]
-  ]);
-
-  renderLayoutContainer(model: LayoutContainerModel): JSX.Element {
-    return (
-      <LayoutContainerComponent model={model}
-        key={model.id}
-        onSetRef={this.onSetChildRef}
-        overrideCursor={this.props.overrideCursor}
-        resetCursor={this.props.resetCursor} />
-    );
+  componentDidMount(): void {
+    if (this.props.parentDidResizeStream) {
+      this._didResizeStreamSub = this.props.parentDidResizeStream.subscribe(this._didResizeStream);
+    }
   }
 
-  renderPanel(model: PanelModel): JSX.Element {
-    return (
-      <PanelComponent model={model}
-        key={model.id}
-        onSetRef={this.onSetChildRef} />
-    );
-  }
-
-  renderSplitter(model: SplitterModel): JSX.Element {
-    return (
-      <SplitterComponent model={model}
-        key={model.id}
-        adjustSiblingSize={this.adjustSiblingSize}
-        onBeginSplitterResize={this.onBeginSplitterResize}
-        onEndSplitterResize={this.onEndSplitterResize} />
-    );
+  componentWillUnmount(): void {
+    if (this._didResizeStreamSub) {
+      this._didResizeStreamSub.unsubscribe();
+    }
+    this._didResizeStream = null;
   }
 
   render() {
+    const { model } = this.props;
     const inlineStyle = {
-      width: (this.props.model.width !== undefined) ? this.props.model.width : undefined,
-      height: (this.props.model.height !== undefined) ? this.props.model.height : undefined,
-      flex: (this.props.model.mainAxisSize !== null) ? `0 0 ${this.props.model.mainAxisSize}` : undefined
-    }
+      width: (model.width !== undefined) ? model.width : undefined,
+      height: (model.height !== undefined) ? model.height : undefined,
+      flex: (this.props.flexBasis !== undefined) ? `0 0 ${this.props.flexBasis}` : undefined
+    };
 
     return (
-      <div className={this.className} style={inlineStyle} ref={this.onSetRef}>{
-        this.props.model.items.map(item => {
-          const renderChild = this.renderers.get(item.constructor);
-          return renderChild(item);
+      <div className={this._className} style={inlineStyle} ref={this._onSetRef}>{
+        model.items.map(child => {
+          let onSetRef = null;
+          let flexBasis;
+          if (!(child instanceof SplitterModel)) {
+            onSetRef = this._onSetChildRef;
+            flexBasis = (model.direction === 'vertical') ? child.height : child.width;
+          }
+          return this.context.renderChild(child, {
+            key: child.id,
+            onSetRef,
+            parentDidResizeStream: this.props.parentDidResizeStream,
+            flexBasis,
+            adjustElementSize: this._adjustElementSize,
+            onBeginSplitterResize: this.props.onBeginSplitterResize,
+            onEndSplitterResize: this.props.onEndSplitterResize
+          });
         })
       }</div>
     );
@@ -172,12 +160,17 @@ export class LayoutContainerComponent
 export namespace LayoutContainerComponent {
   export interface IProps extends ILayoutComponentProps<LayoutContainerComponent> {
     model: LayoutContainerModel;
-
-    // callbacks passed through to splitter components
-    overrideCursor?: (cursor: Cursor) => void;
-    resetCursor?: () => void;
+    flexBasis?: string;
+    /**
+     * Stream that yields a `null` value whenever the browser window or the parent container is
+     * resized.
+     */
+    parentDidResizeStream?: Observable<void>;
+    onBeginSplitterResize(direction: 'vertical' | 'horizontal'): void;
+    onEndSplitterResize(): void;
   }
 
-  export interface IContext extends stylable.IContext, IRequiresElementFactoryContext {
+  export interface IContext extends stylable.IContext {
+    renderChild(model: any, props: any): React.ReactElement<any>;
   }
 }

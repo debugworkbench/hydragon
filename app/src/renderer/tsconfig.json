@@ -5,7 +5,7 @@
         "jsx": "react",
         "importHelpers": true,
         "noImplicitAny": true,
-        "sourceMap": false,
+        "sourceMap": true,
         "declaration": true,
         "noLib": false,
         "outDir": "../../lib",
@@ -22,12 +22,6 @@
         "../../typings/polymer/polymer-typescript-helpers.d.ts",
         "../../typings/polymer-elements/index.d.ts",
         "elements/jsx-extensions.d.ts",
-        "elements/code-mirror-editor/code-mirror-editor.ts",
-        "elements/element-factory.ts",
-        "debug-config-manager.ts",
-        "debug-config-presenter.ts",
-        "init-window.ts",
-        "renderer-context.ts",
-        "utils.ts"
+        "init-window.ts"
     ]
 }

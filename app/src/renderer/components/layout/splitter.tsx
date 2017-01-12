@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Vadim Macagon
+// Copyright (c) 2016-2017 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as React from 'react';
@@ -9,26 +9,28 @@ import { SplitterModel } from './splitter-model';
 import { ContextComponent } from '../context';
 
 /**
- * Component that resizes its sibling elements when the user drags it with the primary mouse button.
+ * A splitter directly resizes the sibling element that precedes it when the user drags the
+ * splitter with the primary mouse button. Splitters can only be placed in layout containers
+ * between layout containers and panels.
  */
 @stylable
 export class SplitterComponent
        extends ContextComponent<SplitterComponent.IProps, void, SplitterComponent.IContext> {
 
-  private styleId: string;
-  private className: string;
-  private divElement: HTMLDivElement;
-  private mouseDragSub: Subscription;
+  private _styleId: string;
+  private _className: string;
+  private _divElement: HTMLDivElement;
+  private _mouseDragSub: Subscription;
 
   private onSetElementRef = (ref: HTMLDivElement) => {
-    this.divElement = ref;
-    if (!ref && this.mouseDragSub) {
-      this.mouseDragSub.unsubscribe();
+    this._divElement = ref;
+    if (!ref && this._mouseDragSub) {
+      this._mouseDragSub.unsubscribe();
     }
   }
 
   componentWillMount(): void {
-    this.styleId = this.context.freeStyle.registerStyle(Object.assign(
+    this._styleId = this.context.freeStyle.registerStyle(Object.assign(
       {
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
@@ -60,19 +62,21 @@ export class SplitterComponent
         }
       }
     ));
-    this.className = `hydragon-${this.props.model.orientation}-splitter ${this.styleId}`;
+    this._className = `hydragon-${this.props.model.orientation}-splitter ${this._styleId}`;
   }
 
   componentDidMount(): void {
     type Pair = { x: number, y: number };
-    const mouseDragStream = Observable.fromEvent<MouseEvent>(this.divElement, 'mousedown')
+    const mouseDragStream = Observable.fromEvent<MouseEvent>(this._divElement, 'mousedown')
       // ignore everything but the primary mouse button
       .filter(mouseDownEvent => (mouseDownEvent.button === 0))
       .flatMap<Pair>(mouseDownEvent => {
         mouseDownEvent.stopPropagation();
         mouseDownEvent.preventDefault();
 
-        this.props.onBeginSplitterResize();
+        this.props.onBeginSplitterResize(
+          (this.props.model.orientation === 'vertical') ? 'horizontal' : 'vertical'
+        );
 
         const mouseUpStream = Observable.fromEvent<MouseEvent>(document, 'mouseup')
           .take(1)
@@ -91,26 +95,25 @@ export class SplitterComponent
           .takeUntil(mouseUpStream);
       });
 
-    this.mouseDragSub = mouseDragStream.subscribe(delta =>
-      this.props.adjustSiblingSize(this.props.model, { width: delta.x, height: delta.y })
+    this._mouseDragSub = mouseDragStream.subscribe(delta =>
+      this.props.adjustElementSize(this.props.model.resizeeId, { width: delta.x, height: delta.y })
     );
   }
 
   componentWillUnmount(): void {
-    this.mouseDragSub.unsubscribe();
+    this._mouseDragSub.unsubscribe();
   }
 
   render() {
-    return <div className={this.className} ref={this.onSetElementRef} />;
+    return <div className={this._className} ref={this.onSetElementRef} />;
   }
 }
 
 export namespace SplitterComponent {
   export interface IProps extends React.Props<SplitterComponent> {
     model: SplitterModel;
-
-    adjustSiblingSize(splitter: SplitterModel, delta: { width?: number; height?: number }): void;
-    onBeginSplitterResize(): void;
+    adjustElementSize(id: string, delta: { width?: number; height?: number }): void;
+    onBeginSplitterResize(direction: 'vertical' | 'horizontal'): void;
     onEndSplitterResize(): void;
   }
 

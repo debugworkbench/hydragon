@@ -8,12 +8,13 @@
         "declaration": true,
         "noLib": false,
         "outDir": "../../lib",
-        "rootDir": "../"
+        "rootDir": "../",
+        "lib": ["es6"],
+        "types": ["node"]
     },
     "files": [
-        "../../typings/node/node.d.ts",
         "app-window-config.ts",
-        "dev-tools.ts",
+        "dev-tools-ipc.ts",
         "events.ts",
         "path-picker-ipc.ts",
         "uri-path-resolver.ts",

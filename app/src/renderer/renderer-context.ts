@@ -1,13 +1,13 @@
-// Copyright (c) 2015-2016 Vadim Macagon
+// Copyright (c) 2015-2017 Vadim Macagon
 // MIT License, see LICENSE file for full terms.
 
 import * as path from 'path';
 import * as electron from 'electron';
+import { ipcRenderer } from 'electron';
 import MobxDevToolsComponent from 'mobx-react-devtools';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import * as ReactFreeStyle from 'react-free-style';
-import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
 import * as mobx from 'mobx';
 import ElementRegistry, { ElementManifestLoader } from './elements/element-registry';
@@ -15,25 +15,15 @@ import ElementFactory from './elements/element-factory';
 import { importHref } from './utils';
 import UriPathResolver from '../common/uri-path-resolver';
 import { IAppWindowConfig } from '../common/app-window-config';
-import { DebugConfigManager, DebugConfigFileLoader } from './debug-config-manager';
-import { DebugConfigPresenter } from './debug-config-presenter';
 import { RendererDevTools } from './dev-tools';
-import { PagePresenter } from './page-presenter';
-import {
-  WorkspaceModel, CodeMirrorEditorPageModel, PageSetModel, PageTreeModel, GdbMiDebugConfigPageModel,
-  DebugToolbarModel, NewDebugConfigDialogModel, DialogModel, DirectoryTreeModel
-} from './components/models';
-import { ElementFactory as ReactElementFactory } from './components/element-factory';
-import {
-  PageSetComponent, PageTreeComponent, CodeMirrorEditorPageComponent, GdbMiDebugConfigPageComponent,
-  DebugToolbarComponent, NewDebugConfigDialogComponent, DirectoryTreeComponent, WorkspaceComponent
-} from './components';
-import { PathPickerProxy } from './platform/path-picker-proxy';
 import { WindowMenu } from './platform/window-menu';
 import * as cmds from '../common/command-ids';
-import { RendererSourceDirRegistry } from './source-dir-registry';
-import { SourceFilePresenter } from './source-file-presenter';
 import { RendererIPCDispatcher } from './ipc-dispatcher';
+import { Reactor } from './reactor';
+import { WindowComponent } from './components/workspace/window';
+import { WindowModel } from './components/workspace/window-model';
+import { ComponentModelFactory } from './component-model-factory';
+import { WidgetPatch, WidgetEvent } from '../display-server';
 
 export const enum Cursor {
   HorizontalResize,
@@ -48,57 +38,36 @@ export class RendererContext {
 
   elementRegistry: ElementRegistry;
   elementFactory: ElementFactory;
-  reactElementFactory: ReactElementFactory;
   rootPath: string;
 
   private windowMenu: WindowMenu;
   private devTools: RendererDevTools;
-  private _sourceDirRegistry: RendererSourceDirRegistry;
-  private _dirTree: DirectoryTreeModel;
-  private _sourceFilePresenter: SourceFilePresenter;
   private _ipcDispatcher: RendererIPCDispatcher;
+  private _windowId: string;
 
   /** Create the renderer context for the current process. */
   static async create(config: IAppWindowConfig): Promise<RendererContext> {
-    const newContext = new RendererContext(config);
-    await newContext.initialize();
+    const newContext = new RendererContext();
+    await newContext.initialize(config);
     return newContext;
   }
 
-  constructor(config: IAppWindowConfig) {
+  dispose(): void {
+    // noop
+  }
+
+  async initialize(config: IAppWindowConfig): Promise<void> {
     this.rootPath = config.rootPath;
     this._ipcDispatcher = new RendererIPCDispatcher();
     this.devTools = new RendererDevTools();
-  }
-
-  dispose(): void {
-    if (this._dirTree) {
-      this._dirTree.dispose();
-    }
-    if (this._sourceDirRegistry) {
-      this._sourceDirRegistry.dispose();
-    }
-    if (this._sourceFilePresenter) {
-      this._sourceFilePresenter.dispose();
-    }
-  }
-
-  async initialize(): Promise<void> {
     const uriPathResolver = new UriPathResolver(this.rootPath);
     const elementManifestLoader = new ElementManifestLoader(uriPathResolver);
     this.elementRegistry = new ElementRegistry(uriPathResolver, elementManifestLoader);
     await this.elementRegistry.importManifestFromUri('app:///static/core-elements-manifest.json');
     this.elementFactory = new ElementFactory(this.elementRegistry);
-    this.reactElementFactory = this._createReactElementFactory();
     this.windowMenu = this.createWindowMenu();
-    this._sourceDirRegistry = new RendererSourceDirRegistry(this._ipcDispatcher);
-
-    const userDataDir = electron.remote.app.getPath('userData');
-    const debugConfigsPath = path.join(userDataDir, 'HydragonDebugConfigs.json');
-    const debugConfigLoader = new DebugConfigFileLoader(debugConfigsPath);
-    const debugConfigManager = new DebugConfigManager(debugConfigLoader);
-    DebugEngineProvider.register(new GdbMiDebugEngineProvider());
-    await debugConfigManager.load();
+/*
+    PREVIOUS ITERATION (for reference)
 
     const workspaceModel = new WorkspaceModel();
     const pagePresenter = new PagePresenter(workspaceModel);
@@ -124,6 +93,16 @@ export class RendererContext {
     workspaceModel.createDefaultLayout({
       mainPageSet, pageTree, debugToolbar, dirTree: this._dirTree
     });
+*/
+    const modelFactory = new ComponentModelFactory(this._sendWidgetEventToMainProcess);
+    const windowModel = <WindowModel>(modelFactory.createModel(config.layout));
+    this._windowId = windowModel.id;
+
+    ipcRenderer.on('apply-widget-patch', (event, patch: WidgetPatch) =>
+      patch.forEach(change => windowModel.applyWidgetChange(change, modelFactory.createModel))
+    );
+
+    const reactor = new Reactor();
 
     const rootContainer = document.createElement('div');
     rootContainer.className = 'root-container';
@@ -134,9 +113,9 @@ export class RendererContext {
     const rootComponent = styleRegistry.component(React.createClass({
       render: () => React.createElement(
         'div', null,
-        React.createElement(WorkspaceComponent, {
-          model: workspaceModel,
-          elementFactory: this.reactElementFactory,
+        React.createElement(WindowComponent, {
+          model: windowModel,
+          renderChild: reactor.createReactElement.bind(reactor),
           overrideCursor, resetCursor
         }),
         React.createElement(styleRegistry.Element),
@@ -145,32 +124,10 @@ export class RendererContext {
     }));
     ReactDOM.render(React.createElement(rootComponent), rootContainer);
     document.body.appendChild(rootContainer);
+  }
 
-    // TODO: these editor elements are only here for mockup purposes, they should be removed once
-    // source files can be opened from the directory tree element
-/*
-    pagePresenter.openPage('test-page', () => {
-      const page = new CodeMirrorEditorPageModel({ id: 'SourceFile1' });
-      page.title = 'Page 1';
-      page.editorConfig = {
-        value: 'int main(int argc, char** argv) { return 0; }',
-        mode: 'text/x-c++src'
-      };
-      return page;
-    });
-
-    pagePresenter.openPage('test-page2', () => {
-      const page = new CodeMirrorEditorPageModel({ id: 'SourceFile2' });
-      page.title = 'Page 2';
-      page.editorConfig = {
-        value: 'int main(int argc, char** argv) { return 1; }',
-        mode: 'text/x-c++src'
-      };
-      return page;
-    });
-
-    this._dirTree.addDirectory(__dirname);
-*/
+  private _sendWidgetEventToMainProcess = (event: WidgetEvent): void => {
+    ipcRenderer.send('widget-event', event);
   }
 
   showWindow(): void {
@@ -227,34 +184,6 @@ export class RendererContext {
         throw new Error('The cursor overlay is not attached to the document!');
       }
     }
-  }
-
-  private _createReactElementFactory(): ReactElementFactory {
-    const factory = new ReactElementFactory();
-
-    factory.registerElementConstructor(PageSetModel, ({ model, key }) =>
-      React.createElement(PageSetComponent, { model, key })
-    );
-    factory.registerElementConstructor(PageTreeModel, ({ model, key }) =>
-      React.createElement(PageTreeComponent, { model, key })
-    );
-    factory.registerElementConstructor(CodeMirrorEditorPageModel, ({ model, key }) =>
-      React.createElement(CodeMirrorEditorPageComponent, { model, key })
-    );
-    factory.registerElementConstructor(GdbMiDebugConfigPageModel, ({ model, key }) =>
-      React.createElement(GdbMiDebugConfigPageComponent, { model, key })
-    );
-    factory.registerElementConstructor(DebugToolbarModel, ({ model, key }) =>
-      React.createElement(DebugToolbarComponent, { model, key })
-    );
-    factory.registerElementConstructor(NewDebugConfigDialogModel, ({ model, key }) =>
-      React.createElement(NewDebugConfigDialogComponent, { model, key })
-    );
-    factory.registerElementConstructor(DirectoryTreeModel, ({ model, key }) =>
-      React.createElement(DirectoryTreeComponent, { model, key })
-    );
-
-    return factory;
   }
 
   private createWindowMenu(): WindowMenu {
