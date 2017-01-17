@@ -4,6 +4,7 @@
 import * as path from 'path';
 import * as DebugEngineProvider from 'debug-engine';
 import { GdbMiDebugEngineProvider } from 'gdb-mi-debug-engine';
+import { Observable } from '@reactivex/rxjs';
 import { LayoutDirection } from './widgets';
 import { DebugConfigManager, DebugConfigFileLoader, IDebugConfig } from './debug-config-manager';
 import { Project } from './project';
@@ -64,14 +65,15 @@ export class Application {
       updateStream.subscribe(update => displayServer.updateWindow(widget, update));
     });
     // forward user input events to the corresponding presentations
-    // FIXME: handleEvent() is async so need to check if the returned promise is rejected,
-    //        also events should be handled sequentially since they may modify the UI.
-    displayServer.eventStream.subscribe(event => {
+    // and wait for each presentation to process its event before moving on to the next event
+    displayServer.eventStream
+    .concatMap(event => Observable.defer(async () => {
       const node = rootOutputNode.getNodeAtPath(event.path);
       if (node) {
-        node.presentation.handleEvent(event);
+        await node.presentation.handleEvent(event);
       }
-    });
+    }))
+    .subscribe();
   }
 
   private _buildCmdTable(): CommandTable {
